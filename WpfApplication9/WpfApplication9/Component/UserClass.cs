@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 namespace WpfApplication9.Component
 {
-    public static class Class1
+    public static class UserClass
     {
         public static T TryFindParent<T>(DependencyObject current) where T : class
         {

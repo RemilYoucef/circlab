@@ -64,7 +64,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Component\Class1.cs" />
+    <Compile Include="Component\UserClass.cs" />
     <Compile Include="Component\Wireclass.cs" />
     <Compile Include="LogicGate\AND.cs" />
     <Compile Include="Component\StandardComponent.xaml.cs">

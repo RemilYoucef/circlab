@@ -21,9 +21,9 @@ namespace WpfApplication9.Component
     /// </summary>
     public partial class Terminal : UserControl
     {
-        public Boolean source;//si vrai => ouput ,si false => intput;
-        public ArrayList wires;
-        public Boolean etat;
+        public Boolean IsOutpt;//si vrai => ouput ,si false => intput;
+        public ArrayList wires; //Un terminal de sortie peut être brancher à plusieurs entrés 
+        public Boolean etat; 
 
         public Terminal()
         {
@@ -33,20 +33,20 @@ namespace WpfApplication9.Component
 
         public void relier(object sender, MouseButtonEventArgs e)
         {
-            Terminal term = Class1.TryFindParent<Terminal>((Ellipse)sender);
-            StandardComponent componentPere = Class1.TryFindParent<StandardComponent>((Ellipse)sender);
-            Canvas canvas = Class1.TryFindParent<Canvas>((term));
-     
-            
-            Wireclass wi = new Wireclass();
-            wi.relier((Ellipse)sender);
+            Terminal terminal = UserClass.TryFindParent<Terminal>((Ellipse)sender);
+            StandardComponent componentPere = UserClass.TryFindParent<StandardComponent>((Ellipse)sender);
+            Canvas canvas = UserClass.TryFindParent<Canvas>((terminal));
+  
+            Wireclass wire = new Wireclass();
+            wire.relier((Ellipse)sender);
         }
 
+        //Recalcule de position de chaque terminal en recaluculant la pos de tout les fils
         public void recalculer()
         {
             foreach(Wireclass wire in wires)
             {
-                wire.recalculer(source);
+                wire.recalculer(IsOutpt);
             }
         }
 
