@@ -23,29 +23,16 @@ namespace WpfApplication9.LogicGate
             Boolean tmp = false;
 
             foreach (Terminal terminal in inputStack.Children)
-            {
-             /*   if (terminal.wires.Count == 0)
+            {            
+                foreach (Wireclass wire in terminal.wires)
                 {
-
-                    tmp = false;
-                }*/
-                //else
-                //{
-                    foreach (Wireclass wire in terminal.wires)
+                    if (wire.state == true)
                     {
-
-
-                        if (wire.state == true)
-                        {
-
-                            tmp = true;
-                        }
-
-
+                        tmp = true;
                     }
-              //  }
-
+                }   
             }
+
             foreach (Wireclass wire in this.output.wires)
             {
                 wire.state = tmp;

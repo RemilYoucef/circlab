@@ -34,19 +34,16 @@ namespace WpfApplication9.LogicGate
                 {
                     foreach (Wireclass wire in terminal.wires)
                     {
-
-
                         if (wire.state == false)
                         {
 
                             tmp = false;
                         }
-
-
                     }
                 }
               
             }
+
             foreach(Wireclass wire in this.output.wires)
             {
                 wire.state = tmp;

@@ -128,7 +128,7 @@
                                 Margin="5"
                                 Click="addXOR" />
                         <Button Height="100"
-                                Content="OR"
+                                Content="XNOR"
                                 Width="100"
                                 Margin="5"
                                 Click="addXNOR" />
@@ -242,11 +242,13 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <TextBlock>Property1</TextBlock>
-                            <TextBlock Grid.Column="1">Value</TextBlock>
-                            <TextBlock Grid.Row="1">Property2</TextBlock>
-                            <TextBlock Grid.Column="1"
-                                       Grid.Row="1">Value</TextBlock>
+                            <TextBlock Text="Nombre d'entrés" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" SelectedIndex="0"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" >
+                                <ComboBoxItem>2</ComboBoxItem>
+                                <ComboBoxItem>3</ComboBoxItem>
+                                <ComboBoxItem>4</ComboBoxItem>
+                                <ComboBoxItem>8</ComboBoxItem>
+                            </ComboBox>
                         </Grid>
                         <Label HorizontalAlignment="Center"
                                FontWeight="Bold"

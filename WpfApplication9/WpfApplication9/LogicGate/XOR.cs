@@ -60,6 +60,8 @@ namespace WpfApplication9.LogicGate
                 wire.state = tmp;
             }
         }
+
+        
     }
 }
 

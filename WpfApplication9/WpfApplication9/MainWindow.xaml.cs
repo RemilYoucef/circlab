@@ -87,7 +87,7 @@ namespace WpfApplication9
         private void addAND(object sender, RoutedEventArgs e)
         {
             //canvas.Children.Clear();
-            AND img = new AND(4);
+            AND img = new AND(2);
             canvas.Children.Add(img);
             img.AllowDrop = true;
             img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
