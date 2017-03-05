@@ -9,6 +9,7 @@ namespace WpfApplication9.Component
 {
     public static class Class1
     {
+        
         public static T TryFindParent<T>(DependencyObject current) where T : class
         {
             DependencyObject parent = VisualTreeHelper.GetParent(current);

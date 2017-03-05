@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
 
     <Grid>
-        <Path Data="M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15" HorizontalAlignment="Left" Height="30.5" Margin="88.5,47.25,0,0" Stretch="Fill" Stroke="Black" VerticalAlignment="Top" Width="34.25"/>
+        <Path Data="M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15" HorizontalAlignment="Left" Height="30.5" Margin="63.5,70.75,0,0" Stretch="Fill" Stroke="Black" VerticalAlignment="Top" Width="34.25"/>
         <Path Data="M0.5,0.5 L27,0.5 L27,27.5 L0.5,27.5 z" HorizontalAlignment="Left" Height="28" Margin="43.5,73.25,0,0" Stretch="Fill" Stroke="Black" VerticalAlignment="Top" Width="20"/>
         <Rectangle HorizontalAlignment="Right" Height="81" Margin="0,33,123,0" Stroke="Black" VerticalAlignment="Top" Width="25.5"/>
     </Grid>
