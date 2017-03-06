@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,8 @@ namespace WpfApplication9.Component
     {
         public static Canvas canvas;//le canvas de l'interface 
         public Path typeComponenet; //Le path pour dessiner le composant concerné (And,Or,...)
+        protected ArrayList inputs_tab;
+        protected ArrayList outputs_tab;
 
         //Constructeur de tout les composonts
         public StandardComponent(int nbrinput,string path)
@@ -76,26 +79,41 @@ namespace WpfApplication9.Component
         }
 
         public abstract void Run();
-        
 
-        /* public  Path create(int nbrinput, String path)
-         {
-             StackPanel stackPanel = new StackPanel();
-             stackPanel.Orientation = Orientation.Vertical;
-             Input input = new Input();
-             input.create(nbrinput);
-             stackPanel.Children.Add(input);
-             Path ph = new Path();
-             ph.StrokeEndLineCap = PenLineCap.Square;
-             ph.StrokeStartLineCap = PenLineCap.Triangle;
-             ph.Data = StreamGeometry.Parse(path);
-             ph.Stroke = Brushes.Black;
-             ph.StrokeThickness = 2;
-             ph.Fill = Brushes.White;
-            // stackPanel.Children.Add(ph);
-             //stackPanel.Background = Brushes.Blue;
-             return ph;
-         }*/
+        public void update_input()
+        {
+            inputs_tab.Clear();
+            int i = 0;
+            foreach (Terminal terminal in inputStack.Children)
+            {
+                if (terminal.wires.Count == 0)
+                {
+                    inputs_tab[i] = 0;
+                }
+                else
+                {
+                    foreach (Wireclass wire in terminal.wires)
+                    {
+                        inputs_tab[i] = wire.state;
+                    }
+                   
+                }
+                i++;
+            }
+        }
+
+        public void update_output()
+        {
+            int i = 0;
+            foreach (Terminal terminal in inputStack_Copy.Children)
+            {
+                foreach (Wireclass wire in terminal.wires)
+                {
+                    wire.state =(Boolean)outputs_tab[i];
+                }
+                i++;
+            }
+        }
 
     }
 }

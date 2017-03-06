@@ -53,6 +53,7 @@ namespace WpfApplication9.Component
                     }
                 }
                 _state = value;
+            
             }
         }
 
