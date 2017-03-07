@@ -127,6 +127,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Component\Design\projectGuides.guides" />
     <None Include="Design\projectGuides.guides" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -142,6 +143,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="logo.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Complexcomponent\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
