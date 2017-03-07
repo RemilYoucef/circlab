@@ -116,8 +116,9 @@ namespace WpfApplication9.Component
             
                 btn2Point = selection2.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
                 btn1Point = selection1.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
+
                 l1 = new Line();
-                l1.Stroke = new SolidColorBrush(Colors.White);
+                l1.Stroke = new SolidColorBrush(Colors.Black);
                 l1.StrokeThickness = 2.0;
                 l1.X1 = btn1Point.X + 0/*btn11.ActualWidth*/;
                 l1.X2 = (btn1Point.X + btn2Point.X + 2*selection1.ActualWidth) / 2;
@@ -126,7 +127,7 @@ namespace WpfApplication9.Component
                 myCanvas.Children.Add(l1);
 
                 l2 = new Line();
-                l2.Stroke = new SolidColorBrush(Colors.White);
+                l2.Stroke = new SolidColorBrush(Colors.Black);
                 l2.StrokeThickness = 2.0;
                 l2.X1 = l1.X2;
                 l2.X2 = l1.X2;
@@ -135,7 +136,7 @@ namespace WpfApplication9.Component
                 myCanvas.Children.Add(l2);
 
                 l3 = new Line();
-                l3.Stroke = new SolidColorBrush(Colors.White);
+                l3.Stroke = new SolidColorBrush(Colors.Black);
                 l3.StrokeThickness = 2.0;
                 l3.X1 = l2.X2;
                 l3.X2 = (btn2Point.X);//btn2Point.X;
@@ -166,6 +167,20 @@ namespace WpfApplication9.Component
              }*/
         }
 
+        public void Destroy()
+        {
+            myCanvas.Children.Remove(l1);
+            myCanvas.Children.Remove(l2);
+            myCanvas.Children.Remove(l3);
+            foreach (StandardComponent componenet in destinations)
+            {
+                foreach (Terminal terminal in componenet.inputStack.Children)
+                {
+                    terminal.wires.Remove(this);
+                }
+                componenet.Run();
+            }
+        }
 
         public void recalculer(Boolean source)
         {
@@ -207,11 +222,10 @@ namespace WpfApplication9.Component
             //myCanvas.Children.Add(l3);
            // selected = false;
         }
+    }
 
-       
 
 
     }
 
 
-}

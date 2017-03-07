@@ -19,7 +19,7 @@ namespace WpfApplication9.LogicGate
 
         public override void Run()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

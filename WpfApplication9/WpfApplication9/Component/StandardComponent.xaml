@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WpfApplication9.Component"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" HorizontalAlignment="Left">
+             d:DesignHeight="300" d:DesignWidth="300" HorizontalAlignment="Left" MouseDown="standardcomponent_MouseDown">
     <Grid x:Name="grid"  Height="66" VerticalAlignment="Top">
         <Grid.ContextMenu>
             <ContextMenu>

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfApplication9.LogicGate;
 
 namespace WpfApplication9.Component
 {
@@ -22,11 +23,14 @@ namespace WpfApplication9.Component
     {
         public static Canvas canvas;//le canvas de l'interface 
         public Path typeComponenet; //Le path pour dessiner le composant concerné (And,Or,...)
+        public String path;
+       
 
         //Constructeur de tout les composonts
         public StandardComponent(int nbrinput,string path)
         {   
             InitializeComponent();
+            this.path = path;
             Terminal terminal = new Terminal();//on crée un terminal 
             typeComponenet = new Path();//le nombre d'input ;
             
@@ -41,31 +45,24 @@ namespace WpfApplication9.Component
                 nbrinput = 1;
             }
 
-            output.Margin = new Thickness(4.5, 11 * (nbrinput - 1), 4.5, 0);
-            grid.Height = nbrinput * 22;
             output.IsOutpt = true;//defini que c'est une sortie ; 
 
             //Pour dessiner le composant
-            typeComponenet.Height = terminal.Height * nbrinput;
-            typeComponenet.Width = terminal.Width * 4;
-            typeComponenet.Data = StreamGeometry.Parse(path); 
-            typeComponenet.Stretch = Stretch.Fill;
-            typeComponenet.StrokeThickness = 0;
-            typeComponenet.Fill = Brushes.RoyalBlue;
-            typeComponenet.Margin = new Thickness(14, 0, 0, 0);
-            typeComponenet.HorizontalAlignment = HorizontalAlignment.Left;
-            typeComponenet.VerticalAlignment = VerticalAlignment.Top;
+            this.redessiner(path);
             grid.Children.Add(typeComponenet);//on ajoute le composant dans la grid 
         }
 
-        //Methode pour recalculer la position du composants, on calcule la pos de chaque terminal
+        //Methode pour recalculer la position du composants, on calcule la pos de chaque terminal prenant en considération les filles liées à lui
         public void recalculer_pos()
         {
             foreach (Terminal terminal in inputStack.Children)
             {
                 terminal.recalculer(); 
             }
+            
             output.recalculer();
+            canvas.UpdateLayout();
+
         }
 
         private void Delete(object sender, RoutedEventArgs e)
@@ -77,6 +74,87 @@ namespace WpfApplication9.Component
 
         public abstract void Run();
         
+        public void AddInputs()
+        {
+            Terminal terminal = new Terminal();
+            terminal.IsOutpt = false;
+            inputStack.Children.Add(terminal);
+           
+            
+        }
+
+        public void RemoveInputs()
+        {
+            Terminal terminal=null;
+            Wireclass wire=null;
+            foreach(Terminal tmp in inputStack.Children)
+            {
+                terminal = tmp;
+            }
+            foreach(Wireclass tmp in terminal.wires)
+            {
+                wire = tmp;
+            }
+            if(wire!=null) wire.Destroy();
+            inputStack.Children.Remove(terminal);
+    
+            
+        }
+
+        private void standardcomponent_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+
+            MainWindow.elementSelected = this;
+            MainWindow window = UserClass.TryFindParent<MainWindow>(canvas);
+            if (!(sender is Input) && !(sender is Output))
+            {
+                window.modifieProperties();
+            }
+
+            this.typeComponenet.StrokeThickness = 2;
+            this.typeComponenet.Stroke = Brushes.Black;
+        }
+
+        public int nbrInputs()
+        {
+            int tmp = 0;
+            foreach(Terminal terminal in inputStack.Children)
+            {
+                tmp++;
+            }
+            return tmp;
+        }
+
+        public virtual void redessiner(string path)
+        {
+            Terminal terminal = new Terminal();
+            int nbrInput;
+            foreach(Terminal tmp in inputStack.Children)
+            {
+                terminal = tmp;
+            }
+
+            if (this.nbrInputs() == 0)
+            {
+                nbrInput = 1;
+            }
+            else nbrInput = this.nbrInputs();
+
+            output.Margin = new Thickness(4.5, 11 * (nbrInput - 1), 4.5, 0);
+            grid.Height = nbrInput * 22;
+            typeComponenet.Height = terminal.Height * nbrInput;
+            typeComponenet.Width = terminal.Width * 4;
+           
+            typeComponenet.Data = StreamGeometry.Parse(path);
+            typeComponenet.Stretch = Stretch.Fill;
+            typeComponenet.StrokeThickness = 0;
+            typeComponenet.Fill = Brushes.RoyalBlue;
+            typeComponenet.Margin = new Thickness(14, 0, 0, 0);
+            typeComponenet.HorizontalAlignment = HorizontalAlignment.Left;
+            typeComponenet.VerticalAlignment = VerticalAlignment.Top;
+            recalculer_pos();
+           
+        }
 
         /* public  Path create(int nbrinput, String path)
          {
