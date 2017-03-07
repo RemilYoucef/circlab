@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,9 @@ namespace WpfApplication9.Component
         public String path;
        
 
+        protected ArrayList inputs_tab;
+        protected ArrayList outputs_tab;
+
         //Constructeur de tout les composonts
         public StandardComponent(int nbrinput,string path)
         {   
@@ -46,10 +50,11 @@ namespace WpfApplication9.Component
             }
 
             output.IsOutpt = true;//defini que c'est une sortie ; 
-
+          
             //Pour dessiner le composant
             this.redessiner(path);
             grid.Children.Add(typeComponenet);//on ajoute le composant dans la grid 
+            
         }
 
         //Methode pour recalculer la position du composants, on calcule la pos de chaque terminal prenant en considération les filles liées à lui
@@ -67,8 +72,33 @@ namespace WpfApplication9.Component
 
         private void Delete(object sender, RoutedEventArgs e)
         {
-            StandardComponent component = sender as StandardComponent;
+
+
+            StandardComponent component =UserClass.TryFindParent<StandardComponent>((((MenuItem)sender).Parent as ContextMenu).PlacementTarget);
+            
+            foreach(Terminal terminal in component.inputStack.Children )
+            {
+                try {//dans le cas d'output ou il ny'a aucune sortie
+                    foreach (Wireclass wire in terminal.wires)
+                    {
+                        wire.Destroy();
+                    }
+                }
+                catch { }
+            }
+            foreach (Terminal terminal in component.inputStack_Copy.Children)
+            {
+                foreach (Wireclass wire in terminal.wires)
+                {
+                    wire.Destroy();
+                }
+            }
+            //Control component =(Control)sender;
+            //StandardComponent test = UserClass.TryFindParent<StandardComponent>();
+            // test.typeComponenet.Height = 100;
+            //MessageBox.Show();
             canvas.Children.Remove(component);
+            ///canvas.Children.Remove(UserClass.TryFindParent<StandardComponent>(text));
 
         }
 
@@ -156,24 +186,18 @@ namespace WpfApplication9.Component
            
         }
 
-        /* public  Path create(int nbrinput, String path)
-         {
-             StackPanel stackPanel = new StackPanel();
-             stackPanel.Orientation = Orientation.Vertical;
-             Input input = new Input();
-             input.create(nbrinput);
-             stackPanel.Children.Add(input);
-             Path ph = new Path();
-             ph.StrokeEndLineCap = PenLineCap.Square;
-             ph.StrokeStartLineCap = PenLineCap.Triangle;
-             ph.Data = StreamGeometry.Parse(path);
-             ph.Stroke = Brushes.Black;
-             ph.StrokeThickness = 2;
-             ph.Fill = Brushes.White;
-            // stackPanel.Children.Add(ph);
-             //stackPanel.Background = Brushes.Blue;
-             return ph;
-         }*/
+        public void update_output()
+        {
+            int i = 0;
+            foreach (Terminal terminal in inputStack_Copy.Children)
+            {
+                foreach (Wireclass wire in terminal.wires)
+                {
+                    wire.state =(Boolean)outputs_tab[i];
+                }
+                i++;
+            }
+        }
 
     }
 }

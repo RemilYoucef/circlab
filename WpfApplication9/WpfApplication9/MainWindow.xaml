@@ -128,7 +128,7 @@
                                 Margin="5"
                                 Click="addXOR" />
                         <Button Height="100"
-                                Content="OR"
+                                Content="XNOR"
                                 Width="100"
                                 Margin="5"
                                 Click="addXNOR" />
