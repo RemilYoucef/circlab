@@ -47,7 +47,7 @@ namespace WpfApplication9.Component
             output.Margin = new Thickness(4.5, 11 * (nbrinput - 1), 4.5, 0);
             grid.Height = nbrinput * 22;
             output.IsOutpt = true;//defini que c'est une sortie ; 
-
+          
             //Pour dessiner le composant
             typeComponenet.Height = terminal.Height * nbrinput;
             typeComponenet.Width = terminal.Width * 4;
@@ -59,6 +59,7 @@ namespace WpfApplication9.Component
             typeComponenet.HorizontalAlignment = HorizontalAlignment.Left;
             typeComponenet.VerticalAlignment = VerticalAlignment.Top;
             grid.Children.Add(typeComponenet);//on ajoute le composant dans la grid 
+            
         }
 
         //Methode pour recalculer la position du composants, on calcule la pos de chaque terminal
@@ -73,8 +74,33 @@ namespace WpfApplication9.Component
 
         private void Delete(object sender, RoutedEventArgs e)
         {
-            StandardComponent component = sender as StandardComponent;
+
+
+            StandardComponent component =UserClass.TryFindParent<StandardComponent>((((MenuItem)sender).Parent as ContextMenu).PlacementTarget);
+            
+            foreach(Terminal terminal in component.inputStack.Children )
+            {
+                try {//dans le cas d'output ou il ny'a aucune sortie
+                    foreach (Wireclass wire in terminal.wires)
+                    {
+                        wire.Destroy();
+                    }
+                }
+                catch { }
+            }
+            foreach (Terminal terminal in component.inputStack_Copy.Children)
+            {
+                foreach (Wireclass wire in terminal.wires)
+                {
+                    wire.Destroy();
+                }
+            }
+            //Control component =(Control)sender;
+            //StandardComponent test = UserClass.TryFindParent<StandardComponent>();
+            // test.typeComponenet.Height = 100;
+            //MessageBox.Show();
             canvas.Children.Remove(component);
+            ///canvas.Children.Remove(UserClass.TryFindParent<StandardComponent>(text));
 
         }
 

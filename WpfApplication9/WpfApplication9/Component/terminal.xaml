@@ -19,7 +19,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid RenderTransformOrigin="0.5,0.5" Margin="-1.291,1.287,1.291,1.295">
+    <Grid Name= "terminal_grid" RenderTransformOrigin="0.5,0.5" Margin="-1.291,1.287,1.291,1.295">
         <Grid.RenderTransform>
             <TransformGroup>
                 <ScaleTransform/>
