@@ -17,7 +17,7 @@ namespace WpfApplication9.LogicGate
         {
             
         }
-
+        //ffffffffffffffffff
         public override void Run()
         {
 
