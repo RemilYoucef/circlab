@@ -226,16 +226,12 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <TextBlock Text="Nombre d'entrés"
-                                       VerticalAlignment="Center" />
-                            <ComboBox Grid.Column="1"
-                                      SelectedIndex="0"
-                                      HorizontalContentAlignment="Center"
-                                      VerticalContentAlignment="Center">
-                                <ComboBoxItem Content="2" />
-                                <ComboBoxItem Content="3" />
-                                <ComboBoxItem Content="4" />
-                                <ComboBoxItem Content="8" />
+                            <TextBlock Text="Nombre d'entrés" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" SelectedIndex="0"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" >
+                                <ComboBoxItem>2</ComboBoxItem>
+                                <ComboBoxItem>3</ComboBoxItem>
+                                <ComboBoxItem>4</ComboBoxItem>
+                                <ComboBoxItem>8</ComboBoxItem>
                             </ComboBox>
                         </Grid>
                         <Grid DockPanel.Dock="Bottom"
@@ -274,7 +270,7 @@
 
                     <Canvas Grid.Column="2"
                             x:Name="canvas"
-                            Margin="0">
+                            Margin="0" MouseDown="canvas_MouseDown">
                         <Canvas.Background>
                             <!-- see http://mark-dot-net.blogspot.com/2007/06/creating-hatched-patterned-brush-in-wpf.html -->
                             <VisualBrush TileMode="Tile"
