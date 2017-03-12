@@ -188,15 +188,15 @@ namespace WpfApplication9.Component
            
           //  if (!source)
           //  {
-                btn1Point = btn111.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
-                x1 = btn1Point.X;
-                y1 = btn1Point.Y;
+             btn1Point = btn111.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
+             x1 = btn1Point.X;
+             y1 = btn1Point.Y;
          /*   }
             else
             {*/
-                btn2Point = btn222.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
-                x2 = btn2Point.X;
-                y2 = btn2Point.Y;
+            btn2Point = btn222.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
+            x2 = btn2Point.X;
+            y2 = btn2Point.Y;
             // }
             l1.Stroke = new SolidColorBrush(Colors.Black);
             l1.X1 = x1 + 0/*btn11.ActualWidth*/;

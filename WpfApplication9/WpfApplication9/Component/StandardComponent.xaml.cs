@@ -25,15 +25,18 @@ namespace WpfApplication9.Component
         public static Canvas canvas;//le canvas de l'interface 
         public Path typeComponenet; //Le path pour dessiner le composant concerné (And,Or,...)
         public String path;
+        public Boolean IsSelect;
+        public string type;
        
 
         protected ArrayList inputs_tab;
         protected ArrayList outputs_tab;
 
         //Constructeur de tout les composonts
-        public StandardComponent(int nbrinput,string path)
+        public StandardComponent(int nbrinput,string path,string type)
         {   
             InitializeComponent();
+            this.type = type;
             this.path = path;
             Terminal terminal = new Terminal();//on crée un terminal 
             typeComponenet = new Path();//le nombre d'input ;
@@ -58,6 +61,8 @@ namespace WpfApplication9.Component
             inputs_tab = new ArrayList();
             outputs_tab = new ArrayList();
             outputs_tab.Add(false);
+            this.typeComponenet.StrokeThickness = 2;
+            this.typeComponenet.Stroke = Brushes.RoyalBlue;
         }
 
         //Methode pour recalculer la position du composants, on calcule la pos de chaque terminal prenant en considération les filles liées à lui
@@ -69,14 +74,13 @@ namespace WpfApplication9.Component
             }
             
             output.recalculer();
-            canvas.UpdateLayout();
+           
+            
 
         }
 
         private void Delete(object sender, RoutedEventArgs e)
         {
-
-
             StandardComponent component =UserClass.TryFindParent<StandardComponent>((((MenuItem)sender).Parent as ContextMenu).PlacementTarget);
             
             foreach(Terminal terminal in component.inputStack.Children )
@@ -106,6 +110,10 @@ namespace WpfApplication9.Component
         }
 
         public abstract void Run();
+
+
+
+
         
         public void AddInputs()
         {
@@ -136,16 +144,36 @@ namespace WpfApplication9.Component
 
         private void standardcomponent_MouseDown(object sender, MouseButtonEventArgs e)
         {
-
-            MainWindow.elementSelected = this;
+            if(MainWindow.elementSelected==null || MainWindow.elementSelected!=(StandardComponent)sender)
+            {
+                if (MainWindow.elementSelected != null)
+                {
+                    MainWindow.elementSelected.typeComponenet.Stroke =Brushes.RoyalBlue;
+                    MainWindow.elementSelected.IsSelect = false;
+                }
+                MainWindow.elementSelected = this;
+                this.IsSelect = true;
+                selectElement(this);
+            }
+            
             MainWindow window = UserClass.TryFindParent<MainWindow>(canvas);
             if (!(sender is Input) && !(sender is Output))
             {
+                window.activeComboBox();
                 window.modifieProperties();
             }
+            else
+            {
+                window.desactiveComboBox();
+            }
+           
+           
+        }
 
-            this.typeComponenet.StrokeThickness = 2;
-            this.typeComponenet.Stroke = Brushes.Black;
+        public static void selectElement(StandardComponent component)
+        {
+            component.typeComponenet.StrokeThickness = 2;
+            component.typeComponenet.Stroke = Brushes.Black;
         }
 
         public int nbrInputs()
@@ -186,7 +214,9 @@ namespace WpfApplication9.Component
             typeComponenet.HorizontalAlignment = HorizontalAlignment.Left;
             typeComponenet.VerticalAlignment = VerticalAlignment.Top;
             recalculer_pos();
-           
+            if (IsSelect) selectElement(this);
+            canvas.UpdateLayout();
+
         }
 
         public void update_input()
