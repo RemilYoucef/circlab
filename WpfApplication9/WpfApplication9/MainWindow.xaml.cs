@@ -24,6 +24,8 @@ namespace WpfApplication9
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static StandardComponent elementSelected;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -65,6 +67,7 @@ namespace WpfApplication9
             Canvas.SetZIndex(img, top + 1);
             Mouse.Capture(img);
         }
+
         private new void PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Control img = sender as Control;
@@ -84,6 +87,13 @@ namespace WpfApplication9
         }
 
   
+        public void modifieProperties()
+        {
+      
+            if (elementSelected.nbrInputs() != 8 )
+                ComboBoxProperties.SelectedIndex = elementSelected.nbrInputs() - 2;
+            else ComboBoxProperties.SelectedIndex = 3;
+        }
 
         private void addAND(object sender, RoutedEventArgs e)
         {
@@ -253,10 +263,6 @@ namespace WpfApplication9
         }
 
       
-        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
 
         private void closeWindow(object sender, MouseButtonEventArgs e)
         {
@@ -269,11 +275,60 @@ namespace WpfApplication9
             drawerHost.IsLeftDrawerOpen = false;
         }
 
+        private void ComboBoxProperties_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(elementSelected!=null && !(elementSelected is Input) && !(elementSelected is Output))
+            {
+                int selecteVal=ComboBoxProperties.SelectedIndex+2;
+                if (ComboBoxProperties.SelectedIndex == 3) selecteVal = 8;
+
+                if (selecteVal!= elementSelected.nbrInputs())
+                {
+                    while (selecteVal > elementSelected.nbrInputs())
+                    {
+                        elementSelected.AddInputs();
+                    }
+                    while (selecteVal < elementSelected.nbrInputs())
+                    {
+                        elementSelected.RemoveInputs();
+                    }
+
+                    elementSelected.redessiner(elementSelected.path);
+                    elementSelected.Run();
+
+                }
+                
+
+
+            }
+          
+
+        }
+
+        private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+         /*   try
+            {
+                StandardComponent test = (StandardComponent)sender;
+                
+            }
+            catch (Exception)
+            {*/
+               /*              if (elementSelected != null)
+                {
+                    elementSelected.typeComponenet.StrokeThickness = 0;
+                    elementSelected = null;
+                    Wireclass.selected = false;
+                }
+            //}*/
+        }
         private void BottomDrawerHostOpen(object sender, RoutedEventArgs e)
         {
             drawerHost.IsBottomDrawerOpen = true;
-            MessageBox.Show("hi");
+            //MessageBox.Show("hi");
         }
+
+
     }
 
 

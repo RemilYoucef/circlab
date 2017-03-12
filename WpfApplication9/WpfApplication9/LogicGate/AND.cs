@@ -11,7 +11,6 @@ namespace WpfApplication9.LogicGate
 {
     class AND:StandardComponent
     {
-
         public AND(int nbrinput)
             :base(nbrinput, "M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15")
         {
@@ -50,7 +49,10 @@ namespace WpfApplication9.LogicGate
             }
         }
 
-
+        public override void redessiner(string path)
+        {
+            base.redessiner("M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15");
+        }
 
     }
 }
