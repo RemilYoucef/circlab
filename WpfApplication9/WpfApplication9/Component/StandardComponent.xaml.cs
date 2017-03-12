@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApplication9.LogicGate;
+using WpfApplication9.SequentialComponent;
 
 namespace WpfApplication9.Component
 {
@@ -157,7 +158,7 @@ namespace WpfApplication9.Component
             }
             
             MainWindow window = UserClass.TryFindParent<MainWindow>(canvas);
-            if (!(sender is Input) && !(sender is Output))
+            if (!(sender is Input) && !(sender is Output) && !(sender is Clock))
             {
                 window.activeComboBox();
                 window.modifieProperties();
