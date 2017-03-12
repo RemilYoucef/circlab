@@ -21,8 +21,8 @@ namespace WpfApplication9.Component
     /// </summary>
     public abstract partial class StandardComponent : UserControl
     {
-        public static Canvas canvas;//le canvas de l'interface 
-        public Path typeComponenet; //Le path pour dessiner le composant concerné (And,Or,...)
+        public static Canvas canvas;//le canvas de l'interface
+        protected Path typeComponenet; //Le path pour dessiner le composant concerné (And,Or,...)
         protected ArrayList inputs_tab;
         protected ArrayList outputs_tab;
 
@@ -59,6 +59,10 @@ namespace WpfApplication9.Component
             typeComponenet.HorizontalAlignment = HorizontalAlignment.Left;
             typeComponenet.VerticalAlignment = VerticalAlignment.Top;
             grid.Children.Add(typeComponenet);//on ajoute le composant dans la grid 
+
+            inputs_tab = new ArrayList();
+            outputs_tab = new ArrayList();
+            outputs_tab.Add(false);
         }
 
         //Methode pour recalculer la position du composants, on calcule la pos de chaque terminal
@@ -88,12 +92,14 @@ namespace WpfApplication9.Component
             {
                 if (terminal.wires.Count == 0)
                 {
-                    inputs_tab[i] = 0;
+                    inputs_tab.Add(false);
+                    inputs_tab[i] = false;
                 }
                 else
                 {
                     foreach (Wireclass wire in terminal.wires)
                     {
+                        inputs_tab.Add(false);
                         inputs_tab[i] = wire.state;
                     }
                    

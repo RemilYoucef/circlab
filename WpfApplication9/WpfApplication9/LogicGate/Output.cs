@@ -53,21 +53,6 @@ namespace WpfApplication9.LogicGate
             }
         }
 
-        private void MouseClick(object sender, RoutedEventArgs e)
-        {
-            state = !state;
-            if (state == true)
-            {
-                this.typeComponenet.Fill = Brushes.Green;
-            }
-            else
-            {
-                this.typeComponenet.Fill = Brushes.Red;
-            }
-        }
-
-
-
 
     }
 }
