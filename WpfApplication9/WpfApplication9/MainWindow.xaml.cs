@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApplication9.Component;
 using WpfApplication9.LogicGate;
+using WpfApplication9.SequentialComponent;
 
 namespace WpfApplication9
 {
@@ -205,9 +206,48 @@ namespace WpfApplication9
             
 
         }
+
         private void addOutput(object sender, RoutedEventArgs e)
         {
             Output img = new Output();
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+
+        private void addClock(object sender, RoutedEventArgs e)
+        {
+            Clock img = new Clock(500);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+
+        private void addFlipFlop(object sender, RoutedEventArgs e)
+        {
+            FlipFlop img = new FlipFlop(FlipFlop.TriggerType.HighLevel );
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+
+        private void addLabel(object sender, RoutedEventArgs e)
+        {
+            TextBlock img = new TextBlock();
+            img.Inlines.Add("Label");
+            img.Foreground = Brushes.Black;
             canvas.Children.Add(img);
             img.AllowDrop = true;
             img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;

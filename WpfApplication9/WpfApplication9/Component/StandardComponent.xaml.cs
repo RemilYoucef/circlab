@@ -57,6 +57,10 @@ namespace WpfApplication9.Component
             //Pour dessiner le composant
             this.redessiner(path);
             grid.Children.Add(typeComponenet);//on ajoute le composant dans la grid 
+
+            inputs_tab = new ArrayList();
+            outputs_tab = new ArrayList();
+            outputs_tab.Add(false);
             this.typeComponenet.StrokeThickness = 2;
             this.typeComponenet.Stroke = Brushes.RoyalBlue;
         }
