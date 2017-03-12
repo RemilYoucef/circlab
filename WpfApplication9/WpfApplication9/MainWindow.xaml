@@ -242,8 +242,8 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <TextBlock Text="Nombre d'entrés" VerticalAlignment="Center"/>
-                            <ComboBox x:Name="ComboBoxProperties" Grid.Column="1" SelectedIndex="0"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Top" SelectionChanged="ComboBoxProperties_SelectionChanged" >
+                            <TextBlock x:Name="NbrEntreText" Text="Nombre d'entrés" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="ComboBoxProperties" Grid.Column="1" SelectedIndex="0"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Stretch" SelectionChanged="ComboBoxProperties_SelectionChanged" >
                                 <ComboBoxItem>2</ComboBoxItem>
                                 <ComboBoxItem>3</ComboBoxItem>
                                 <ComboBoxItem>4</ComboBoxItem>

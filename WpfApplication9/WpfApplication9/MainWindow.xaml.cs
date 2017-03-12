@@ -254,34 +254,38 @@ namespace WpfApplication9
                     }
 
                     elementSelected.redessiner(elementSelected.path);
+                    canvas.UpdateLayout();
                     elementSelected.Run();
-
                 }
                 
-
-
             }
           
 
         }
 
+        public void desactiveComboBox()
+        {
+            NbrEntreText.Visibility = Visibility.Collapsed;
+            ComboBoxProperties.Visibility=Visibility.Collapsed;
+            
+        }
+
+        public void activeComboBox()
+        {
+            NbrEntreText.Visibility = Visibility.Visible;
+            ComboBoxProperties.Visibility = Visibility.Visible ;
+        }
+
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-         /*   try
+             if (e.OriginalSource is Canvas && elementSelected!=null)
             {
-                StandardComponent test = (StandardComponent)sender;
-                
+                elementSelected.typeComponenet.Stroke = Brushes.RoyalBlue;
+                elementSelected = null;
+
             }
-            catch (Exception)
-            {*/
-               /*              if (elementSelected != null)
-                {
-                    elementSelected.typeComponenet.StrokeThickness = 0;
-                    elementSelected = null;
-                    Wireclass.selected = false;
-                }
-            //}*/
         }
+
         private void BottomDrawerHostOpen(object sender, RoutedEventArgs e)
         {
             drawerHost.IsBottomDrawerOpen = true;
