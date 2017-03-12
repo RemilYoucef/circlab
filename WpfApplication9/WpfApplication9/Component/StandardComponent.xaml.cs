@@ -189,6 +189,30 @@ namespace WpfApplication9.Component
            
         }
 
+        public void update_input()
+        {
+            inputs_tab.Clear();
+            int i = 0;
+            foreach (Terminal terminal in inputStack.Children)
+            {
+                if (terminal.wires.Count == 0)
+                {
+                    inputs_tab.Add(false);
+                    inputs_tab[i] = false;
+                }
+                else
+                {
+                    foreach (Wireclass wire in terminal.wires)
+                    {
+                        inputs_tab.Add(false);
+                        inputs_tab[i] = wire.state;
+                    }
+
+                }
+                i++;
+            }
+        }
+
         public void update_output()
         {
             int i = 0;
