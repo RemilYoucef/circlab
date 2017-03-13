@@ -39,7 +39,6 @@ namespace WpfApplication9.Component
   
             Wireclass wire = new Wireclass();
             wire.relier((Ellipse)sender);
-            //wires.Add(wire);
         }
 
         //Recalcule de position de chaque terminal en recaluculant la pos de tout les fils

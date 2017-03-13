@@ -19,7 +19,7 @@ namespace WpfApplication9.SequentialComponent
         private TriggerType _trigger = TriggerType.RisingEdge;
         private bool oldClockValue;
         public FlipFlop(TriggerType trigger)
-            :base(2, "M 0,0 L 30,0 L 30,30 L 0,30 z")
+            :base(2, "M 0,0 L 30,0 L 30,30 L 0,30 z","FlipFlop")
         {
             _trigger = trigger;
             oldClockValue = false;

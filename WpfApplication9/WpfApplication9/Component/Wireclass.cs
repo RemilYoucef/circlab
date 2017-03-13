@@ -117,6 +117,7 @@ namespace WpfApplication9.Component
             
                 btn2Point = selection2.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
                 btn1Point = selection1.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
+
                 l1 = new Line();
                 l1.Stroke = new SolidColorBrush(Colors.Black);
                 l1.StrokeThickness = 2.0;
@@ -167,21 +168,35 @@ namespace WpfApplication9.Component
              }*/
         }
 
+        public void Destroy()
+        {
+            myCanvas.Children.Remove(l1);
+            myCanvas.Children.Remove(l2);
+            myCanvas.Children.Remove(l3);
+            foreach (StandardComponent componenet in destinations)
+            {
+                foreach (Terminal terminal in componenet.inputStack.Children)
+                {
+                    terminal.wires.Remove(this);
+                }
+                componenet.Run();
+            }
+        }
 
         public void recalculer(Boolean source)
         {
            
           //  if (!source)
           //  {
-                btn1Point = btn111.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
-                x1 = btn1Point.X;
-                y1 = btn1Point.Y;
+             btn1Point = btn111.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
+             x1 = btn1Point.X;
+             y1 = btn1Point.Y;
          /*   }
             else
             {*/
-                btn2Point = btn222.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
-                x2 = btn2Point.X;
-                y2 = btn2Point.Y;
+            btn2Point = btn222.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
+            x2 = btn2Point.X;
+            y2 = btn2Point.Y;
             // }
             l1.Stroke = new SolidColorBrush(Colors.Black);
             l1.X1 = x1 + 0/*btn11.ActualWidth*/;
@@ -208,11 +223,10 @@ namespace WpfApplication9.Component
             //myCanvas.Children.Add(l3);
            // selected = false;
         }
+    }
 
-       
 
 
     }
 
 
-}
