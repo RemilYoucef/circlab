@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfApplication9.LogicGate;
 
 namespace WpfApplication9.Component
 {
@@ -142,6 +143,114 @@ namespace WpfApplication9.Component
         }
 
         public abstract void Run();
+
+
+
+
+        
+        public void AddInputs()
+        {
+            Terminal terminal = new Terminal();
+            terminal.IsOutpt = false;
+            inputStack.Children.Add(terminal);
+           
+            
+        }
+
+        public void RemoveInputs()
+        {
+            Terminal terminal=null;
+            Wireclass wire=null;
+            foreach(Terminal tmp in inputStack.Children)
+            {
+                terminal = tmp;
+            }
+            foreach(Wireclass tmp in terminal.wires)
+            {
+                wire = tmp;
+            }
+            if(wire!=null) wire.Destroy();
+            inputStack.Children.Remove(terminal);
+    
+            
+        }
+
+        private void standardcomponent_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if(MainWindow.elementSelected==null || MainWindow.elementSelected!=(StandardComponent)sender)
+            {
+                if (MainWindow.elementSelected != null)
+                {
+                    MainWindow.elementSelected.typeComponenet.Stroke =Brushes.RoyalBlue;
+                    MainWindow.elementSelected.IsSelect = false;
+                }
+                MainWindow.elementSelected = this;
+                this.IsSelect = true;
+                selectElement(this);
+            }
+            
+            MainWindow window = UserClass.TryFindParent<MainWindow>(canvas);
+            if (!(sender is Input) && !(sender is Output))
+            {
+                window.activeComboBox();
+                window.modifieProperties();
+            }
+            else
+            {
+                window.desactiveComboBox();
+            }
+           
+           
+        }
+
+        public static void selectElement(StandardComponent component)
+        {
+            component.typeComponenet.StrokeThickness = 2;
+            component.typeComponenet.Stroke = Brushes.Black;
+        }
+
+        public int nbrInputs()
+        {
+            int tmp = 0;
+            foreach(Terminal terminal in inputStack.Children)
+            {
+                tmp++;
+            }
+            return tmp;
+        }
+
+        public virtual void redessiner(string path)
+        {
+            Terminal terminal = new Terminal();
+            int nbrInput;
+            foreach(Terminal tmp in inputStack.Children)
+            {
+                terminal = tmp;
+            }
+
+            if (this.nbrInputs() == 0)
+            {
+                nbrInput = 1;
+            }
+            else nbrInput = this.nbrInputs();
+
+            output.Margin = new Thickness(4.5, 11 * (nbrInput - 1), 4.5, 0);
+            grid.Height = nbrInput * 22;
+            typeComponenet.Height = terminal.Height * nbrInput;
+            typeComponenet.Width = terminal.Width * 4;
+           
+            typeComponenet.Data = StreamGeometry.Parse(path);
+            typeComponenet.Stretch = Stretch.Fill;
+            typeComponenet.StrokeThickness = 0;
+            typeComponenet.Fill = Brushes.RoyalBlue;
+            typeComponenet.Margin = new Thickness(14, 0, 0, 0);
+            typeComponenet.HorizontalAlignment = HorizontalAlignment.Left;
+            typeComponenet.VerticalAlignment = VerticalAlignment.Top;
+            recalculer_pos();
+            if (IsSelect) selectElement(this);
+            canvas.UpdateLayout();
+
+        }
 
         public void update_input()
         {
