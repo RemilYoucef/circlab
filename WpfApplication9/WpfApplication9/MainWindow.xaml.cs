@@ -15,7 +15,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApplication9.Component;
 using WpfApplication9.LogicGate;
-using WpfApplication9.SequentialComponent;
 
 namespace WpfApplication9
 {
@@ -24,8 +23,6 @@ namespace WpfApplication9
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static StandardComponent elementSelected;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -67,7 +64,6 @@ namespace WpfApplication9
             Canvas.SetZIndex(img, top + 1);
             Mouse.Capture(img);
         }
-
         private new void PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Control img = sender as Control;
@@ -87,13 +83,6 @@ namespace WpfApplication9
         }
 
   
-        public void modifieProperties()
-        {
-      
-            if (elementSelected.nbrInputs() != 8 )
-                ComboBoxProperties.SelectedIndex = elementSelected.nbrInputs() - 2;
-            else ComboBoxProperties.SelectedIndex = 3;
-        }
 
         private void addAND(object sender, RoutedEventArgs e)
         {
@@ -206,48 +195,9 @@ namespace WpfApplication9
             
 
         }
-
         private void addOutput(object sender, RoutedEventArgs e)
         {
             Output img = new Output();
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-
-        private void addClock(object sender, RoutedEventArgs e)
-        {
-            Clock img = new Clock(500);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-
-        private void addFlipFlop(object sender, RoutedEventArgs e)
-        {
-            FlipFlop img = new FlipFlop(FlipFlop.TriggerType.HighLevel );
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-
-        private void addLabel(object sender, RoutedEventArgs e)
-        {
-            TextBlock img = new TextBlock();
-            img.Inlines.Add("Label");
-            img.Foreground = Brushes.Black;
             canvas.Children.Add(img);
             img.AllowDrop = true;
             img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
@@ -263,6 +213,10 @@ namespace WpfApplication9
         }
 
       
+        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
 
         private void closeWindow(object sender, MouseButtonEventArgs e)
         {
@@ -275,64 +229,11 @@ namespace WpfApplication9
             drawerHost.IsLeftDrawerOpen = false;
         }
 
-        private void ComboBoxProperties_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if(elementSelected!=null && !(elementSelected is Input) && !(elementSelected is Output))
-            {
-                int selecteVal=ComboBoxProperties.SelectedIndex+2;
-                if (ComboBoxProperties.SelectedIndex == 3) selecteVal = 8;
-
-                if (selecteVal!= elementSelected.nbrInputs())
-                {
-                    while (selecteVal > elementSelected.nbrInputs())
-                    {
-                        elementSelected.AddInputs();
-                    }
-                    while (selecteVal < elementSelected.nbrInputs())
-                    {
-                        elementSelected.RemoveInputs();
-                    }
-
-                    elementSelected.redessiner(elementSelected.path);
-                    canvas.UpdateLayout();
-                    elementSelected.Run();
-                }
-                
-            }
-          
-
-        }
-
-        public void desactiveComboBox()
-        {
-            NbrEntreText.Visibility = Visibility.Collapsed;
-            ComboBoxProperties.Visibility=Visibility.Collapsed;
-            
-        }
-
-        public void activeComboBox()
-        {
-            NbrEntreText.Visibility = Visibility.Visible;
-            ComboBoxProperties.Visibility = Visibility.Visible ;
-        }
-
-        private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-             if (e.OriginalSource is Canvas && elementSelected!=null)
-            {
-                elementSelected.typeComponenet.Stroke = Brushes.RoyalBlue;
-                elementSelected = null;
-
-            }
-        }
-
         private void BottomDrawerHostOpen(object sender, RoutedEventArgs e)
         {
             drawerHost.IsBottomDrawerOpen = true;
-            //MessageBox.Show("hi");
+            MessageBox.Show("hi");
         }
-
-
     }
 
 

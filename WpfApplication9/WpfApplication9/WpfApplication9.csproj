@@ -45,10 +45,8 @@
     </Reference>
     <Reference Include="Microsoft.Expression.Controls, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Expression.Drawing, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -67,8 +65,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ComplexComponent\ClassConverter.cs" />
-    <Compile Include="ComplexComponent\Decoder.cs" />
     <Compile Include="Component\UserClass.cs" />
     <Compile Include="Component\Wireclass.cs" />
     <Compile Include="LogicGate\AND.cs" />
@@ -88,8 +84,6 @@
     </Compile>
     <Compile Include="LogicGate\XNOR.cs" />
     <Compile Include="LogicGate\XOR.cs" />
-    <Compile Include="SequentialComponent\Clock.cs" />
-    <Compile Include="SequentialComponent\FlipFlop.cs" />
     <Page Include="Component\StandardComponent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -133,6 +127,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Component\Design\projectGuides.guides" />
     <None Include="Design\projectGuides.guides" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -148,6 +143,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="logo.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Complexcomponent\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

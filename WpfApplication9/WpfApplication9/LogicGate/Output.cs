@@ -15,7 +15,7 @@ namespace WpfApplication9.LogicGate
     {
 
         public Output()
-            : base(1, "M0.5,0.5 L27,0.5 L27,27.5 L0.5,27.5 z","OUTPUT")
+            : base(1,0, "M0.5,0.5 L27,0.5 L27,27.5 L0.5,27.5 z")
         {
             state = false;
             this.typeComponenet.Fill = Brushes.Red;
@@ -52,6 +52,21 @@ namespace WpfApplication9.LogicGate
                 }
             }
         }
+
+        private void MouseClick(object sender, RoutedEventArgs e)
+        {
+            state = !state;
+            if (state == true)
+            {
+                this.typeComponenet.Fill = Brushes.Green;
+            }
+            else
+            {
+                this.typeComponenet.Fill = Brushes.Red;
+            }
+        }
+
+
 
 
     }

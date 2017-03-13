@@ -17,7 +17,7 @@ namespace WpfApplication9.SequentialComponent
         private int _ms;
 
         public Clock(int milliseconds)
-            : base(0, "M0.5,0.5 L27,0.5 L27,27.5 L0.5,27.5 z","Clock")
+            : base(0, "M0.5,0.5 L27,0.5 L27,27.5 L0.5,27.5 z")
         {
             _val = false;
             this.typeComponenet.Fill = Brushes.Red;
