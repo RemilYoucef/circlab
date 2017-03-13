@@ -65,6 +65,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ComplexComponent\ClassConvertercs.cs" />
+    <Compile Include="ComplexComponent\Decodeur.cs" />
+    <Compile Include="ComplexComponent\Encodeur.cs" />
     <Compile Include="Component\UserClass.cs" />
     <Compile Include="Component\Wireclass.cs" />
     <Compile Include="LogicGate\AND.cs" />
@@ -144,9 +147,7 @@
   <ItemGroup>
     <Resource Include="logo.bmp" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Complexcomponent\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

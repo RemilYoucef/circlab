@@ -30,7 +30,7 @@ namespace WpfApplication9.Component
         public StandardComponent(int nbrinput,int nbrOutput,string path)
         {
             inputs_tab = new ArrayList();
-            outputs_tab = new ArrayList();
+            outputs_tab=new ArrayList();
             InitializeComponent();
             Terminal terminal = new Terminal();//on crée un terminal 
             typeComponenet = new Path();//le nombre d'input ;
@@ -79,13 +79,7 @@ namespace WpfApplication9.Component
             grid.Height = terminal.Height * Math.Max(nbrinput, nbrOutput);
             grid.Children.Add(typeComponenet);
             
-            //on ajoute le typecomponenent 
-           // inputStack_Copy.Height =
-                 foreach (Terminal terminal1 in inputStack_Copy.Children)
-            {
-                // terminal1.terminal_grid.Width = grid.Height / Math.Pow(2, Math.Max(nbrinput, nbrOutput));
-              //  terminal1.BorderThickness = new Thickness(0,10,0,0);
-            }
+          
 
         }
 
@@ -96,7 +90,11 @@ namespace WpfApplication9.Component
             {
                 terminal.recalculer(); 
             }
-            output.recalculer();
+            foreach (Terminal terminal in inputStack_Copy.Children)
+            {
+                terminal.recalculer();
+            }
+            //output.recalculer();
             
         }
 
@@ -111,26 +109,32 @@ namespace WpfApplication9.Component
                     {
                         
                         wire.Destroy();
+                        
                        
                     }
-                   terminal.wires.Clear();
+                   //terminal.wires.Clear();
 
 
             }
 
            
             foreach (Terminal terminal in component.inputStack_Copy.Children)
-            {
-                
+            {   
+          
                     foreach (Wireclass wire in terminal.wires)
-                    {
-                
-                        wire.Destroy();
-                
+                    {   
+                            
+                            wire.Destroy();
+                            foreach (Terminal terminal1 in  wire.destinationcomponent.inputStack.Children)
+                            {
+                                 var wire1 = wire;
+                                terminal1.wires.Remove(wire1);
+                            }
+                        
                     }
-                
-              
+               
             }
+
             //MessageBox.Show(i.ToString());
             //Control component =(Control)sender;
             //StandardComponent test = UserClass.TryFindParent<StandardComponent>();
@@ -151,15 +155,16 @@ namespace WpfApplication9.Component
             {
                 if (terminal.wires.Count == 0)
                 {
-                    inputs_tab[i] = 0;
+                    inputs_tab.Add(false);
                 }
                 else
                 {
                     foreach (Wireclass wire in terminal.wires)
                     {
+                        inputs_tab.Add(false);
                         inputs_tab[i] = wire.state;
                     }
-                   
+
                 }
                 i++;
             }
@@ -172,7 +177,7 @@ namespace WpfApplication9.Component
             {
                 foreach (Wireclass wire in terminal.wires)
                 {
-                    wire.state =(Boolean)outputs_tab[i];
+                    wire.state = (Boolean)outputs_tab[i];
                 }
                 i++;
             }

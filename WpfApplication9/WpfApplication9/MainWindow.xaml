@@ -144,6 +144,18 @@
                                 Width="100"
                                 Margin="5"
                                 Click="addOutput"></Button>
+                        <Button Background="RoyalBlue"
+                                Height="100"
+                                Content="Decoder"
+                                Width="100"
+                                Margin="5"
+                                Click="addDecoder"></Button>
+                        <Button Background="RoyalBlue"
+                                Height="100"
+                                Content="Encoder"
+                                Width="100"
+                                Margin="5"
+                                Click="addEncoder"></Button>
                     </StackPanel>
                 </DockPanel>
             </materialDesign:DrawerHost.BottomDrawerContent>
