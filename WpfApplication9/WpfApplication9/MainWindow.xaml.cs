@@ -15,7 +15,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApplication9.Component;
 using WpfApplication9.LogicGate;
-using WpfApplication9.ComplexComponent;
 
 namespace WpfApplication9
 {
@@ -185,27 +184,6 @@ namespace WpfApplication9
 
         }
 
-        private void addDecoder(object sender, RoutedEventArgs e)
-        {
-            //canvas.Children.Clear();
-            Decodeur img = new Decodeur(2,4);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-        }
-        private void addEncoder(object sender, RoutedEventArgs e)
-        {
-            //canvas.Children.Clear();
-            Encodeur img = new Encodeur(2, 4);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-        }
-
         private void addInput(object sender, RoutedEventArgs e)
         {
             Input img = new Input();
@@ -249,14 +227,6 @@ namespace WpfApplication9
         {
             drawerHost.IsRightDrawerOpen = true;
             drawerHost.IsLeftDrawerOpen = false;
-        }
-
-        private void deselection(object sender, MouseButtonEventArgs e)
-        {
-            if (e.OriginalSource is Canvas)
-            {
-                MessageBox.Show("aloha");
-            }
         }
 
         private void BottomDrawerHostOpen(object sender, RoutedEventArgs e)

@@ -28,8 +28,8 @@ namespace WpfApplication9.Component
 
         public static Terminal source;
         public static Terminal destination;
-        public StandardComponent destinationcomponent;
-        //public ArrayList destinations;//liste des destination relier
+       
+        public ArrayList destinations;
         public double x1;
         public double x2;
         public double y1;
@@ -47,23 +47,12 @@ namespace WpfApplication9.Component
                 if (_state !=value)
                 {
                     _state = value;
-                   
-                        destinationcomponent.Run(); //Recalcule les résultats de tout les composants relier à ce fils
-
+                    foreach(StandardComponent standardcomponent in destinations)
+                    {
+                        standardcomponent.Run(); //Recalcule les résultats de tout les composants relier à ce fils
+                    }
                 }
                 _state = value;
-                if (value==true)
-                {
-                    l1.Stroke = new SolidColorBrush(Colors.Green);
-                    l2.Stroke = new SolidColorBrush(Colors.Green);
-                    l3.Stroke = new SolidColorBrush(Colors.Green);
-                }
-                else
-                {
-                    l1.Stroke = new SolidColorBrush(Colors.Black);
-                    l2.Stroke = new SolidColorBrush(Colors.Black);
-                    l3.Stroke = new SolidColorBrush(Colors.Black);
-                }
             
             }
         }
@@ -71,7 +60,7 @@ namespace WpfApplication9.Component
 
         public Wireclass()
         {
-            destinationcomponent = null;
+            destinations = new ArrayList();
         }
 
         public void relier(Ellipse select)
@@ -123,10 +112,8 @@ namespace WpfApplication9.Component
                 btn111 = selection1;
                 btn222 = selection2;
                 destination.wires.Add(this);
-                destinationcomponent = UserClass.TryFindParent<StandardComponent>(destination);
-                //MessageBox.Show("il y "+ destination.wires.Count.ToString());
                 source.wires.Add(this);
-                
+             
             
                 btn2Point = selection2.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
                 btn1Point = selection1.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
@@ -156,11 +143,11 @@ namespace WpfApplication9.Component
                 l3.Y1 = l2.Y2;
                 l3.Y2 = l2.Y2;
                 myCanvas.Children.Add(l3);
-                
+
                 UserClass.TryFindParent<StandardComponent>(source).Run();
                 selected = false;
                 UserClass.TryFindParent<StandardComponent>(destination).Run();           
-                destinationcomponent=(UserClass.TryFindParent<StandardComponent>(destination));
+                destinations.Add(UserClass.TryFindParent<StandardComponent>(destination));
             }
 
             //partie noued
@@ -184,56 +171,47 @@ namespace WpfApplication9.Component
         public void recalculer(Boolean source)
         {
            
-         
+          //  if (!source)
+          //  {
                 btn1Point = btn111.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
                 x1 = btn1Point.X;
                 y1 = btn1Point.Y;
-        
+         /*   }
+            else
+            {*/
                 btn2Point = btn222.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
                 x2 = btn2Point.X;
                 y2 = btn2Point.Y;
-            
-            //l1.Stroke = new SolidColorBrush(Colors.Black);
-            l1.X1 = x1 + 0;
+            // }
+            l1.Stroke = new SolidColorBrush(Colors.Black);
+            l1.X1 = x1 + 0/*btn11.ActualWidth*/;
             l1.X2 = (x1 + x2 + 2 * selection1.ActualWidth) / 2;
             l1.Y1 = y1 + selection1.ActualHeight / 2;
             l1.Y2 = y1 + selection1.ActualHeight / 2;
-           
-            //l2.Stroke = new SolidColorBrush(Colors.Black);
-           
+            //myCanvas.Children.Add(l1);
+            //l2 = new Line();
+            l2.Stroke = new SolidColorBrush(Colors.Black);
+           // l2.StrokeThickness = 2.0;
             l2.X1 = l1.X2;
             l2.X2 = l1.X2;
             l2.Y1 = l1.Y1;
             l2.Y2 = y2 - selection2.ActualHeight / 2;
-            //l3.Stroke = new SolidColorBrush(Colors.Black);
-           
+            //myCanvas.Children.Add(l2);
+
+            //l3 = new Line();
+            l3.Stroke = new SolidColorBrush(Colors.Black);
+            //l3.StrokeThickness = 2.0;
             l3.X1 = l2.X2;
-            l3.X2 = (x2);
+            l3.X2 = (x2);//btn2Point.X;
             l3.Y1 = l2.Y2;
             l3.Y2 = l2.Y2;
-       
+            //myCanvas.Children.Add(l3);
+           // selected = false;
         }
 
        
-        public void Destroy()
-        {
-            myCanvas.Children.Remove(l1);
-            myCanvas.Children.Remove(l2);
-            myCanvas.Children.Remove(l3);
 
 
-            source.wires.Remove(this);
-           /* foreach(StandardComponent componenet in destinations)
-            {
-                foreach(Terminal terminal in componenet.inputStack.Children)
-                {
-                    terminal.wires.Remove(this);
-                }
-                componenet.Run();
-            }*/
-            
-        }
-        
     }
 
 
