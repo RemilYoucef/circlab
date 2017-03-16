@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApplication9.Component;
+using System.Collections;
 using WpfApplication9.LogicGate;
 using WpfApplication9.SequentialComponent;
 
@@ -24,17 +25,18 @@ namespace WpfApplication9
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static StandardComponent elementSelected;
+        public static List<StandardComponent> elementsSelected= new List<StandardComponent>();
 
         public MainWindow()
         {
             InitializeComponent();
             Wireclass.mwindow = mwindow;
             Wireclass.myCanvas = canvas;
+            desactiveComboBox();
             StandardComponent.canvas = canvas;
             //Input input = new Input(2);
-           //gg.Children.Add(input.create(2));
-           //StandardComponent standard = new StandardComponent(3);
+            //gg.Children.Add(input.create(2));
+            //StandardComponent standard = new StandardComponent(3);
             //gg.Children.Add(standard);
             // gg.Children.Add(standard.create(2, "M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15"));
             //gg.Children.Add(standard);
@@ -89,10 +91,17 @@ namespace WpfApplication9
   
         public void modifieProperties()
         {
-      
-            if (elementSelected.nbrInputs() != 8 )
-                ComboBoxProperties.SelectedIndex = elementSelected.nbrInputs() - 2;
-            else ComboBoxProperties.SelectedIndex = 3;
+            if(elementsSelected!=null)
+            {
+                if (elementsSelected.Count == 1)
+                {
+                    if (elementsSelected[0].nbrInputs() != 8)
+                        ComboBoxProperties.SelectedIndex = elementsSelected[0].nbrInputs() - 2;
+                    else ComboBoxProperties.SelectedIndex = 3;
+                }
+            }
+           
+            
         }
 
         private void addAND(object sender, RoutedEventArgs e)
@@ -277,30 +286,35 @@ namespace WpfApplication9
 
         private void ComboBoxProperties_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(elementSelected!=null && !(elementSelected is Input) && !(elementSelected is Output))
+            if(elementsSelected!=null)
             {
-                int selecteVal=ComboBoxProperties.SelectedIndex+2;
-                if (ComboBoxProperties.SelectedIndex == 3) selecteVal = 8;
-
-                if (selecteVal!= elementSelected.nbrInputs())
+                if (elementsSelected.Count != 0)
                 {
-                    while (selecteVal > elementSelected.nbrInputs())
+                    if (!(elementsSelected[0] is Input) && !(elementsSelected[0] is Output))
                     {
-                        elementSelected.AddInputs();
-                    }
-                    while (selecteVal < elementSelected.nbrInputs())
-                    {
-                        elementSelected.RemoveInputs();
+                        int selecteVal = ComboBoxProperties.SelectedIndex + 2;
+                        if (ComboBoxProperties.SelectedIndex == 3) selecteVal = 8;
+
+                        if (selecteVal != elementsSelected[0].nbrInputs())
+                        {
+                            while (selecteVal > elementsSelected[0].nbrInputs())
+                            {
+                                elementsSelected[0].AddInputs();
+                            }
+                            while (selecteVal < elementsSelected[0].nbrInputs())
+                            {
+                                elementsSelected[0].RemoveInputs();
+                            }
+
+                            elementsSelected[0].redessiner(elementsSelected[0].path);
+                            canvas.UpdateLayout();
+                            elementsSelected[0].Run();
+                        }
                     }
 
-                    elementSelected.redessiner(elementSelected.path);
-                    canvas.UpdateLayout();
-                    elementSelected.Run();
                 }
-                
             }
-          
-
+            
         }
 
         public void desactiveComboBox()
@@ -318,12 +332,16 @@ namespace WpfApplication9
 
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-             if (e.OriginalSource is Canvas && elementSelected!=null)
+            if (e.OriginalSource is Canvas && elementsSelected!=null)
             {
-                elementSelected.typeComponenet.Stroke = Brushes.RoyalBlue;
-                elementSelected = null;
-
+                foreach(StandardComponent elementSelected in elementsSelected)
+                {
+                    elementSelected.typeComponenet.Stroke = Brushes.RoyalBlue;
+                }
+                elementsSelected.Clear();
+                
             }
+            if (elementsSelected.Count() > 1 || elementsSelected.Count()==0) desactiveComboBox();
         }
 
         private void BottomDrawerHostOpen(object sender, RoutedEventArgs e)

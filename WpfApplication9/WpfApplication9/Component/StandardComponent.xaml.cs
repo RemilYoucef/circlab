@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApplication9.LogicGate;
 using WpfApplication9.SequentialComponent;
+using System.Windows.Input;
 
 namespace WpfApplication9.Component
 {
@@ -52,7 +53,6 @@ namespace WpfApplication9.Component
             {
                 nbrinput = 1;
             }
-
             output.IsOutpt = true;//defini que c'est une sortie ; 
           
             //Pour dessiner le composant
@@ -82,30 +82,36 @@ namespace WpfApplication9.Component
 
         private void Delete(object sender, RoutedEventArgs e)
         {
-            StandardComponent component =UserClass.TryFindParent<StandardComponent>((((MenuItem)sender).Parent as ContextMenu).PlacementTarget);
+            //StandardComponent component =UserClass.TryFindParent<StandardComponent>((((MenuItem)sender).Parent as ContextMenu).PlacementTarget);
             
-            foreach(Terminal terminal in component.inputStack.Children )
+            foreach(StandardComponent component in MainWindow.elementsSelected)
             {
-                try {//dans le cas d'output ou il ny'a aucune sortie
+                foreach (Terminal terminal in component.inputStack.Children)
+                {
+                    try
+                    {//dans le cas d'output ou il ny'a aucune sortie
+                        foreach (Wireclass wire in terminal.wires)
+                        {
+                            wire.Destroy();
+                        }
+                    }
+                    catch { }
+                }
+                foreach (Terminal terminal in component.inputStack_Copy.Children)
+                {
                     foreach (Wireclass wire in terminal.wires)
                     {
                         wire.Destroy();
                     }
                 }
-                catch { }
+                canvas.Children.Remove(component);
             }
-            foreach (Terminal terminal in component.inputStack_Copy.Children)
-            {
-                foreach (Wireclass wire in terminal.wires)
-                {
-                    wire.Destroy();
-                }
-            }
+            
             //Control component =(Control)sender;
             //StandardComponent test = UserClass.TryFindParent<StandardComponent>();
             // test.typeComponenet.Height = 100;
             //MessageBox.Show();
-            canvas.Children.Remove(component);
+            
             ///canvas.Children.Remove(UserClass.TryFindParent<StandardComponent>(text));
 
         }
@@ -145,20 +151,62 @@ namespace WpfApplication9.Component
 
         private void standardcomponent_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(MainWindow.elementSelected==null || MainWindow.elementSelected!=(StandardComponent)sender)
+            if (MainWindow.elementsSelected!=null && !(Mouse.RightButton==MouseButtonState.Pressed))
             {
-                if (MainWindow.elementSelected != null)
+
+                if(!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl)) //Une selection simple 
                 {
-                    MainWindow.elementSelected.typeComponenet.Stroke =Brushes.RoyalBlue;
-                    MainWindow.elementSelected.IsSelect = false;
-                }
-                MainWindow.elementSelected = this;
-                this.IsSelect = true;
-                selectElement(this);
+                    
+                        if (!MainWindow.elementsSelected.Contains((StandardComponent)sender)) //si ce n'est pas un clic sur le meme element
+                        {
+                            foreach (StandardComponent elementSelected in MainWindow.elementsSelected) //Deslectionner tout les elements selectionner
+                            {
+                                deSelectElement(elementSelected);
+                            }
+                            MainWindow.elementsSelected.Clear();
+                            MainWindow.elementsSelected.Add(this);
+                            this.IsSelect = true;
+                            selectElement(this);
+                            
+                        }
+                        else
+                        {
+                           
+                            int i=MainWindow.elementsSelected.IndexOf((StandardComponent) sender);
+                            deSelectElement(MainWindow.elementsSelected[i]);
+                            MainWindow.elementsSelected.Remove((StandardComponent)sender);
+                           
+                        }
+                    
+                } 
+                else
+                {
+                    if(MainWindow.elementsSelected.Contains((StandardComponent)sender))
+                    {
+                        int i = MainWindow.elementsSelected.IndexOf((StandardComponent)sender);
+                        deSelectElement(MainWindow.elementsSelected[i]);
+                        MainWindow.elementsSelected.Remove((StandardComponent)sender);
+                    }
+                    else
+                    {
+                        MainWindow.elementsSelected.Add(this);
+                        this.IsSelect = true;
+                        selectElement(this);
+
+                    }
+
+                  
+                }  
+
+               
+
+
             }
+
             
+
             MainWindow window = UserClass.TryFindParent<MainWindow>(canvas);
-            if (!(sender is Input) && !(sender is Output) && !(sender is Clock))
+            if (!(sender is Input) && !(sender is Output) && !(sender is Clock) && !(sender is FlipFlop))
             {
                 window.activeComboBox();
                 window.modifieProperties();
@@ -167,14 +215,20 @@ namespace WpfApplication9.Component
             {
                 window.desactiveComboBox();
             }
-           
-           
+
+
         }
 
         public static void selectElement(StandardComponent component)
         {
             component.typeComponenet.StrokeThickness = 2;
             component.typeComponenet.Stroke = Brushes.Black;
+        }
+
+        public static void deSelectElement(StandardComponent component)
+        {
+            component.typeComponenet.Stroke = Brushes.RoyalBlue;
+            component.IsSelect = false;
         }
 
         public int nbrInputs()

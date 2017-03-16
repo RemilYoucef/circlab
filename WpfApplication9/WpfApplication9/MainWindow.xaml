@@ -259,6 +259,7 @@
                                     Maximum="50"
                                     Value="25" />
                         </Grid>
+                        <CheckBox x:Name="checkBox1" Content="1 inputs" Height="40" VerticalAlignment="Top" Margin="30,30,10,0" Width="76"/>
                     </DockPanel>
                     <GridSplitter Grid.Column="1"
                                   ResizeDirection="Columns"
@@ -325,7 +326,7 @@
                                 <TranslateTransform Y="200" />
                             </TransformGroup>
                         </DockPanel.RenderTransform>
-                        
+
                         <Button x:Name="ToolboxCloser"
                                 Style="{DynamicResource MaterialDesignToolForegroundButton}"
                                 DockPanel.Dock="Top"
