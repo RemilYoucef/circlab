@@ -259,7 +259,17 @@
                                     Maximum="50"
                                     Value="25" />
                         </Grid>
-                        <CheckBox x:Name="checkBox1" Content="1 inputs" Height="40" VerticalAlignment="Top" Margin="30,30,10,0" Width="76"/>
+                        <Grid x:Name="GridCheckBox" Margin="0,1,0,0" Width="257">
+                            <CheckBox x:Name="checkBox1" Content="1 input" Height="40" VerticalAlignment="Top" Margin="30,20,150,0" Width="68" Click="checkBox1_Click"/>
+                            <CheckBox x:Name="checkBox2" Content="2 input" Height="40" VerticalAlignment="Top" Margin="150,20,30,0" Width="68" Click="checkBox2_Click" />
+                            <CheckBox x:Name="checkBox3" Content="3 input" Height="40" VerticalAlignment="Top" Margin="30,70,150,0" Width="68" Click="checkBox3_Click" />
+                            <CheckBox x:Name="checkBox4" Content="4 input" Height="40" VerticalAlignment="Top" Margin="150,70,30,-1" Width="68" Click="checkBox4_Click"/>
+                            <CheckBox x:Name="checkBox5" Content="5 input" Height="40" VerticalAlignment="Top" Margin="34,115,155,0" Width="68" Click="checkBox5_Click" />
+                            <CheckBox x:Name="checkBox6" Content="6 input" Height="40" VerticalAlignment="Top" Margin="154,115,35,0" Width="68" Click="checkBox6_Click" />
+                            <CheckBox x:Name="checkBox7" Content="7 input" Height="40" VerticalAlignment="Top" Margin="34,165,155,0" Width="68" Click="checkBox7_Click" />
+                            <CheckBox x:Name="checkBox8" Content="8 input" Height="40" VerticalAlignment="Top" Margin="154,165,35,0" Width="68" Click="checkBox8_Click" />
+                        </Grid>
+
                     </DockPanel>
                     <GridSplitter Grid.Column="1"
                                   ResizeDirection="Columns"

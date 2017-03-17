@@ -20,23 +20,17 @@ namespace WpfApplication9.LogicGate
         public override void Run()
         {
 
-            Boolean tmp = false;
-
-            foreach (Terminal terminal in inputStack.Children)
-            {            
-                foreach (Wireclass wire in terminal.wires)
-                {
-                    if (wire.state == true)
-                    {
-                        tmp = true;
-                    }
-                }   
-            }
-
-            foreach (Wireclass wire in this.output.wires)
+            update_input();
+            outputs_tab[0] = false;
+            foreach (bool tmp in inputs_tab)
             {
-                wire.state = tmp;
+                if (tmp == true)
+                {
+                    outputs_tab[0] = true;
+                }
+
             }
+            update_output();
         }
 
     }

@@ -19,34 +19,19 @@ namespace WpfApplication9.LogicGate
 
         public override void Run()
         {
-
-            Boolean tmp = true;
-         
-            foreach(Terminal terminal in inputStack.Children)
+            update_input();
+            outputs_tab[0] = true;
+            foreach(bool tmp in inputs_tab)
             {
-                if (terminal.wires.Count == 0)
+                if(tmp == false)
                 {
-                   
-                    tmp = false;
+                    outputs_tab[0] = false;                   
                 }
-                else
-                {
-                    foreach (Wireclass wire in terminal.wires)
-                    {
-                        if (wire.state == false)
-                        {
-
-                            tmp = false;
-                        }
-                    }
-                }
-              
+           
             }
+            update_output();
+            
 
-            foreach(Wireclass wire in this.output.wires)
-            {
-                wire.state = tmp;
-            }
         }
 
         public override void redessiner(string path)

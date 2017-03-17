@@ -32,7 +32,7 @@ namespace WpfApplication9
             InitializeComponent();
             Wireclass.mwindow = mwindow;
             Wireclass.myCanvas = canvas;
-            desactiveComboBox();
+            desactiveProp();
             StandardComponent.canvas = canvas;
             //Input input = new Input(2);
             //gg.Children.Add(input.create(2));
@@ -93,11 +93,76 @@ namespace WpfApplication9
         {
             if(elementsSelected!=null)
             {
-                if (elementsSelected.Count == 1)
+                if (elementsSelected.Count == 1 && !(elementsSelected[0] is Input) && !(elementsSelected[0] is Output))
                 {
                     if (elementsSelected[0].nbrInputs() != 8)
                         ComboBoxProperties.SelectedIndex = elementsSelected[0].nbrInputs() - 2;
                     else ComboBoxProperties.SelectedIndex = 3;
+
+                    if(elementsSelected[0].nbrInputs()==2)
+                    {
+                        checkBox3.Visibility = Visibility.Collapsed;
+                        checkBox4.Visibility = Visibility.Collapsed;
+                        checkBox5.Visibility = Visibility.Collapsed;
+                        checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox8.Visibility = Visibility.Collapsed;
+                    }
+                    else if(elementsSelected[0].nbrInputs()==3)
+                    {
+                        checkBox3.Visibility = Visibility.Visible;
+                        checkBox4.Visibility = Visibility.Collapsed;
+                        checkBox5.Visibility = Visibility.Collapsed;
+                        checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox8.Visibility = Visibility.Collapsed;
+                    }
+                    else if(elementsSelected[0].nbrInputs()==4)
+                    {
+                        checkBox3.Visibility = Visibility.Visible;
+                        checkBox4.Visibility = Visibility.Visible;
+                        checkBox5.Visibility = Visibility.Collapsed;
+                        checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox8.Visibility = Visibility.Collapsed;
+                    }
+                    else if (elementsSelected[0].nbrInputs() == 5)
+                    {
+                        checkBox3.Visibility = Visibility.Visible;
+                        checkBox4.Visibility = Visibility.Visible;
+                        checkBox5.Visibility = Visibility.Visible;
+                        checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox8.Visibility = Visibility.Collapsed;
+                    }
+                    else if (elementsSelected[0].nbrInputs() == 6)
+                    {
+                        checkBox3.Visibility = Visibility.Visible;
+                        checkBox4.Visibility = Visibility.Visible;
+                        checkBox5.Visibility = Visibility.Visible;
+                        checkBox6.Visibility = Visibility.Visible;
+                        checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox8.Visibility = Visibility.Collapsed;
+                    }
+                    else if (elementsSelected[0].nbrInputs() == 7)
+                    {
+                        checkBox3.Visibility = Visibility.Visible;
+                        checkBox4.Visibility = Visibility.Visible;
+                        checkBox5.Visibility = Visibility.Visible;
+                        checkBox6.Visibility = Visibility.Visible;
+                        checkBox7.Visibility = Visibility.Visible;
+                        checkBox8.Visibility = Visibility.Collapsed;
+                    }
+                    else if (elementsSelected[0].nbrInputs() == 8)
+                    {
+                        checkBox3.Visibility = Visibility.Visible;
+                        checkBox4.Visibility = Visibility.Visible;
+                        checkBox5.Visibility = Visibility.Visible;
+                        checkBox6.Visibility = Visibility.Visible;
+                        checkBox7.Visibility = Visibility.Visible;
+                        checkBox8.Visibility = Visibility.Visible;
+                    }
+
                 }
             }
            
@@ -311,24 +376,27 @@ namespace WpfApplication9
                             elementsSelected[0].Run();
                         }
                     }
+                    modifieProperties();
 
                 }
             }
             
         }
 
-        public void desactiveComboBox()
+        public void desactiveProp()
         {
             NbrEntreText.Visibility = Visibility.Collapsed;
             ComboBoxProperties.Visibility=Visibility.Collapsed;
-            
+             GridCheckBox.Visibility = Visibility.Collapsed;
         }
 
-        public void activeComboBox()
+        public void activeProp()
         {
             NbrEntreText.Visibility = Visibility.Visible;
             ComboBoxProperties.Visibility = Visibility.Visible ;
+            GridCheckBox.Visibility = Visibility.Visible;
         }
+
 
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -341,8 +409,67 @@ namespace WpfApplication9
                 elementsSelected.Clear();
                 
             }
-            if (elementsSelected.Count() > 1 || elementsSelected.Count()==0) desactiveComboBox();
+            if (elementsSelected.Count() > 1 || elementsSelected.Count()==0) desactiveProp();
         }
+
+               
+        private void checkBox2_Click(object sender, RoutedEventArgs e)
+        {
+            Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[1];
+            terminal.IsInversed = checkBox2.IsChecked.Value;
+            elementsSelected[0].Run();
+        }
+
+        private void checkBox3_Click(object sender, RoutedEventArgs e)
+        {
+           Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[2];
+            terminal.IsInversed = checkBox3.IsChecked.Value;
+            elementsSelected[0].Run();
+        }
+
+        private void checkBox4_Click(object sender, RoutedEventArgs e)
+        {
+            Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[3];
+            terminal.IsInversed = checkBox4.IsChecked.Value;
+            elementsSelected[0].Run();
+        }
+
+        private void checkBox5_Click(object sender, RoutedEventArgs e)
+        {
+            Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[4];
+            terminal.IsInversed = checkBox5.IsChecked.Value;
+            elementsSelected[0].Run();
+        }
+
+        private void checkBox6_Click(object sender, RoutedEventArgs e)
+        {
+            Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[5];
+            terminal.IsInversed = checkBox6.IsChecked.Value;
+            elementsSelected[0].Run();
+        }
+
+        private void checkBox7_Click(object sender, RoutedEventArgs e)
+        {
+            Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[6];
+            terminal.IsInversed = checkBox7.IsChecked.Value;
+            elementsSelected[0].Run();
+        }
+
+        private void checkBox8_Click(object sender, RoutedEventArgs e)
+        {
+            Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[7];
+            terminal.IsInversed = checkBox8.IsChecked.Value;
+            elementsSelected[0].Run();
+        }
+
+        private void checkBox1_Click(object sender, RoutedEventArgs e)
+        {
+            Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[0];
+            terminal.IsInversed = checkBox1.IsChecked.Value;
+            elementsSelected[0].Run();
+        }
+
+        
 
         private void BottomDrawerHostOpen(object sender, RoutedEventArgs e)
         {

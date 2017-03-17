@@ -206,14 +206,14 @@ namespace WpfApplication9.Component
             
 
             MainWindow window = UserClass.TryFindParent<MainWindow>(canvas);
-            if (!(sender is Input) && !(sender is Output) && !(sender is Clock) && !(sender is FlipFlop))
+            if (!(sender is Input) && !(sender is Output) && !(sender is Clock) && !(sender is FlipFlop) && !(sender is XOR) && !(sender is XNOR))
             {
-                window.activeComboBox();
+                window.activeProp();
                 window.modifieProperties();
             }
             else
             {
-                window.desactiveComboBox();
+                window.desactiveProp();
             }
 
 
@@ -290,7 +290,16 @@ namespace WpfApplication9.Component
                     foreach (Wireclass wire in terminal.wires)
                     {
                         inputs_tab.Add(false);
-                        inputs_tab[i] = wire.state;
+                        if(!terminal.IsInversed)
+                        {
+                            inputs_tab[i] = wire.state;
+                           
+                        }
+                        else
+                        {
+                            inputs_tab[i] = !wire.state;
+                        }
+                       
                     }
 
                 }

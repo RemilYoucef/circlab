@@ -23,11 +23,12 @@ namespace WpfApplication9.Component
     {
         public Boolean IsOutpt;//si vrai => ouput ,si false => intput;
         public ArrayList wires; //Un terminal de sortie peut être brancher à plusieurs entrés 
-        public Boolean etat; 
+        public Boolean IsInversed;// 
 
         public Terminal()
         {
             InitializeComponent();
+            IsInversed = false;
             wires = new ArrayList();
         }
 
