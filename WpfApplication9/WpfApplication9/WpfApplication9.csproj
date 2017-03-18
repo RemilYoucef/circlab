@@ -81,6 +81,7 @@
     <Compile Include="LogicGate\Input.cs" />
     <Compile Include="LogicGate\NAND.cs" />
     <Compile Include="LogicGate\NOR.cs" />
+    <Compile Include="LogicGate\Not.cs" />
     <Compile Include="LogicGate\OR.cs" />
     <Compile Include="LogicGate\Output.cs" />
     <Compile Include="LogicGate\test.xaml.cs">

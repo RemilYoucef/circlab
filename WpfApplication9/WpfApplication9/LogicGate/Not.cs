@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using WpfApplication9.Component;
 
 
 namespace WpfApplication9.LogicGate
 {
-    class NOR : StandardComponent
+    class Not : StandardComponent
     {
-
-        public NOR(int nbrinput)
-            : base(nbrinput,1, "M 15,17 h 5 c 10,0 20,5 25,15 c -5,10 -15,15 -25,15 h -5 c 5,-10 5,-20 0,-30 M 46,33.5 a 3,3 1 1 1 0.1,0.1","NOR")
+        public Not()
+            : base(1,1, "M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15", "AND")
         {
 
         }
@@ -20,30 +20,30 @@ namespace WpfApplication9.LogicGate
         public override void Run()
         {
 
-            Boolean tmp = true;
+            Boolean tmp = false;
 
             foreach (Terminal terminal in inputStack.Children)
             {
-               
-                foreach (Wireclass wire in terminal.wires)
+                if (terminal.wires.Count == 0)
                 {
 
-
-                    if (wire.state == true)
-                    {
-
-                        tmp = false;
-                    }
-
-
+                    tmp = true;
                 }
-                
+                else
+                {
+                    foreach (Wireclass wire in terminal.wires)
+                    {
+                       tmp=!wire.state;
+                    }
+                }
 
             }
+
             foreach (Wireclass wire in this.output.wires)
             {
                 wire.state = tmp;
             }
         }
+
     }
 }

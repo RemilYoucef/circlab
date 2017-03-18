@@ -32,16 +32,7 @@ namespace WpfApplication9
             Wireclass.mwindow = mwindow;
             Wireclass.myCanvas = canvas;
             StandardComponent.canvas = canvas;
-            //Input input = new Input(2);
-           //gg.Children.Add(input.create(2));
-           //StandardComponent standard = new StandardComponent(3);
-            //gg.Children.Add(standard);
-            // gg.Children.Add(standard.create(2, "M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15"));
-            //gg.Children.Add(standard);
-            /*img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;*/
+            
 
         }
         private object movingObject;
@@ -257,6 +248,19 @@ namespace WpfApplication9
 
         }
 
+
+        private void addNot(object sender, RoutedEventArgs e)
+        {
+            Not img = new Not();
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+
         private void annuler(object sender, MouseButtonEventArgs e)
         {
             Wireclass.selected = false;
@@ -277,7 +281,7 @@ namespace WpfApplication9
 
         private void ComboBoxProperties_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(elementSelected!=null && !(elementSelected is Input) && !(elementSelected is Output))
+            if(elementSelected!=null && !(elementSelected is Input) && !(elementSelected is Output) && !(elementSelected is Not))
             {
                 int selecteVal=ComboBoxProperties.SelectedIndex+2;
                 if (ComboBoxProperties.SelectedIndex == 3) selecteVal = 8;

@@ -379,6 +379,11 @@
                                                 Width="100"
                                                 Margin="5"
                                                 Click="addXNOR" />
+                                        <Button Height="100"
+                                                Content="Not"
+                                                Width="100"
+                                                Margin="5"
+                                                Click="addNot" />
                                     </StackPanel>
                                 </Expander>
                                 <Expander ExpandDirection="Right" IsExpanded="True">

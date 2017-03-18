@@ -13,11 +13,11 @@ namespace WpfApplication9.Component
 {
 
     public class Wireclass
-    {
+    {   
+        //aaaaaaaaaaaaaaaaaaaa
         public Line l1 { get; set; }
         public Line l2 { get; set; }
         public Line l3 { get; set; }
-
         public static Boolean selected = false;
         public static Point btn1Point;
         public static Point btn2Point;
