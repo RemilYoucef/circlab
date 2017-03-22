@@ -51,6 +51,18 @@ namespace WpfApplication9.Component
             }
         }
 
+        public void input_inversed()
+        {
+            if(IsInversed)
+            {
+                inverse_input.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                inverse_input.Visibility = Visibility.Collapsed;
+            }
+        }
+
       
     }
 }

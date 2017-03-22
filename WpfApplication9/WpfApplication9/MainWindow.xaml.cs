@@ -102,29 +102,44 @@ namespace WpfApplication9
                     if(elementsSelected[0].nbrInputs()==2)
                     {
                         checkBox3.Visibility = Visibility.Collapsed;
+                        checkBox3.IsChecked = false;
                         checkBox4.Visibility = Visibility.Collapsed;
+                        checkBox4.IsChecked = false;
                         checkBox5.Visibility = Visibility.Collapsed;
+                        checkBox5.IsChecked = false;
                         checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox6.IsChecked = false;
                         checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox7.IsChecked = false;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if(elementsSelected[0].nbrInputs()==3)
                     {
                         checkBox3.Visibility = Visibility.Visible;
                         checkBox4.Visibility = Visibility.Collapsed;
+                        checkBox4.IsChecked = false;
                         checkBox5.Visibility = Visibility.Collapsed;
+                        checkBox5.IsChecked = false;
                         checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox6.IsChecked = false;
                         checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox7.IsChecked = false;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if(elementsSelected[0].nbrInputs()==4)
                     {
                         checkBox3.Visibility = Visibility.Visible;
                         checkBox4.Visibility = Visibility.Visible;
                         checkBox5.Visibility = Visibility.Collapsed;
+                        checkBox5.IsChecked = false;
                         checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox6.IsChecked = false;
                         checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox7.IsChecked = false;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if (elementsSelected[0].nbrInputs() == 5)
                     {
@@ -132,8 +147,11 @@ namespace WpfApplication9
                         checkBox4.Visibility = Visibility.Visible;
                         checkBox5.Visibility = Visibility.Visible;
                         checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox6.IsChecked = false;
                         checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox7.IsChecked = false;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if (elementsSelected[0].nbrInputs() == 6)
                     {
@@ -142,7 +160,9 @@ namespace WpfApplication9
                         checkBox5.Visibility = Visibility.Visible;
                         checkBox6.Visibility = Visibility.Visible;
                         checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox7.IsChecked = false;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if (elementsSelected[0].nbrInputs() == 7)
                     {
@@ -152,6 +172,7 @@ namespace WpfApplication9
                         checkBox6.Visibility = Visibility.Visible;
                         checkBox7.Visibility = Visibility.Visible;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if (elementsSelected[0].nbrInputs() == 8)
                     {
@@ -229,6 +250,7 @@ namespace WpfApplication9
                 Control img = sender as Control;
                 Canvas canvas = img.Parent as Canvas;
 
+                
                 double newLeft = e.GetPosition(canvas).X - firstXPos - canvas.Margin.Left;
                 // newLeft inside canvas right-border?
                 if (newLeft > canvas.Margin.Left + canvas.ActualWidth - img.ActualWidth)
@@ -417,6 +439,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[1];
             terminal.IsInversed = checkBox2.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -424,6 +447,7 @@ namespace WpfApplication9
         {
            Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[2];
             terminal.IsInversed = checkBox3.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -431,6 +455,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[3];
             terminal.IsInversed = checkBox4.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -438,6 +463,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[4];
             terminal.IsInversed = checkBox5.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -445,6 +471,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[5];
             terminal.IsInversed = checkBox6.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -452,6 +479,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[6];
             terminal.IsInversed = checkBox7.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -459,6 +487,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[7];
             terminal.IsInversed = checkBox8.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -466,6 +495,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[0];
             terminal.IsInversed = checkBox1.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 

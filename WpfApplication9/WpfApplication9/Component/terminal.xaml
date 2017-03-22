@@ -48,6 +48,11 @@
 
             </Polygon.Points>
         </Polygon>
+        <Ellipse VerticalAlignment="Top" x:Name="inverse_input" Width="Auto"  Margin="2,12,1,0" Height="7" StrokeThickness="0.25" Visibility="Collapsed" >
+            <Ellipse.Stroke>
+                <SolidColorBrush Color="RoyalBlue"/>
+            </Ellipse.Stroke>
+        </Ellipse>
 
     </Grid>
 </UserControl>
