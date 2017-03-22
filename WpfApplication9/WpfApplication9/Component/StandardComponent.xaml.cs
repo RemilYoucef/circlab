@@ -115,7 +115,7 @@ namespace WpfApplication9.Component
 
         private void Delete(object sender, RoutedEventArgs e)
         {
-            //StandardComponent component =UserClass.TryFindParent<StandardComponent>((((MenuItem)sender).Parent as ContextMenu).PlacementTarget);
+            StandardComponent component =UserClass.TryFindParent<StandardComponent>((((MenuItem)sender).Parent as ContextMenu).PlacementTarget);
             
             foreach(Terminal terminal in component.inputStack.Children )
             {
