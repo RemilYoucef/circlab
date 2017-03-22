@@ -23,6 +23,8 @@ namespace WpfApplication9.Component
     {
         public Boolean IsOutpt;//si vrai => ouput ,si false => intput;
         public ArrayList wires; //Un terminal de sortie peut être brancher à plusieurs entrés 
+        public Boolean etat;
+        public Wireclass logestWire;
         public Boolean IsInversed;// 
 
         public Terminal()
@@ -30,6 +32,7 @@ namespace WpfApplication9.Component
             InitializeComponent();
             IsInversed = false;
             wires = new ArrayList();
+            elSelector.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
         }
 
         public void relier(object sender, MouseButtonEventArgs e)
@@ -39,7 +42,7 @@ namespace WpfApplication9.Component
             Canvas canvas = UserClass.TryFindParent<Canvas>((terminal));
   
             Wireclass wire = new Wireclass();
-            wire.relier((Ellipse)sender);
+            wire.relier();
         }
 
         //Recalcule de position de chaque terminal en recaluculant la pos de tout les fils
@@ -64,5 +67,18 @@ namespace WpfApplication9.Component
         }
 
       
+
+        private new void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+            Ellipse img = sender as Ellipse;
+            Canvas canvas = UserClass.TryFindParent<Canvas>(img);
+            MainWindow.sourceEllipse = sender as Ellipse;
+            MainWindow.wire = new Wireclass();
+            Mouse.Capture(canvas);
+            
+        }
+
+        
     }
 }

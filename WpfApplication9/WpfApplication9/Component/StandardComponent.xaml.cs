@@ -117,27 +117,36 @@ namespace WpfApplication9.Component
         {
             //StandardComponent component =UserClass.TryFindParent<StandardComponent>((((MenuItem)sender).Parent as ContextMenu).PlacementTarget);
             
-            foreach(StandardComponent component in MainWindow.elementsSelected)
+            foreach(Terminal terminal in component.inputStack.Children )
             {
-                foreach (Terminal terminal in component.inputStack.Children)
-                {
-                    try
-                    {//dans le cas d'output ou il ny'a aucune sortie
-                        foreach (Wireclass wire in terminal.wires)
-                        {
-                            wire.Destroy();
-                        }
+
+                try {
+                    for (int i = 0; i < terminal.wires.Count; i++)
+                    {
+                        ((Wireclass)terminal.wires[i]).Destroy();
+                        
                     }
-                    catch { }
                 }
-                foreach (Terminal terminal in component.inputStack_Copy.Children)
-                {
-                    foreach (Wireclass wire in terminal.wires)
+                catch (ArgumentOutOfRangeException) { }
+                    /*foreach (Wireclass wire in terminal.wires)
                     {
                         wire.Destroy();
-                    }
+                    }*/
+                
+               
+            }
+            foreach (Terminal terminal in component.inputStack_Copy.Children)
+            {
+
+                for (int i=terminal.wires.Count-1;i>=0;i--)
+                {
+
+                    ((Wireclass)terminal.wires[i]).Destroy();
                 }
-                canvas.Children.Remove(component);
+         /*       foreach (Wireclass wire in terminal.wires)
+                {
+                    wire.Destroy();
+                }*/
             }
             
             //Control component =(Control)sender;
@@ -355,5 +364,4 @@ namespace WpfApplication9.Component
 
     }
 }
-
 
