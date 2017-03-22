@@ -70,7 +70,9 @@
     <Compile Include="ComplexComponent\ClassConverter.cs" />
     <Compile Include="ComplexComponent\Decoder.cs" />
     <Compile Include="Component\UserClass.cs" />
-    <Compile Include="Component\Wireclass.cs" />
+    <Compile Include="Component\Wireclass.xaml.cs">
+      <DependentUpon>Wireclass.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LogicGate\AND.cs" />
     <Compile Include="Component\StandardComponent.xaml.cs">
       <DependentUpon>StandardComponent.xaml</DependentUpon>
@@ -96,6 +98,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Component\terminal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Component\Wireclass.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

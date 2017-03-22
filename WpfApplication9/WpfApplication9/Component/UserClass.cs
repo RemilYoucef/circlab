@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 namespace WpfApplication9.Component
 {
@@ -22,12 +24,21 @@ namespace WpfApplication9.Component
                 return TryFindParent<T>(parent);
         }
 
-        public static void Intersection(Terminal terminal)
+        public static ArrayList FiltreSrandardComponent(Canvas canvas)
         {
-            foreach(Wireclass wire in terminal.wires)
-            {
-                       
+            ArrayList arrayList = new ArrayList();
+            try {
+                for (int i = 0; i < canvas.Children.Capacity; i++)
+                {
+               //     MessageBox.Show(canvas.Children.Capacity.ToString() + "   " + i.ToString());
+                    if (canvas.Children[i] is StandardComponent)
+                    {
+                        arrayList.Add(canvas.Children[i]);
+                    }
+                }
             }
+            catch { }
+            return arrayList;
         }
     }
 }

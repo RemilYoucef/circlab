@@ -59,6 +59,7 @@ namespace WpfApplication9.LogicGate
 
         public override void Run()
         {
+          
             foreach(Wireclass wire in output.wires)
             {
                 wire.state = this.state;

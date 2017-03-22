@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,17 +33,23 @@ namespace WpfApplication9
             Wireclass.mwindow = mwindow;
             Wireclass.myCanvas = canvas;
             StandardComponent.canvas = canvas;
-            
-
+            canvas.PreviewMouseMove += this.MouseMove2;
+            canvas.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp2;
+            sourceEllipse = null;
         }
+
         private object movingObject;
         private double firstXPos, firstYPos;
+     //   private Wireclass wire ;
+        public static Ellipse sourceEllipse;
+        public static Wireclass wire;
+
         private new void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // In this event, we get the current mouse position on the control to use it in the MouseMove event.
             Control img = sender as Control;
             Canvas canvas = img.Parent as Canvas;
-
+            //Mouse.OverrideCursor = Cursors.Hand;
             firstXPos = e.GetPosition(img).X;
             firstYPos = e.GetPosition(img).Y;
 
@@ -56,6 +63,7 @@ namespace WpfApplication9
             }
             catch (Exception){ }
             Canvas.SetZIndex(img, top + 1);
+            ((StandardComponent)movingObject).Cursor = Cursors.Hand;
             Mouse.Capture(img);
         }
 
@@ -63,7 +71,7 @@ namespace WpfApplication9
         {
             Control img = sender as Control;
             Canvas canvas = img.Parent as Canvas;
-
+         
             movingObject = null;
 
             // Put the image currently being dragged on top of the others
@@ -337,7 +345,80 @@ namespace WpfApplication9
         }
 
 
-    }
+
+        private  void PreviewMouseLeftButtonUp2(object sender, MouseButtonEventArgs e)
+        {
+
+            if (sourceEllipse != null)
+            {
+
+                Wireclass.selection1 = sourceEllipse;
+                // (int)canvas.Children.Capacity;
+                //MessageBox.Show(i.ToString);
+
+
+                ArrayList arraylist = UserClass.FiltreSrandardComponent(canvas);
+
+               
+
+                foreach(StandardComponent standardcomponent in arraylist)
+                {
+
+                
+                    foreach (Terminal terminal in standardcomponent.inputStack.Children)
+                    { 
+                      
+                        
+                        if (Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).X - e.GetPosition(canvas).X) < 20 && Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).Y - e.GetPosition(canvas).Y) < 20)
+                        {
+                            //MessageBox.Show("911");
+                            Wireclass.selection2 = terminal.elSelector;
+                        }
+                    }
+                    foreach (Terminal terminal in standardcomponent.inputStack_Copy.Children)
+                    {
+
+
+                        if (Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).X - e.GetPosition(canvas).X) < 20 && Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).Y - e.GetPosition(canvas).Y) < 20)
+                        {
+                            //MessageBox.Show("911");
+                            Wireclass.selection2 = terminal.elSelector;
+                        }
+                    }
+
+                }
+                
+                 wire.Destroy();
+                if (Wireclass.selection2!=null)
+                {
+                    wire.relier();
+                }
+                
+            }
+
+          
+            Mouse.Capture(null);
+            sourceEllipse = null;
+        }
+
+
+        private  void MouseMove2(object sender, MouseEventArgs e)
+        {
+            
+            if (e.LeftButton == MouseButtonState.Pressed && sourceEllipse!=null)
+            {
+              //  wire = new Wireclass();
+                Wireclass.btn2Point.X = e.GetPosition(canvas).X;
+                Wireclass.btn2Point.Y = e.GetPosition(canvas).Y;
+                Wireclass.selection1 = sourceEllipse;
+                Wireclass.btn1Point = sourceEllipse.TransformToAncestor(canvas).Transform(new Point(0, 0));
+                wire.Dessiner();
+         
+
+                //On dessine 
+            }
+        }
+        }
 
 
 }

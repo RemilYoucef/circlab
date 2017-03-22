@@ -119,20 +119,34 @@ namespace WpfApplication9.Component
             
             foreach(Terminal terminal in component.inputStack.Children )
             {
-                try {//dans le cas d'output ou il ny'a aucune sortie
-                    foreach (Wireclass wire in terminal.wires)
+
+                try {
+                    for (int i = 0; i < terminal.wires.Count; i++)
                     {
-                        wire.Destroy();
+                        ((Wireclass)terminal.wires[i]).Destroy();
+                        
                     }
                 }
-                catch { }
+                catch (ArgumentOutOfRangeException) { }
+                    /*foreach (Wireclass wire in terminal.wires)
+                    {
+                        wire.Destroy();
+                    }*/
+                
+               
             }
             foreach (Terminal terminal in component.inputStack_Copy.Children)
             {
-                foreach (Wireclass wire in terminal.wires)
+
+                for (int i=terminal.wires.Count-1;i>=0;i--)
+                {
+
+                    ((Wireclass)terminal.wires[i]).Destroy();
+                }
+         /*       foreach (Wireclass wire in terminal.wires)
                 {
                     wire.Destroy();
-                }
+                }*/
             }
             //Control component =(Control)sender;
             //StandardComponent test = UserClass.TryFindParent<StandardComponent>();
