@@ -46,55 +46,55 @@ namespace WpfApplication9
         public static Ellipse sourceEllipse;
         public static Wireclass wire;
 
+   
         private new void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // In this event, we get the current mouse position on the control to use it in the MouseMove event.
             Control img = sender as Control;
             Canvas canvas = img.Parent as Canvas;
-<<<<<<< HEAD
 
             firstXPos = e.GetPosition(canvas).X;
             firstYPos = e.GetPosition(canvas).Y;
-=======
-            //Mouse.OverrideCursor = Cursors.Hand;
-            firstXPos = e.GetPosition(img).X;
-            firstYPos = e.GetPosition(img).Y;
->>>>>>> origin/SelectionMultiple
 
             movingObject = sender;
 
             // Put the image currently being dragged on top of the others
             int top = Canvas.GetZIndex(img);
-            try { foreach (Control child in canvas.Children)
+            try
+            {
+                foreach (Control child in canvas.Children)
                     if (top < Canvas.GetZIndex(child))
                         top = Canvas.GetZIndex(child);
             }
-            catch (Exception){ }
+            catch (Exception) { }
             Canvas.SetZIndex(img, top + 1);
-            ((StandardComponent)movingObject).Cursor = Cursors.Hand;
             Mouse.Capture(img);
         }
 
+
         private new void PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            
+
             Control img = sender as Control;
             Canvas canvas = img.Parent as Canvas;
-         
+
             movingObject = null;
 
             // Put the image currently being dragged on top of the others
             int top = Canvas.GetZIndex(img);
-            try { foreach (Control child in canvas.Children)
+            try
+            {
+                foreach (Control child in canvas.Children)
                     if (top > Canvas.GetZIndex(child))
-                        top = Canvas.GetZIndex(child); }
+                        top = Canvas.GetZIndex(child);
+            }
             catch (Exception) { }
             Canvas.SetZIndex(img, top + 1);
-           
+
             Mouse.Capture(null);
         }
 
-  
+
         public void modifieProperties()
         {
             if(elementsSelected!=null)
@@ -254,6 +254,7 @@ namespace WpfApplication9
         
         double differnceX;//Calculer la difference de deplacement des absices
         double differenceY;//meme chose :3
+
         private new void MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && sender == movingObject)
@@ -267,35 +268,14 @@ namespace WpfApplication9
 
 
 
-                
-<<<<<<< HEAD
-              
+
+
 
                 foreach (StandardComponent component in elementsSelected)
-=======
-                double newLeft = e.GetPosition(canvas).X - firstXPos - canvas.Margin.Left;
-                // newLeft inside canvas right-border?
-                if (newLeft > canvas.Margin.Left + canvas.ActualWidth - img.ActualWidth)
-                    newLeft = canvas.Margin.Left + canvas.ActualWidth - img.ActualWidth;
-                // newLeft inside canvas left-border?
-                else if (newLeft < canvas.Margin.Left)
-                    newLeft = canvas.Margin.Left;
-                img.SetValue(Canvas.LeftProperty, newLeft);
-
-                double newTop = e.GetPosition(canvas).Y - firstYPos - canvas.Margin.Top;
-                // newTop inside canvas bottom-border?
-                if (newTop > canvas.Margin.Top + canvas.ActualHeight - img.ActualHeight)
-                    newTop = canvas.Margin.Top + canvas.ActualHeight - img.ActualHeight;
-                // newTop inside canvas top-border?
-                else if (newTop < canvas.Margin.Top)
-                    newTop = canvas.Margin.Top;
-                img.SetValue(Canvas.TopProperty, newTop);
-                try
->>>>>>> origin/SelectionMultiple
                 {
-                    
-                
-                  
+
+
+
                     double newLeft = differnceX + ((StandardComponent)component).PosX - canvas.Margin.Left;
                     ((StandardComponent)component).PosX = differnceX + ((StandardComponent)component).PosX;
                     // newLeft inside canvas right-border?
