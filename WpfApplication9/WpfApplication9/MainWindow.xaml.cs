@@ -57,7 +57,15 @@ namespace WpfApplication9
             firstYPos = e.GetPosition(canvas).Y;
 
             movingObject = sender;
-
+            checkBox1.IsChecked = false;
+            checkBox2.IsChecked = false;
+            checkBox3.IsChecked = false;
+            checkBox4.IsChecked = false;
+            checkBox5.IsChecked = false;
+            checkBox6.IsChecked = false;
+            checkBox7.IsChecked = false;
+            checkBox8.IsChecked = false;
+            
             // Put the image currently being dragged on top of the others
             int top = Canvas.GetZIndex(img);
             try
