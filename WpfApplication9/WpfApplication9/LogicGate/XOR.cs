@@ -22,6 +22,7 @@ namespace WpfApplication9.LogicGate
         {
 
             update_input();
+            outputs_tab.Add(false);
             if ((bool)inputs_tab[0] != (bool)inputs_tab[1]) outputs_tab[0] = true;
             else outputs_tab[0] = false;
           

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,28 +35,31 @@ namespace WpfApplication9
             Wireclass.myCanvas = canvas;
             desactiveProp();
             StandardComponent.canvas = canvas;
-            //Input input = new Input(2);
-            //gg.Children.Add(input.create(2));
-            //StandardComponent standard = new StandardComponent(3);
-            //gg.Children.Add(standard);
-            // gg.Children.Add(standard.create(2, "M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15"));
-            //gg.Children.Add(standard);
-            /*img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;*/
-
+            canvas.PreviewMouseMove += this.MouseMove2;
+            canvas.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp2;
+            sourceEllipse = null;
         }
+
         private object movingObject;
         private double firstXPos, firstYPos;
+     //   private Wireclass wire ;
+        public static Ellipse sourceEllipse;
+        public static Wireclass wire;
+
         private new void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // In this event, we get the current mouse position on the control to use it in the MouseMove event.
             Control img = sender as Control;
             Canvas canvas = img.Parent as Canvas;
+<<<<<<< HEAD
 
             firstXPos = e.GetPosition(canvas).X;
             firstYPos = e.GetPosition(canvas).Y;
+=======
+            //Mouse.OverrideCursor = Cursors.Hand;
+            firstXPos = e.GetPosition(img).X;
+            firstYPos = e.GetPosition(img).Y;
+>>>>>>> origin/SelectionMultiple
 
             movingObject = sender;
 
@@ -67,6 +71,7 @@ namespace WpfApplication9
             }
             catch (Exception){ }
             Canvas.SetZIndex(img, top + 1);
+            ((StandardComponent)movingObject).Cursor = Cursors.Hand;
             Mouse.Capture(img);
         }
 
@@ -75,7 +80,7 @@ namespace WpfApplication9
             
             Control img = sender as Control;
             Canvas canvas = img.Parent as Canvas;
-
+         
             movingObject = null;
 
             // Put the image currently being dragged on top of the others
@@ -103,29 +108,44 @@ namespace WpfApplication9
                     if(elementsSelected[0].nbrInputs()==2)
                     {
                         checkBox3.Visibility = Visibility.Collapsed;
+                        checkBox3.IsChecked = false;
                         checkBox4.Visibility = Visibility.Collapsed;
+                        checkBox4.IsChecked = false;
                         checkBox5.Visibility = Visibility.Collapsed;
+                        checkBox5.IsChecked = false;
                         checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox6.IsChecked = false;
                         checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox7.IsChecked = false;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if(elementsSelected[0].nbrInputs()==3)
                     {
                         checkBox3.Visibility = Visibility.Visible;
                         checkBox4.Visibility = Visibility.Collapsed;
+                        checkBox4.IsChecked = false;
                         checkBox5.Visibility = Visibility.Collapsed;
+                        checkBox5.IsChecked = false;
                         checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox6.IsChecked = false;
                         checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox7.IsChecked = false;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if(elementsSelected[0].nbrInputs()==4)
                     {
                         checkBox3.Visibility = Visibility.Visible;
                         checkBox4.Visibility = Visibility.Visible;
                         checkBox5.Visibility = Visibility.Collapsed;
+                        checkBox5.IsChecked = false;
                         checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox6.IsChecked = false;
                         checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox7.IsChecked = false;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if (elementsSelected[0].nbrInputs() == 5)
                     {
@@ -133,8 +153,11 @@ namespace WpfApplication9
                         checkBox4.Visibility = Visibility.Visible;
                         checkBox5.Visibility = Visibility.Visible;
                         checkBox6.Visibility = Visibility.Collapsed;
+                        checkBox6.IsChecked = false;
                         checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox7.IsChecked = false;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if (elementsSelected[0].nbrInputs() == 6)
                     {
@@ -143,7 +166,9 @@ namespace WpfApplication9
                         checkBox5.Visibility = Visibility.Visible;
                         checkBox6.Visibility = Visibility.Visible;
                         checkBox7.Visibility = Visibility.Collapsed;
+                        checkBox7.IsChecked = false;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if (elementsSelected[0].nbrInputs() == 7)
                     {
@@ -153,6 +178,7 @@ namespace WpfApplication9
                         checkBox6.Visibility = Visibility.Visible;
                         checkBox7.Visibility = Visibility.Visible;
                         checkBox8.Visibility = Visibility.Collapsed;
+                        checkBox8.IsChecked = false;
                     }
                     else if (elementsSelected[0].nbrInputs() == 8)
                     {
@@ -242,9 +268,30 @@ namespace WpfApplication9
 
 
                 
+<<<<<<< HEAD
               
 
                 foreach (StandardComponent component in elementsSelected)
+=======
+                double newLeft = e.GetPosition(canvas).X - firstXPos - canvas.Margin.Left;
+                // newLeft inside canvas right-border?
+                if (newLeft > canvas.Margin.Left + canvas.ActualWidth - img.ActualWidth)
+                    newLeft = canvas.Margin.Left + canvas.ActualWidth - img.ActualWidth;
+                // newLeft inside canvas left-border?
+                else if (newLeft < canvas.Margin.Left)
+                    newLeft = canvas.Margin.Left;
+                img.SetValue(Canvas.LeftProperty, newLeft);
+
+                double newTop = e.GetPosition(canvas).Y - firstYPos - canvas.Margin.Top;
+                // newTop inside canvas bottom-border?
+                if (newTop > canvas.Margin.Top + canvas.ActualHeight - img.ActualHeight)
+                    newTop = canvas.Margin.Top + canvas.ActualHeight - img.ActualHeight;
+                // newTop inside canvas top-border?
+                else if (newTop < canvas.Margin.Top)
+                    newTop = canvas.Margin.Top;
+                img.SetValue(Canvas.TopProperty, newTop);
+                try
+>>>>>>> origin/SelectionMultiple
                 {
                     
                 
@@ -354,6 +401,19 @@ namespace WpfApplication9
 
         }
 
+
+        private void addNot(object sender, RoutedEventArgs e)
+        {
+            Not img = new Not();
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+
         private void annuler(object sender, MouseButtonEventArgs e)
         {
             Wireclass.selected = false;
@@ -440,6 +500,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[1];
             terminal.IsInversed = checkBox2.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -447,6 +508,7 @@ namespace WpfApplication9
         {
            Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[2];
             terminal.IsInversed = checkBox3.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -454,6 +516,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[3];
             terminal.IsInversed = checkBox4.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -461,6 +524,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[4];
             terminal.IsInversed = checkBox5.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -468,6 +532,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[5];
             terminal.IsInversed = checkBox6.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -475,6 +540,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[6];
             terminal.IsInversed = checkBox7.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -482,6 +548,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[7];
             terminal.IsInversed = checkBox8.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -489,6 +556,7 @@ namespace WpfApplication9
         {
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[0];
             terminal.IsInversed = checkBox1.IsChecked.Value;
+            terminal.input_inversed();
             elementsSelected[0].Run();
         }
 
@@ -501,7 +569,80 @@ namespace WpfApplication9
         }
 
 
-    }
+
+        private  void PreviewMouseLeftButtonUp2(object sender, MouseButtonEventArgs e)
+        {
+
+            if (sourceEllipse != null)
+            {
+
+                Wireclass.selection1 = sourceEllipse;
+                // (int)canvas.Children.Capacity;
+                //MessageBox.Show(i.ToString);
+
+
+                ArrayList arraylist = UserClass.FiltreSrandardComponent(canvas);
+
+               
+
+                foreach(StandardComponent standardcomponent in arraylist)
+                {
+
+                
+                    foreach (Terminal terminal in standardcomponent.inputStack.Children)
+                    { 
+                      
+                        
+                        if (Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).X - e.GetPosition(canvas).X) < 20 && Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).Y - e.GetPosition(canvas).Y) < 20)
+                        {
+                            //MessageBox.Show("911");
+                            Wireclass.selection2 = terminal.elSelector;
+                        }
+                    }
+                    foreach (Terminal terminal in standardcomponent.inputStack_Copy.Children)
+                    {
+
+
+                        if (Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).X - e.GetPosition(canvas).X) < 20 && Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).Y - e.GetPosition(canvas).Y) < 20)
+                        {
+                            //MessageBox.Show("911");
+                            Wireclass.selection2 = terminal.elSelector;
+                        }
+                    }
+
+                }
+                
+                 wire.Destroy();
+                if (Wireclass.selection2!=null)
+                {
+                    wire.relier();
+                }
+                
+            }
+
+          
+            Mouse.Capture(null);
+            sourceEllipse = null;
+        }
+
+
+        private  void MouseMove2(object sender, MouseEventArgs e)
+        {
+            
+            if (e.LeftButton == MouseButtonState.Pressed && sourceEllipse!=null)
+            {
+              //  wire = new Wireclass();
+                Wireclass.btn2Point.X = e.GetPosition(canvas).X;
+                Wireclass.btn2Point.Y = e.GetPosition(canvas).Y;
+                Wireclass.selection1 = sourceEllipse;
+                Wireclass.btn1Point = sourceEllipse.TransformToAncestor(canvas).Transform(new Point(0, 0));
+                wire.Dessiner();
+         
+
+                //On dessine 
+            }
+        }
+        }
 
 
 }

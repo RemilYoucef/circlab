@@ -29,7 +29,7 @@
             </TransformGroup>
         </Grid.RenderTransform>
         <Line VerticalAlignment="Top" HorizontalAlignment="Center" X1="0" X2="0" Y1="10" Y2="22" Stroke="RoyalBlue" StrokeThickness="2" Margin="4.512,0,4.536,-1.645" Width="0.952" Height="21.063" Fill="Black" />
-        <Ellipse VerticalAlignment="Top" x:Name="elSelector" Width="Auto"  Margin="0.628,1.55,0.321,0" Height="8.498" Stroke="RoyalBlue" MouseLeftButtonUp="relier" Fill="White" />
+        <Ellipse VerticalAlignment="Top" x:Name="elSelector" Width="Auto"  Margin="0.628,1.55,0.321,0" Height="8.498" Stroke="RoyalBlue" Fill="White" MouseLeftButtonDown="MouseLeftButtonDown" />
         <!-- default to INPUT -->
         <Polygon Stroke="DarkGray" Fill="DarkGray" x:Name="polyInput" Margin="-0.012,1.116,1.551,-0.119" Visibility="Hidden">
             <Polygon.Points>
@@ -48,6 +48,11 @@
 
             </Polygon.Points>
         </Polygon>
+        <Ellipse VerticalAlignment="Top" x:Name="inverse_input" Width="Auto"  Margin="2,12,1,0" Height="7" StrokeThickness="0.25" Visibility="Collapsed" >
+            <Ellipse.Stroke>
+                <SolidColorBrush Color="RoyalBlue"/>
+            </Ellipse.Stroke>
+        </Ellipse>
 
     </Grid>
 </UserControl>
