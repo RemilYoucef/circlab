@@ -255,10 +255,16 @@ namespace WpfApplication9.Component
             
 
             MainWindow window = UserClass.TryFindParent<MainWindow>(canvas);
-            if (!(sender is Input) && !(sender is Output) && !(sender is Clock) && !(sender is FlipFlop) && !(sender is XOR) && !(sender is XNOR))
+            if (!(sender is Input) && !(sender is Output) && !(sender is Clock) && !(sender is FlipFlop))
             {
                 window.activeProp();
                 window.modifieProperties();
+                if (sender is XOR || sender is XNOR)
+                {
+                    window.NbrEntreText.Visibility = Visibility.Collapsed;
+                    window.ComboBoxProperties.Visibility = Visibility.Collapsed;
+                }
+                   
             }
             else
             {

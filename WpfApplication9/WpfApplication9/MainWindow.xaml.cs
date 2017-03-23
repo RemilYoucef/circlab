@@ -57,21 +57,7 @@ namespace WpfApplication9
             firstYPos = e.GetPosition(canvas).Y;
 
             movingObject = sender;
-            try
-            {
-                if (elementsSelected[0] != (StandardComponent)sender)
-                {
-                    checkBox1.IsChecked = false;
-                    checkBox2.IsChecked = false;
-                    checkBox3.IsChecked = false;
-                    checkBox4.IsChecked = false;
-                    checkBox5.IsChecked = false;
-                    checkBox6.IsChecked = false;
-                    checkBox7.IsChecked = false;
-                    checkBox8.IsChecked = false;
-                }
-            }
-            catch { }
+           
             
             
             
@@ -124,6 +110,8 @@ namespace WpfApplication9
 
                     if(elementsSelected[0].nbrInputs()==2)
                     {
+                        checkBox1.IsChecked= ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
+                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
                         checkBox3.Visibility = Visibility.Collapsed;
                         checkBox3.IsChecked = false;
                         checkBox4.Visibility = Visibility.Collapsed;
@@ -139,6 +127,9 @@ namespace WpfApplication9
                     }
                     else if(elementsSelected[0].nbrInputs()==3)
                     {
+                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
+                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
+                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
                         checkBox3.Visibility = Visibility.Visible;
                         checkBox4.Visibility = Visibility.Collapsed;
                         checkBox4.IsChecked = false;
@@ -153,6 +144,10 @@ namespace WpfApplication9
                     }
                     else if(elementsSelected[0].nbrInputs()==4)
                     {
+                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
+                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
+                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
+                        checkBox4.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[3]).IsInversed;
                         checkBox3.Visibility = Visibility.Visible;
                         checkBox4.Visibility = Visibility.Visible;
                         checkBox5.Visibility = Visibility.Collapsed;
@@ -166,6 +161,11 @@ namespace WpfApplication9
                     }
                     else if (elementsSelected[0].nbrInputs() == 5)
                     {
+                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
+                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
+                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
+                        checkBox4.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[3]).IsInversed;
+                        checkBox5.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[4]).IsInversed;
                         checkBox3.Visibility = Visibility.Visible;
                         checkBox4.Visibility = Visibility.Visible;
                         checkBox5.Visibility = Visibility.Visible;
@@ -178,6 +178,12 @@ namespace WpfApplication9
                     }
                     else if (elementsSelected[0].nbrInputs() == 6)
                     {
+                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
+                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
+                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
+                        checkBox4.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[3]).IsInversed;
+                        checkBox5.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[4]).IsInversed;
+                        checkBox6.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[5]).IsInversed;
                         checkBox3.Visibility = Visibility.Visible;
                         checkBox4.Visibility = Visibility.Visible;
                         checkBox5.Visibility = Visibility.Visible;
@@ -189,6 +195,13 @@ namespace WpfApplication9
                     }
                     else if (elementsSelected[0].nbrInputs() == 7)
                     {
+                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
+                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
+                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
+                        checkBox4.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[3]).IsInversed;
+                        checkBox5.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[4]).IsInversed;
+                        checkBox6.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[5]).IsInversed;
+                        checkBox7.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[6]).IsInversed;
                         checkBox3.Visibility = Visibility.Visible;
                         checkBox4.Visibility = Visibility.Visible;
                         checkBox5.Visibility = Visibility.Visible;
@@ -199,6 +212,14 @@ namespace WpfApplication9
                     }
                     else if (elementsSelected[0].nbrInputs() == 8)
                     {
+                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
+                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
+                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
+                        checkBox4.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[3]).IsInversed;
+                        checkBox5.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[4]).IsInversed;
+                        checkBox6.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[5]).IsInversed;
+                        checkBox7.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[6]).IsInversed;
+                        checkBox8.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[7]).IsInversed;
                         checkBox3.Visibility = Visibility.Visible;
                         checkBox4.Visibility = Visibility.Visible;
                         checkBox5.Visibility = Visibility.Visible;
@@ -247,7 +268,7 @@ namespace WpfApplication9
 
         private void addNAND(object sender, RoutedEventArgs e)
         {
-            NAND img = new NAND(4);
+            NAND img = new NAND(2);
             canvas.Children.Add(img);
             img.AllowDrop = true;
             img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
