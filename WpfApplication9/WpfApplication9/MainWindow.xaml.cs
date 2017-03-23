@@ -226,6 +226,8 @@ namespace WpfApplication9
 
       
         
+        double differnceX;//Calculer la difference de deplacement des absices
+        double differenceY;//meme chose :3
         private new void MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && sender == movingObject)
