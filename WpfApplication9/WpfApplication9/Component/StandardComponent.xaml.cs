@@ -28,7 +28,8 @@ namespace WpfApplication9.Component
         public String path;
         public Boolean IsSelect;
         public string type;
-     
+        public double PosX;//Position x dans le canvas
+        public double PosY;//Position y dans le canvas 
 
 
         protected ArrayList inputs_tab;

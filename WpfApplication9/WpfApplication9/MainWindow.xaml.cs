@@ -54,8 +54,8 @@ namespace WpfApplication9
             Control img = sender as Control;
             Canvas canvas = img.Parent as Canvas;
 
-            firstXPos = e.GetPosition(img).X;
-            firstYPos = e.GetPosition(img).Y;
+            firstXPos = e.GetPosition(canvas).X;
+            firstYPos = e.GetPosition(canvas).Y;
 
             movingObject = sender;
 
@@ -72,6 +72,7 @@ namespace WpfApplication9
 
         private new void PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            
             Control img = sender as Control;
             Canvas canvas = img.Parent as Canvas;
 
@@ -84,7 +85,7 @@ namespace WpfApplication9
                         top = Canvas.GetZIndex(child); }
             catch (Exception) { }
             Canvas.SetZIndex(img, top + 1);
-         
+           
             Mouse.Capture(null);
         }
 
@@ -222,37 +223,57 @@ namespace WpfApplication9
 
         }
 
+
+      
+        
         private new void MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && sender == movingObject)
             {
                 Control img = sender as Control;
                 Canvas canvas = img.Parent as Canvas;
+                differnceX = Mouse.GetPosition(canvas).X - firstXPos;
+                differenceY = Mouse.GetPosition(canvas).Y - firstYPos;
+                firstXPos = Mouse.GetPosition(canvas).X;
+                firstYPos = Mouse.GetPosition(canvas).Y;
 
-                double newLeft = e.GetPosition(canvas).X - firstXPos - canvas.Margin.Left;
-                // newLeft inside canvas right-border?
-                if (newLeft > canvas.Margin.Left + canvas.ActualWidth - img.ActualWidth)
-                    newLeft = canvas.Margin.Left + canvas.ActualWidth - img.ActualWidth;
-                // newLeft inside canvas left-border?
-                else if (newLeft < canvas.Margin.Left)
-                    newLeft = canvas.Margin.Left;
-                img.SetValue(Canvas.LeftProperty, newLeft);
 
-                double newTop = e.GetPosition(canvas).Y - firstYPos - canvas.Margin.Top;
-                // newTop inside canvas bottom-border?
-                if (newTop > canvas.Margin.Top + canvas.ActualHeight - img.ActualHeight)
-                    newTop = canvas.Margin.Top + canvas.ActualHeight - img.ActualHeight;
-                // newTop inside canvas top-border?
-                else if (newTop < canvas.Margin.Top)
-                    newTop = canvas.Margin.Top;
-                img.SetValue(Canvas.TopProperty, newTop);
-                try
+
+                
+              
+
+                foreach (StandardComponent component in elementsSelected)
                 {
-                    StandardComponent component = sender as StandardComponent;
-                    component.recalculer_pos();
-                }
-                catch { };
+                    
+                
+                  
+                    double newLeft = differnceX + ((StandardComponent)component).PosX - canvas.Margin.Left;
+                    ((StandardComponent)component).PosX = differnceX + ((StandardComponent)component).PosX;
+                    // newLeft inside canvas right-border?
+                    if (newLeft > canvas.Margin.Left + canvas.ActualWidth - img.ActualWidth)
+                        newLeft = canvas.Margin.Left + canvas.ActualWidth - img.ActualWidth;
+                    // newLeft inside canvas left-border?
+                    else if (newLeft < canvas.Margin.Left)
+                        newLeft = canvas.Margin.Left;
+                    component.SetValue(Canvas.LeftProperty, newLeft);
 
+                    double newTop = differenceY + ((StandardComponent)component).PosY - canvas.Margin.Top;
+                    ((StandardComponent)component).PosY = differenceY + ((StandardComponent)component).PosY;
+                    // newTop inside canvas bottom-border?
+                    if (newTop > canvas.Margin.Top + canvas.ActualHeight - img.ActualHeight)
+                        newTop = canvas.Margin.Top + canvas.ActualHeight - img.ActualHeight;
+                    // newTop inside canvas top-border?
+                    else if (newTop < canvas.Margin.Top)
+                        newTop = canvas.Margin.Top;
+                    component.SetValue(Canvas.TopProperty, newTop);
+                    component.recalculer_pos();
+                    try
+                    {
+                        StandardComponent component1 = sender as StandardComponent;
+                        component1.recalculer_pos();
+                    }
+                    catch { };
+                }
 
             }
         }
