@@ -8,13 +8,13 @@ using WpfApplication9.Component;
 
 namespace WpfApplication9.SequentialComponent
 {
-    class FlipFlop:StandardComponent
+    class FlipFlop : StandardComponent
     {
         public enum TriggerType
         {
             RisingEdge, FallingEdge, HighLevel, LowLevel
         }
-
+        
         private bool _val;
         private TriggerType _trigger = TriggerType.RisingEdge;
         private bool oldClockValue;
@@ -23,23 +23,33 @@ namespace WpfApplication9.SequentialComponent
         {
             _trigger = trigger;
             oldClockValue = false;
+            outputs_tab.Clear();
+            for (int i = 0; i < 2; i++)
+            {
+                outputs_tab.Add(false);
+            }
         }
 
         public override void Run()
         {
+           
             update_input();
-            bool newClockValue = (bool)inputs_tab[0];
+            bool newClockValue = (bool)inputs_tab[1];
+            _val = (bool)inputs_tab[0];
             if ((_trigger == TriggerType.RisingEdge && newClockValue == true && oldClockValue == false) ||
                 (_trigger == TriggerType.FallingEdge && newClockValue == false && oldClockValue == true) ||
                 (_trigger == TriggerType.HighLevel && newClockValue == true) ||
                 (_trigger == TriggerType.LowLevel && newClockValue == false))
             {
-                _val = (bool)inputs_tab[1];
-                outputs_tab[0] = _val;
+                
+                outputs_tab[0] =  _val;
+                outputs_tab[1] = !_val;
+                
             }
             else
             {
-                outputs_tab[0] = _val;
+                outputs_tab[0] =  _val;
+                outputs_tab[1] = !_val;
             }
             oldClockValue = newClockValue;
             update_output();

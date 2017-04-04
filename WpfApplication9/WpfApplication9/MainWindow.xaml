@@ -89,11 +89,13 @@
                              Margin="0 16 0 16"
                              SelectedIndex="0">
                         <ListBoxItem Padding="20,8,8,8"
-                                     Content="Open" />
+                                     Content="Open"
+                                     MouseLeftButtonUp="btnOpen_click" />
                         <ListBoxItem Padding="20,8,8,8"
                                      Content="Save" />
                         <ListBoxItem Padding="20,8,8,8"
-                                     Content="Save As ..." />
+                                     Content="Save As ..."
+                                     MouseLeftButtonUp="btnSaveAs_click" />
                         <ListBoxItem Padding="20,8,8,8"
                                      MouseLeftButtonUp="RightDrawerHostOpen"
                                      Content="Options" />
@@ -116,15 +118,25 @@
                             CommandParameter="{x:Static Dock.Right}">
                         <materialDesign:PackIcon Kind="ArrowRightBold" />
                     </Button>
-                    <ListBox Margin="0 16 0 16"
-                             SelectedIndex="0">
-                        <ListBoxItem Padding="20,8,8,8"
-                                     Content="Theme" />
-                        <ListBoxItem Padding="20,8,8,8"
-                                     Content="About" />
-                        <ListBoxItem Padding="20,8,8,8"
-                                     Content="Contact" />
-                    </ListBox>
+                    <StackPanel>
+                        <DockPanel Margin="20,0">
+                            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Theme</TextBlock>
+                            <ComboBox MinWidth="100" SelectionChanged="ChangeTheme"
+                                      Margin="10,0,0,0">
+                                <ComboBoxItem Content="Purple" />
+                                <ComboBoxItem Content="Blue" />
+                                <ComboBoxItem Content="Orange" />
+                                <ComboBoxItem Content="Red" />
+                            </ComboBox>
+                        </DockPanel>
+                        <ListBox Margin="0 16 0 16"
+                                 SelectedIndex="0">
+                            <ListBoxItem Padding="20,8,8,8"
+                                         Content="About" />
+                            <ListBoxItem Padding="20,8,8,8"
+                                         Content="Contact" />
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </materialDesign:DrawerHost.RightDrawerContent>
 
@@ -157,12 +169,15 @@
                         </Button>
                         <Button DockPanel.Dock="Right"
                                 Style="{DynamicResource MaterialDesignToolForegroundButton}"
-                                Margin="0,0,20,0">
-                            <materialDesign:PackIcon Kind="Play"
+                                Margin="0,0,20,0"
+                                Click="SimulationStart_ButtonClick">
+                            <materialDesign:PackIcon x:Name="simIcon"
+                                                     Kind="Play"
                                                      Height="30"
                                                      Width="30" />
                         </Button>
-                        <TextBlock HorizontalAlignment="Center"
+                        <TextBlock x:Name="CircuitName"
+                                   HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    FontSize="22"><Run Text="CircLab" /></TextBlock>
                     </DockPanel>
@@ -184,7 +199,8 @@
                         <ToolBarTray DockPanel.Dock="Top">
                             <ToolBar Style="{DynamicResource MaterialDesignToolBar}"
                                      ClipToBounds="False">
-                                <Button ToolTip="Save">
+                                <Button x:Name="btnSave"
+                                        ToolTip="Save">
                                     <materialDesign:PackIcon Kind="ContentSave" />
                                 </Button>
                                 <Button ToolTip="Undo">
@@ -226,8 +242,16 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <TextBlock x:Name="NbrEntreText" Text="Nombre d'entrés" VerticalAlignment="Center"/>
-                            <ComboBox x:Name="ComboBoxProperties" Grid.Column="1" SelectedIndex="0"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Stretch" SelectionChanged="ComboBoxProperties_SelectionChanged" >
+                            <TextBlock x:Name="NbrEntreText"
+                                       Text="Nombre d'entrés"
+                                       VerticalAlignment="Center" />
+                            <ComboBox x:Name="ComboBoxProperties"
+                                      Grid.Column="1"
+                                      SelectedIndex="0"
+                                      HorizontalContentAlignment="Center"
+                                      VerticalContentAlignment="Center"
+                                      VerticalAlignment="Stretch"
+                                      SelectionChanged="ComboBoxProperties_SelectionChanged">
                                 <ComboBoxItem>2</ComboBoxItem>
                                 <ComboBoxItem>3</ComboBoxItem>
                                 <ComboBoxItem>4</ComboBoxItem>
@@ -251,23 +275,75 @@
                                     Maximum="50"
                                     Value="25" />
                             <TextBlock Grid.Row="1"
-                                       HorizontalAlignment="Center"><Run Text="Speed" /></TextBlock>
-                            <Slider Grid.Row="1"
+                                       HorizontalAlignment="Center"><Run Text="Delay" /></TextBlock>
+                            <Slider x:Name="delay"
+                                    Grid.Row="1"
                                     Grid.Column="1"
                                     TickFrequency="5"
-                                    Minimum="1"
-                                    Maximum="50"
-                                    Value="25" />
+                                    Minimum="0"
+                                    Maximum="5"
+                                    Value="1"
+                                    ValueChanged="delay_ValueChanged" />
                         </Grid>
-                        <Grid x:Name="GridCheckBox" Margin="0,1,0,0" Width="257">
-                            <CheckBox x:Name="checkBox1" Content="1 input" Height="40" VerticalAlignment="Top" Margin="30,20,150,0" Width="68" Click="checkBox1_Click"/>
-                            <CheckBox x:Name="checkBox2" Content="2 input" Height="40" VerticalAlignment="Top" Margin="150,20,30,0" Width="68" Click="checkBox2_Click" />
-                            <CheckBox x:Name="checkBox3" Content="3 input" Height="40" VerticalAlignment="Top" Margin="30,70,150,0" Width="68" Click="checkBox3_Click" />
-                            <CheckBox x:Name="checkBox4" Content="4 input" Height="40" VerticalAlignment="Top" Margin="150,70,30,-1" Width="68" Click="checkBox4_Click"/>
-                            <CheckBox x:Name="checkBox5" Content="5 input" Height="40" VerticalAlignment="Top" Margin="34,115,155,0" Width="68" Click="checkBox5_Click" />
-                            <CheckBox x:Name="checkBox6" Content="6 input" Height="40" VerticalAlignment="Top" Margin="154,115,35,0" Width="68" Click="checkBox6_Click" />
-                            <CheckBox x:Name="checkBox7" Content="7 input" Height="40" VerticalAlignment="Top" Margin="34,165,155,0" Width="68" Click="checkBox7_Click" />
-                            <CheckBox x:Name="checkBox8" Content="8 input" Height="40" VerticalAlignment="Top" Margin="154,165,35,0" Width="68" Click="checkBox8_Click" />
+                        <Grid x:Name="GridCheckBox"
+                              Margin="0,1,0,0"
+                              Width="257">
+                            <CheckBox x:Name="checkBox1"
+                                      Content="1 input"
+                                      Height="40"
+                                      VerticalAlignment="Top"
+                                      Margin="30,20,150,0"
+                                      Width="68"
+                                      Click="checkBox1_Click" />
+                            <CheckBox x:Name="checkBox2"
+                                      Content="2 input"
+                                      Height="40"
+                                      VerticalAlignment="Top"
+                                      Margin="150,20,30,0"
+                                      Width="68"
+                                      Click="checkBox2_Click" />
+                            <CheckBox x:Name="checkBox3"
+                                      Content="3 input"
+                                      Height="40"
+                                      VerticalAlignment="Top"
+                                      Margin="30,70,150,0"
+                                      Width="68"
+                                      Click="checkBox3_Click" />
+                            <CheckBox x:Name="checkBox4"
+                                      Content="4 input"
+                                      Height="40"
+                                      VerticalAlignment="Top"
+                                      Margin="150,70,30,-1"
+                                      Width="68"
+                                      Click="checkBox4_Click" />
+                            <CheckBox x:Name="checkBox5"
+                                      Content="5 input"
+                                      Height="40"
+                                      VerticalAlignment="Top"
+                                      Margin="34,115,155,0"
+                                      Width="68"
+                                      Click="checkBox5_Click" />
+                            <CheckBox x:Name="checkBox6"
+                                      Content="6 input"
+                                      Height="40"
+                                      VerticalAlignment="Top"
+                                      Margin="154,115,35,0"
+                                      Width="68"
+                                      Click="checkBox6_Click" />
+                            <CheckBox x:Name="checkBox7"
+                                      Content="7 input"
+                                      Height="40"
+                                      VerticalAlignment="Top"
+                                      Margin="34,165,155,0"
+                                      Width="68"
+                                      Click="checkBox7_Click" />
+                            <CheckBox x:Name="checkBox8"
+                                      Content="8 input"
+                                      Height="40"
+                                      VerticalAlignment="Top"
+                                      Margin="154,165,35,0"
+                                      Width="68"
+                                      Click="checkBox8_Click" />
                         </Grid>
 
                     </DockPanel>
@@ -278,35 +354,38 @@
                                   VerticalAlignment="Stretch"
                                   Margin="0"
                                   x:Name="GridSplitter1" />
+                    <ScrollViewer   x:Name="canvasContainer"
+                                    Grid.Column="2">
+                        <Canvas x:Name="canvas"
+                                Margin="0"
+                                MouseDown="canvas_MouseDown">
+                            <Canvas.Background>
+                                <!-- see http://mark-dot-net.blogspot.com/2007/06/creating-hatched-patterned-brush-in-wpf.html -->
+                                <VisualBrush TileMode="Tile"
+                                             Viewport="0,0,32,32"
+                                             ViewportUnits="Absolute"
+                                             Viewbox="0,0,32,32"
+                                             ViewboxUnits="Absolute">
+                                    <VisualBrush.Visual>
+                                        <Canvas>
+                                            <Rectangle Fill="White"
+                                                       Width="32"
+                                                       Height="32" />
+                                            <Path Stroke="LightBlue"
+                                                  Data="M 0 0 l 0 32" />
+                                            <Path Stroke="LightBlue"
+                                                  Data="M 0 32 l 32 0" />
+                                        </Canvas>
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
 
-                    <Canvas Grid.Column="2"
-                            x:Name="canvas"
-                            Margin="0" MouseDown="canvas_MouseDown">
-                        <Canvas.Background>
-                            <!-- see http://mark-dot-net.blogspot.com/2007/06/creating-hatched-patterned-brush-in-wpf.html -->
-                            <VisualBrush TileMode="Tile"
-                                         Viewport="0,0,32,32"
-                                         ViewportUnits="Absolute"
-                                         Viewbox="0,0,32,32"
-                                         ViewboxUnits="Absolute">
-                                <VisualBrush.Visual>
-                                    <Canvas>
-                                        <Rectangle Fill="White"
-                                                   Width="32"
-                                                   Height="32" />
-                                        <Path Stroke="LightBlue"
-                                              Data="M 0 0 l 0 32" />
-                                        <Path Stroke="LightBlue"
-                                              Data="M 0 32 l 32 0" />
-                                    </Canvas>
-                                </VisualBrush.Visual>
-                            </VisualBrush>
 
-
-                        </Canvas.Background>
-                    </Canvas>
+                            </Canvas.Background>
+                        </Canvas>
+                    </ScrollViewer>
+                    
                     <Button x:Name="ToolboxOpener"
-                            Style="{DynamicResource MaterialDesignFloatingActionLightButton}"
+                            Style="{DynamicResource MaterialDesignFloatingActionAccentButton}"
                             Margin="0,0,50,50"
                             HorizontalAlignment="Right"
                             Height="50"
@@ -315,7 +394,6 @@
                             FontSize="26.667"
                             FontWeight="Bold"
                             BorderBrush="{x:Null}"
-                            Background="#FFE91E63"
                             VerticalAlignment="Bottom"
                             RenderTransformOrigin="1.711,0.605"
                             Grid.Column="2"
@@ -343,118 +421,202 @@
                                 HorizontalAlignment="Right">
                             <materialDesign:PackIcon Kind="ArrowDown" />
                         </Button>
-                        <ScrollViewer VerticalScrollBarVisibility="Disabled"
-                                      HorizontalScrollBarVisibility="Visible">
-                            <StackPanel Canvas.Bottom="0"
-                                        VerticalAlignment="Bottom"
-                                        Visibility="Visible"
-                                        Orientation="Horizontal">
-                                <Expander ExpandDirection="Right">
-                                    <Expander.Header>
-                                        <TextBlock Text="Basic Gates"
-                                                   RenderTransformOrigin=".5,.5">
-                                            <TextBlock.LayoutTransform>
-                                                <RotateTransform Angle="90" />
-                                            </TextBlock.LayoutTransform>
-                                        </TextBlock>
-                                    </Expander.Header>
-                                    <StackPanel Orientation="Horizontal"
-                                                Margin="8,24,16,24">
-                                        <Button Height="100"
-                                                Content="AND"
-                                                Width="100"
-                                                Margin="5"
-                                                Click="addAND" />
-                                        <Button Height="100"
-                                                Content="NAND"
-                                                Width="100"
-                                                Margin="5"
-                                                Click="addNAND" />
-                                        <Button Height="100"
-                                                Content="NOR"
-                                                Width="100"
-                                                Margin="5"
-                                                Click="addNOR" />
-                                        <Button Height="100"
-                                                Content="OR"
-                                                Width="100"
-                                                Margin="5"
-                                                Click="addOR" />
-                                        <Button Height="100"
-                                                Content="XOR"
-                                                Width="100"
-                                                Margin="5"
-                                                Click="addXOR" />
-                                        <Button Height="100"
-                                                Content="XNOR"
-                                                Width="100"
-                                                Margin="5"
-                                                Click="addXNOR" />
-                                        <Button Height="100"
-                                                Content="Not"
-                                                Width="100"
-                                                Margin="5"
-                                                 />
-                                    </StackPanel>
-                                </Expander>
-                                <Expander ExpandDirection="Right" IsExpanded="True">
-                                    <Expander.Header>
-                                        <TextBlock Text="Input Output"
-                                                   RenderTransformOrigin=".5,.5">
-                                            <TextBlock.LayoutTransform>
-                                                <RotateTransform Angle="90" />
-                                            </TextBlock.LayoutTransform>
-                                        </TextBlock>
-                                    </Expander.Header>
-                                    <StackPanel Orientation="Horizontal"
-                                                Margin="8,24,16,24">
-                                        <Button Background="RoyalBlue"
-                                                Height="100"
-                                                Content="Input"
-                                                Width="100"
-                                                Margin="5"
-                                                Click="addInput" />
-                                        <Button Background="RoyalBlue"
-                                                Height="100"
-                                                Content="Output"
-                                                Width="100"
-                                                Margin="5"
-                                                Click="addOutput" />
-                                        <Button Background="RoyalBlue"
-                                                Height="100"
-                                                Content="Label"
-                                                Width="100"
-                                                Margin="5"
-                                                Click="addLabel" />
-                                    </StackPanel>
-                                </Expander>
-                                <Expander ExpandDirection="Right">
-                                    <Expander.Header>
-                                        <TextBlock Text="Sequential Components"
-                                                   RenderTransformOrigin=".5,.5">
-                                            <TextBlock.LayoutTransform>
-                                                <RotateTransform Angle="90" />
-                                            </TextBlock.LayoutTransform>
-                                        </TextBlock>
-                                    </Expander.Header>
-                                    <StackPanel Orientation="Horizontal"
-                                                Margin="8,24,16,24">
-                                        <Button Background="RoyalBlue"
-                                                Height="100"
-                                                Content="Clock"
-                                                Width="100"
-                                                Margin="5"
-                                                Click="addClock" />
-                                        <Button Background="RoyalBlue"
-                                                Height="100"
-                                                Content="FlipFlop"
-                                                Width="100"
-                                                Margin="5"
-                                                Click="addFlipFlop" />
-                                    </StackPanel>
-                                </Expander>
-                            </StackPanel>
-                        </ScrollViewer>
+                        <TabControl Background="#FF303030"
+                                    BorderBrush="White"
+                                    BorderThickness="0,1,0,0">
+                            <TabControl.Resources>
+                                <Style TargetType="TabItem">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="TabItem">
+                                                <Grid Name="Panel">
+                                                    <ContentPresenter x:Name="ContentSite"
+                                                                      VerticalAlignment="Center"
+                                                                      HorizontalAlignment="Center"
+                                                                      ContentSource="Header"
+                                                                      Margin="10,2" />
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsSelected"
+                                                             Value="True">
+                                                        <Setter TargetName="Panel"
+                                                                Property="Background"
+                                                                Value="White" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsSelected"
+                                                             Value="False">
+                                                        <Setter TargetName="Panel"
+                                                                Property="TextBlock.Foreground"
+                                                                Value="White" />
+                                                        <Setter TargetName="Panel"
+                                                                Property="Background"
+                                                                Value="#FF303030" />
+
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TabControl.Resources>
+                            <TabItem Header="Basic Gates">
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="8,24,16,24">
+                                    <Button Height="100"
+                                            Content="AND"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addAND" />
+                                    <Button Height="100"
+                                            Content="NAND"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addNAND" />
+                                    <Button Height="100"
+                                            Content="NOR"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addNOR" />
+                                    <Button Height="100"
+                                            Content="OR"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addOR" />
+                                    <Button Height="100"
+                                            Content="XOR"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addXOR" />
+                                    <Button Height="100"
+                                            Content="XNOR"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addXNOR" />
+                                    <Button Height="100"
+                                            Content="Not"
+                                            Width="100"
+                                            Margin="5" />
+                                </StackPanel>
+                            </TabItem>
+                            <TabItem Header="Input/Output">
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="8,24,16,24">
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="Input"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addInput" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="Output"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addOutput" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="Comment"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addComment" />
+                                </StackPanel>
+                            </TabItem>
+                            <TabItem Header="Sequential">
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="8,24,16,24">
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="Clock"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addClock" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="FlipFlop"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addFlipFlop" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="SToggle"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addST" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="AToggle"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addT" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="RSLatche"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addRS" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="RSTLatche"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addRST" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="JKLatche"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addJK" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="Register"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addRegister" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="PRegister"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addPRegister" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="CRegister"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addCregister" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="FDevider"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addFD" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="CounterN"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addCounterN" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="CounterModN"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addCMN" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="CtDownN"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addCDN" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="CDownMN"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addCDMN" />
+                                </StackPanel>
+                            </TabItem>
+                        </TabControl>
                     </DockPanel>
                     <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}"
                                              x:Name="MainSnackbar"
@@ -465,62 +627,3 @@
         </materialDesign:DrawerHost>
     </materialDesign:DialogHost>
 </Window>
-
-<!--<Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="284*"/>
-        </Grid.RowDefinitions>
-        <DockPanel Background="RoyalBlue">
-            <Button DockPanel.Dock="Left" Width="35" Background="RoyalBlue" Foreground="White" Padding="9,4" BorderBrush="{x:Null}" Click="open2">≡</Button>
-            <Button DockPanel.Dock="Right" Width="35" Background="RoyalBlue" Foreground="White" Padding="0" BorderBrush="{x:Null}" FontSize="18">?</Button>
-            <Button DockPanel.Dock="Right" Width="35" Background="RoyalBlue" Foreground="White" Padding="0" BorderBrush="{x:Null}" FontSize="18">►</Button>
-            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="20">Title</TextBlock>
-        </DockPanel>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Background="#FFA8A5A5">
-                <Label HorizontalAlignment="Center" FontWeight="Bold">Properties</Label>
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                        <TextBlock VerticalAlignment="Center">Property 1</TextBlock>
-                        <ComboBox x:Name="comboBox" VerticalAlignment="Stretch" SelectedIndex="0" Width="90" Margin="15,0,0,0" SelectionChanged="comboBox_SelectionChanged">
-                            <TextBlock>value 1</TextBlock>
-                            <TextBlock>value 2</TextBlock>
-                        </ComboBox>
-                    </StackPanel>
-                    <CheckBox Margin="0,10,0,0" Content="Property 2"></CheckBox>
-                    <CheckBox Margin="0,10,0,0" Content="Property 3"></CheckBox>
-                </StackPanel>
-            </StackPanel>
-            <GridSplitter Grid.Column="0" ResizeDirection="Columns" Width="10" Height="Auto" VerticalAlignment="Stretch" Margin="0" Name="GridSplitter1"  />
-
-            <StackPanel x:Name="popup" Canvas.Bottom="0" VerticalAlignment="Bottom" Height="200" Background="Gray" Grid.ColumnSpan="2" Visibility="Hidden" Orientation="Horizontal" Panel.ZIndex="1">
-                <Button Background="RoyalBlue" Height="100" Content="AND" Width="100" Margin="5" Click="addAND"></Button>
-                <Button Background="RoyalBlue" Height="100" Content="NAND" Width="100" Margin="5" Click="addNAND"></Button>
-                <Button Background="RoyalBlue" Height="100" Content="NOR" Width="100" Margin="5" Click="addNOR"></Button>
-                <Button Background="RoyalBlue" Height="100" Content="OR" Width="100" Margin="5" Click="addOR"></Button>
-                <Button Background="RoyalBlue" Height="100" Content="XOR" Width="100" Margin="5" Click="addXOR"></Button>
-                <Button Background="RoyalBlue" Height="100" Content="OR" Width="100" Margin="5" Click="addXNOR"></Button>
-                <Button Background="RoyalBlue" Height="100" Content="Input" Width="100" Margin="5" Click="addInput"></Button>
-                <Button Background="RoyalBlue" Height="100" Content="Output" Width="100" Margin="5" Click="addOutput"></Button>
-            </StackPanel>
-            <StackPanel x:Name="popup1" Canvas.Bottom="0" HorizontalAlignment="Left" Width="300" Background="#FF6E4A4A" Grid.ColumnSpan="2" Visibility="Hidden" Panel.ZIndex="1">
-                <ListBox>
-                    <TextBlock>Open</TextBlock>
-                    <TextBlock>Save</TextBlock>
-                    <TextBlock>Close</TextBlock>
-                </ListBox>
-            </StackPanel>
-            <Canvas Grid.Column="1" Name="canvas"  Background="#FF271F1F"/>
-        </Grid>
-        <Button x:Name="clear" Style="{DynamicResource MaterialDesignFloatingActionLightButton}" Margin="0,0,34,26.5" HorizontalAlignment="Right" Height="38" Width="38" Content="+" FontSize="26.667" FontWeight="Bold" BorderBrush="{x:Null}" Background="RoyalBlue" VerticalAlignment="Bottom" Click="open" RenderTransformOrigin="1.711,0.605" Grid.Row="1" d:LayoutOverrides="VerticalAlignment"/>
-    </Grid>
-
-</Window>-->
-
-    
-    
