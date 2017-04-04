@@ -22,7 +22,7 @@ namespace WpfApplication9.SequentialComponent
         private TriggerType _trigger = TriggerType.RisingEdge;
         private bool oldClockValue;
         public CirculerRegister(TriggerType trigger, int nbrinput, Type ty)
-            : base(nbrinput + 3, nbrinput, "M 0,0 L 30,0 L 30,30 L 0,30 z", "CirculaRegister")
+            : base(nbrinput + 3, nbrinput,0, "M 0,0 L 30,0 L 30,30 L 0,30 z", "CirculaRegister")
         {
             _nbroutputs = nbrinput;
             _trigger = trigger;

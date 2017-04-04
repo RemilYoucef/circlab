@@ -58,7 +58,7 @@ namespace WpfApplication9
                             Terminal sourceTerminal = ((Wireclass)input.wires[0]).source;
                             StandardComponent sourceComponent = UserClass.TryFindParent<StandardComponent>(sourceTerminal);
                             wire.Element("From").SetAttributeValue("ID", gid[sourceComponent]);
-                            wire.Element("From").SetAttributeValue("Port", sourceComponent.inputStack_Copy.Children.IndexOf(sourceTerminal));
+                            wire.Element("From").SetAttributeValue("Port", sourceComponent.OutputStack.Children.IndexOf(sourceTerminal));
                             wire.Element("To").SetAttributeValue("ID", gid[g]);
                             wire.Element("To").SetAttributeValue("Port", i);
                             wires.Add(wire);

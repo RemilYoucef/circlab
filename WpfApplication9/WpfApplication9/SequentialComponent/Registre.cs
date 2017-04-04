@@ -21,7 +21,7 @@ namespace WpfApplication9.SequentialComponent
         private TriggerType _trigger = TriggerType.RisingEdge;
         private bool oldClockValue;
         public Registre(TriggerType trigger,int nbrinput)
-            : base(nbrinput+2, nbrinput, "M 0,0 L 30,0 L 30,30 L 0,30 z", "Register")
+            : base(nbrinput+2, nbrinput,0, "M 0,0 L 30,0 L 30,30 L 0,30 z", "Register")
         {
             _nbroutput = nbrinput;
             _trigger = trigger;

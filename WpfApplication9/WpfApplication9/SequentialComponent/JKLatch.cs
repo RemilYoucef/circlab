@@ -18,7 +18,7 @@ namespace WpfApplication9.SequentialComponent
         private TriggerType _trigger = TriggerType.RisingEdge;
         private bool oldClockValue;
         public JKLatch(TriggerType trigger)
-            : base(3, 2, "M 0,0 L 30,0 L 30,30 L 0,30 z", "JKLatche")
+            : base(3, 2,0, "M 0,0 L 30,0 L 30,30 L 0,30 z", "JKLatche")
         {
             _trigger = trigger;
             outputs_tab.Clear();

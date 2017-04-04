@@ -41,6 +41,7 @@ namespace WpfApplication9.Component
         {
             inputs_tab = new ArrayList();
             outputs_tab = new ArrayList();
+            selections_tab = new ArrayList();
             InitializeComponent();
             this.type = type;
             this.path = path;

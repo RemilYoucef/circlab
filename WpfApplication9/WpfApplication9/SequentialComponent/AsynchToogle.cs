@@ -15,7 +15,7 @@ namespace WpfApplication9.SequentialComponent
 
        
         public AsynchToogle()
-            :base(1,2, "M 0,0 L 30,0 L 30,30 L 0,30 z", "AsynchToogle")
+            :base(1,2,0, "M 0,0 L 30,0 L 30,30 L 0,30 z", "AsynchToogle")
         {
             outputs_tab.Clear();
             for (int i = 0; i < 2; i++)

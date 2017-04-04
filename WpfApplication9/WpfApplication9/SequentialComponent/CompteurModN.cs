@@ -15,7 +15,7 @@ namespace WpfApplication9.SequentialComponent
         private int _val;
         private bool oldClockValue;
         public CompteurModN(int N,int nbr)
-            :base(1,nbr, "M 0,0 L 30,0 L 30,30 L 0,30 z","frequencyDivider")
+            :base(1,nbr,0, "M 0,0 L 30,0 L 30,30 L 0,30 z","frequencyDivider")
         {
             for (int k = 0; k < inputs_tab.Count; k++) { outputs_tab[k] = false; }
             _val = N;
