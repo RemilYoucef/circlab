@@ -51,13 +51,17 @@ namespace WpfApplication9.Component
             get { return _state; }
             set
             {
-                if (_state != value)
+               
+                if (_state != value )
                 {
                     _state = value;
+                    
                     foreach (StandardComponent standardcomponent in destinations)
                     {
                         standardcomponent.Run(); //Recalcule les résultats de tout les composants relier à ce fils
+                        
                     }
+                    ChangeWireColor();
                 }
                 _state = value;
 
@@ -148,6 +152,7 @@ namespace WpfApplication9.Component
                 btn111 = selection1;
                 btn222 = selection2;
                 destination.wires.Add(this);
+                destination.etat = this._state;
                 source.wires.Add(this);
 
 
@@ -306,15 +311,11 @@ namespace WpfApplication9.Component
 
             dessinernoued();
 
-
-
-
-
         }
-
+       
         public void Dessiner()
         {
-    
+        
            
             x1 = btn1Point.X;
             y1 = btn1Point.Y;
@@ -324,9 +325,14 @@ namespace WpfApplication9.Component
     
             l1.Stroke = new SolidColorBrush(Colors.Black);
             l1.X1 = x1 ;
-            l1.X2 = (x1 + x2 + 2 * selection1.ActualWidth) / 2;
+            l1.X2 = (x1 + x2 ) / 2;
+            if(MainWindow.SelectedTerminalIsSource)
             l1.Y1 = y1 + selection1.ActualHeight / 2;
-            l1.Y2 = y1 + selection1.ActualHeight / 2;
+            else
+            {
+                l1.Y1 = y1 - selection1.ActualHeight / 2;
+            }
+            l1.Y2 =l1.Y1;
     
             l2.Stroke = new SolidColorBrush(Colors.Black);
      
@@ -392,11 +398,12 @@ namespace WpfApplication9.Component
                     listeLine.Add(lBefore);
                     listeLine.Reverse();
                     myCanvas.Children.Add(lBefore);
-                    lBefore.Stroke = Brushes.Black;
+                    
                     lBefore.StrokeThickness = 2;
                     lBefore.ContextMenu = menu;
                     x = 1;
                     firstIsHorizental = true;
+                  
                 }
                
                    lBefore.X2 = e.GetPosition(myCanvas).X;
@@ -456,6 +463,7 @@ namespace WpfApplication9.Component
                 }
 
                 dessinernoued();
+                this.ChangeWireColor();
 
             }
 
@@ -509,7 +517,8 @@ namespace WpfApplication9.Component
                     //  lBefore.PreviewMouseMove += this.MouseMove2;
                     //   lBefore.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown2;
                     myCanvas.Children.Add(lBefore);
-                   // firstIsHorizental = false;
+            
+                    // firstIsHorizental = false;
                 }
                 lBefore.Y2 = e.GetPosition(myCanvas).Y;
                 lBefore.StrokeThickness = 2;
@@ -552,10 +561,34 @@ namespace WpfApplication9.Component
                 }
 
                 dessinernoued();
+                this.ChangeWireColor();
             }
 
 
     }
+
+       
+        private void ChangeWireColor()
+        {
+            if (this._state == true)
+            {
+                if(noued!=null)
+                noued.Fill = Brushes.Green;
+                foreach(Line line in listeLine)
+                {
+                    line.Stroke = Brushes.Green;
+                }
+            }
+            else
+            {
+                if (noued != null)
+                noued.Fill = Brushes.Black;
+                foreach (Line line in listeLine)
+                {
+                    line.Stroke = Brushes.Black;
+                }
+            }
+        }
         private void dessinernoued()
         {
             
@@ -573,7 +606,15 @@ namespace WpfApplication9.Component
                         myCanvas.Children.Add(wiretmp.noued);
                         wiretmp.noued.Height = 10;
                         wiretmp.noued.Width = 10;
-                        wiretmp.noued.Fill = Brushes.Black;
+                        if (this._state == true)
+                        {
+                            wiretmp.noued.Fill = Brushes.Green;
+                        }
+                        else
+                        {
+                            wiretmp.noued.Fill = Brushes.Black;
+                        }
+                       
                     }
                 
                     Canvas.SetTop(wiretmp.noued,wiretmp.l1.Y1 - btn111.ActualHeight / 2);

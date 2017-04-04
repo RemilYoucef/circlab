@@ -34,9 +34,10 @@ namespace WpfApplication9.Component
 
         protected ArrayList inputs_tab;
         protected ArrayList outputs_tab;
+        protected ArrayList selections_tab;
 
         //Constructeur de tout les composonts
-        public StandardComponent(int nbrinput, int nbrOutput, string path, string type)
+        public StandardComponent(int nbrinput, int nbrOutput,int nbrSelection, string path, string type)
         {
             inputs_tab = new ArrayList();
             outputs_tab = new ArrayList();
@@ -55,7 +56,7 @@ namespace WpfApplication9.Component
                     terminal.Margin = new Thickness(0, ((Math.Max(nbrinput, nbrOutput) * terminal.Height)) / (Math.Pow(2, nbrinput)) - terminal.Height / 2, 0, terminal.Height / 2);
             }
 
-            inputStack_Copy.Children.Remove(output);
+            OutputStack.Children.Remove(output);
             for (int i = 0; i < nbrOutput; i++)
             {
                 RotateTransform rt = new RotateTransform(180);
@@ -64,7 +65,7 @@ namespace WpfApplication9.Component
 
                 terminal.terminal_grid.LayoutTransform = rt;
                 terminal.IsOutpt = true;
-                inputStack_Copy.Children.Add(terminal);
+                OutputStack.Children.Add(terminal);
 
             }
 
@@ -75,7 +76,7 @@ namespace WpfApplication9.Component
             output.IsOutpt = true;//defini que c'est une sortie ; 
             if (nbrOutput != 0)
             {
-                output = (Terminal)inputStack_Copy.Children[0];
+                output = (Terminal)OutputStack.Children[0];
 
             }//Pour dessiner le composant
             typeComponenet.Height = terminal.Height * Math.Max(nbrinput, nbrOutput);
@@ -84,15 +85,28 @@ namespace WpfApplication9.Component
             typeComponenet.Stretch = Stretch.Fill;
             typeComponenet.StrokeThickness = 0;
             typeComponenet.Fill = Brushes.RoyalBlue;
-            typeComponenet.Margin = new Thickness(14, 0, 0, 0);
+            typeComponenet.Margin = new Thickness(14, 25, 0, 0);
             typeComponenet.HorizontalAlignment = HorizontalAlignment.Left;
             typeComponenet.VerticalAlignment = VerticalAlignment.Top;
-            grid.Height = terminal.Height * Math.Max(nbrinput, nbrOutput);
+            grid.Height = terminal.Height * Math.Max(nbrinput, nbrOutput)+25;
             grid.Children.Add(typeComponenet);
 
+
+            selectionStack.Margin = new Thickness(terminal.Width,0,terminal.Width,0);
+                
+            for(int i = 0; i < nbrSelection; i++)
+            {
+                Terminal terminalSelection = new Terminal();
+                double x = terminalSelection.terminal_grid.Height;
+
+                terminalSelection.LayoutTransform = new RotateTransform(90);
+                terminalSelection.Margin = new Thickness(0, 0, 0, 2);
+                selectionStack.Children.Add(terminalSelection);
+            }
+
             //on ajoute le typecomponenent 
-            // inputStack_Copy.Height =
-            foreach (Terminal terminal1 in inputStack_Copy.Children)
+            // OutputStack.Height =
+            foreach (Terminal terminal1 in OutputStack.Children)
             {
                 // terminal1.terminal_grid.Width = grid.Height / Math.Pow(2, Math.Max(nbrinput, nbrOutput));
                 //  terminal1.BorderThickness = new Thickness(0,10,0,0);
@@ -107,10 +121,11 @@ namespace WpfApplication9.Component
             {
                 terminal.recalculer(); 
             }
-            
-            output.recalculer();
-           
-            
+            foreach (Terminal terminal in  OutputStack.Children)
+            {
+                terminal.recalculer();
+            }
+ 
 
         }
 
@@ -137,7 +152,7 @@ namespace WpfApplication9.Component
                     }*/
                 }
 
-                foreach (Terminal terminal in component.inputStack_Copy.Children)
+                foreach (Terminal terminal in component.OutputStack.Children)
                 {
 
                     for (int i = terminal.wires.Count - 1; i >= 0; i--)
@@ -194,7 +209,7 @@ namespace WpfApplication9.Component
             }
             if(wire!=null) wire.Destroy();
             inputStack.Children.Remove(terminal);
-    
+          
             
         }
 
@@ -332,31 +347,60 @@ namespace WpfApplication9.Component
         public void update_input()
         {
             inputs_tab.Clear();
+            selections_tab.Clear();
+            outputs_tab.Clear();
             int i = 0;
             foreach (Terminal terminal in inputStack.Children)
             {
-                if (terminal.wires.Count == 0)
+                inputs_tab.Add(false);
+                if (terminal.wires.Count != 0)
                 {
-                    inputs_tab.Add(false);
-                    inputs_tab[i] = false;
+                   
+                    Wireclass wire = (Wireclass)terminal.wires[0];
+                    if (!terminal.IsInversed)
+                    {
+                        inputs_tab[i] = wire.state;
+
+                    }
+                    else
+                    {
+                        inputs_tab[i] = !wire.state;
+                    }
+
                 }
                 else
                 {
-                    foreach (Wireclass wire in terminal.wires)
+                    if (terminal.IsInversed)
                     {
-                        inputs_tab.Add(false);
-                        if(!terminal.IsInversed)
-                        {
-                            inputs_tab[i] = wire.state;
-                           
-                        }
-                        else
-                        {
-                            inputs_tab[i] = !wire.state;
-                        }
-                       
+                        inputs_tab[i] = true;
+                    }
+                }
+                i++;
+            }
+            foreach (Terminal terminal in selectionStack.Children)
+            {
+                inputs_tab.Add(false);
+                if (terminal.wires.Count != 0)
+                {
+
+                    Wireclass wire = (Wireclass)terminal.wires[0];
+                    if (!terminal.IsInversed)
+                    {
+                        selections_tab[i] = wire.state;
+
+                    }
+                    else
+                    {
+                        selections_tab[i] = !wire.state;
                     }
 
+                }
+                else
+                {
+                    if (terminal.IsInversed)
+                    {
+                        selections_tab[i] = true;
+                    }
                 }
                 i++;
             }
@@ -365,7 +409,7 @@ namespace WpfApplication9.Component
         public void update_output()
         {
             int i = 0;
-            foreach (Terminal terminal in inputStack_Copy.Children)
+            foreach (Terminal terminal in OutputStack.Children)
             {
                 foreach (Wireclass wire in terminal.wires)
                 {
