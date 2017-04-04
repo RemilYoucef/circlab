@@ -67,8 +67,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CircuitXML.cs" />
     <Compile Include="ComplexComponent\ClassConverter.cs" />
     <Compile Include="ComplexComponent\Decoder.cs" />
+    <Compile Include="Component\Comment.xaml.cs">
+      <DependentUpon>Comment.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Component\UserClass.cs" />
     <Compile Include="Component\Wireclass.xaml.cs">
       <DependentUpon>Wireclass.xaml</DependentUpon>
@@ -93,6 +97,11 @@
     <Compile Include="LogicGate\XOR.cs" />
     <Compile Include="SequentialComponent\Clock.cs" />
     <Compile Include="SequentialComponent\FlipFlop.cs" />
+    <Compile Include="SequentialComponent\ISequential.cs" />
+    <Page Include="Component\Comment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Component\StandardComponent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

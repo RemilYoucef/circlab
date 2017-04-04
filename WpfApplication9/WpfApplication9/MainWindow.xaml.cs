@@ -18,6 +18,9 @@ using WpfApplication9.Component;
 using System.Collections;
 using WpfApplication9.LogicGate;
 using WpfApplication9.SequentialComponent;
+using MaterialDesignThemes.Wpf;
+using System.IO;
+using System.Windows.Markup;
 
 namespace WpfApplication9
 {
@@ -26,11 +29,17 @@ namespace WpfApplication9
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static string APP_TITLE = "CircLab";
         public static List<StandardComponent> elementsSelected= new List<StandardComponent>();
+        private string _filename;
+        public static float Delay = 1;
 
         public MainWindow()
         {
             InitializeComponent();
+            var ph = new PaletteHelper();
+            ph.ReplacePrimaryColor("deeppurple");
+            ph.ReplaceAccentColor("deeppurple");
             Wireclass.mwindow = mwindow;
             Wireclass.myCanvas = canvas;
             desactiveProp();
@@ -383,7 +392,7 @@ namespace WpfApplication9
 
         private void addClock(object sender, RoutedEventArgs e)
         {
-            Clock img = new Clock(500);
+            var img = new SequentialComponent.Clock(500,1000, (float)delay.Value);
             canvas.Children.Add(img);
             img.AllowDrop = true;
             img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
@@ -405,11 +414,9 @@ namespace WpfApplication9
 
         }
 
-        private void addLabel(object sender, RoutedEventArgs e)
+        private void addComment(object sender, RoutedEventArgs e)
         {
-            TextBlock img = new TextBlock();
-            img.Inlines.Add("Label");
-            img.Foreground = Brushes.Black;
+            Comment img = new Comment("Label");
             canvas.Children.Add(img);
             img.AllowDrop = true;
             img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
@@ -643,8 +650,104 @@ namespace WpfApplication9
             sourceEllipse = null;
         }
 
+        private void SimulationStart_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            if(simIcon.Kind == MaterialDesignThemes.Wpf.PackIconKind.Play)
+            {
+                simIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Stop;
+                foreach (object component in canvas.Children)
+                {
+                    if (component is ISequential)
+                    {
+                        var tmp = component as ISequential;
+                        tmp.Start();
+                    }
+                }
+            }
+            else
+            {
+                simIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
+                foreach (object component in canvas.Children)
+                {
+                    if (component is ISequential)
+                    {
+                        var tmp = component as ISequential;
+                        tmp.Stop();
+                    }
+                }
+            }
+        }
 
-        private  void MouseMove2(object sender, MouseEventArgs e)
+        private void delay_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (canvas != null) {
+                foreach (object component in canvas.Children)
+                {
+                    if (component is ISequential)
+                    {
+                        var tmp = component as ISequential;
+                        tmp.Delay = (float)delay.Value;
+                    }
+                }
+                MainWindow.Delay = (float)delay.Value;
+            }
+            
+        }
+
+        private void ChangeTheme(object sender, SelectionChangedEventArgs e)
+        {
+            var cb = sender as ComboBox;
+            var ph = new PaletteHelper();
+            switch (cb.SelectedIndex)
+            {
+                case 0:
+                    {
+                        ph.ReplacePrimaryColor("deeppurple");
+                        ph.ReplaceAccentColor("deeppurple");
+                    } break;
+                case 1:
+                    {
+                        ph.ReplacePrimaryColor("indigo");
+                        ph.ReplaceAccentColor("indigo");
+                    }break;
+                case 2:
+                    {
+                        ph.ReplacePrimaryColor("deeporange");
+                        ph.ReplaceAccentColor("deeporange");
+                    }break;
+                case 3:
+                    {
+                        ph.ReplacePrimaryColor("red");
+                        ph.ReplaceAccentColor("red");
+                    }
+                    break;
+            }
+        }
+
+        private void btnSaveAs_click(object sender, MouseButtonEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.DefaultExt = ".clc";
+            dlg.Filter = "CircLab Circuit (.clc)|*.clc";
+            bool? result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                try
+                {
+                    CircuitXML.Save(dlg.FileName, canvas);
+                    _filename = dlg.FileName;
+                    btnSave.IsEnabled = true;
+                    UpdateTitle();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to save circuit as requested: " + ex.ToString());
+                }
+            }
+        }
+
+        private void MouseMove2(object sender, MouseEventArgs e)
         {
             
             if (e.LeftButton == MouseButtonState.Pressed && sourceEllipse!=null)
@@ -660,7 +763,58 @@ namespace WpfApplication9
                 //On dessine 
             }
         }
+
+        private void btnOpen_click(object sender, MouseButtonEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.DefaultExt = ".clc";
+            dlg.Filter = "CircLab Circuit (.clc)|*.clc";
+            bool? result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                foreach (Window w in Application.Current.Windows)
+                {
+                    if (w != this)
+                        w.Close();
+                }
+                try
+                {
+                    CircuitXML.Load(dlg.FileName, ref canvas);
+                    
+                    btnSave.IsEnabled = true;
+                    _filename = dlg.FileName;
+                    UpdateTitle();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to load circuit as requested: " + ex.ToString());
+                }
+
+            }
         }
+
+        private void UpdateTitle()
+        {
+            StringBuilder ttl = new StringBuilder();
+
+            if (String.IsNullOrEmpty(_filename))
+            {
+                ttl.Append("[Untitled]");
+            }
+            else
+            {
+                ttl.Append(_filename.Substring(_filename.LastIndexOf(@"\") + 1));
+            }
+
+            ttl.Append(" - ");
+
+            ttl.Append(APP_TITLE);
+
+            Title = ttl.ToString();
+            CircuitName.Text = ttl.ToString();
+        }
+    }
 
 
 }
