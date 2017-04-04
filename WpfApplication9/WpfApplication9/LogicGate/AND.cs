@@ -12,7 +12,7 @@ namespace WpfApplication9.LogicGate
     class AND:StandardComponent
     {
         public AND(int nbrinput)
-            :base(nbrinput,1, "M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15","AND")
+            :base(nbrinput,1,3, "M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15","AND")
         {
             
         }
@@ -20,8 +20,8 @@ namespace WpfApplication9.LogicGate
         public override void Run()
         {
             update_input();
-            outputs_tab.Add(false);
-            outputs_tab[0] = true;
+            outputs_tab.Add(true);
+        
             foreach(bool tmp in inputs_tab)
             {
                 if(tmp == false)

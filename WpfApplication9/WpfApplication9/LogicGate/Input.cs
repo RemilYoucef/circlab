@@ -15,7 +15,7 @@ namespace WpfApplication9.LogicGate
     {
     
         public Input()
-            : base(0,1, "M0.5,0.5 L27,0.5 L27,27.5 L0.5,27.5 z","INPUT")
+            : base(0,1,0, "M0.5,0.5 L27,0.5 L27,27.5 L0.5,27.5 z","INPUT")
         {
             state = false;
             this.typeComponenet.Fill = Brushes.Red;
@@ -32,13 +32,12 @@ namespace WpfApplication9.LogicGate
                 if (_state != value)
                 {
                     _state = value;
-                    foreach(Terminal terminal in inputStack_Copy.Children)//en réalité il y'a un seul element mais pour facilter le parcours dert haka :3
-                    {
+                    Terminal terminal = (Terminal)OutputStack.Children[0];
                         foreach(Wireclass wire in terminal.wires)
                         {
                             wire.state = _state ;
                         }
-                    }
+                    
                 }
                 _state = value;
             }

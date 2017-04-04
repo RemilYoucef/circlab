@@ -15,7 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApplication9.Component;
-using System.Collections;
 using WpfApplication9.LogicGate;
 using WpfApplication9.SequentialComponent;
 
@@ -45,6 +44,7 @@ namespace WpfApplication9
      //   private Wireclass wire ;
         public static Ellipse sourceEllipse;
         public static Wireclass wire;
+        public static bool SelectedTerminalIsSource;
 
    
         private new void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -227,7 +227,7 @@ namespace WpfApplication9
                         checkBox7.Visibility = Visibility.Visible;
                         checkBox8.Visibility = Visibility.Visible;
                     }
-
+                    elementsSelected[0].recalculer_pos();
                 }
             }
            
@@ -617,7 +617,7 @@ namespace WpfApplication9
                             Wireclass.selection2 = terminal.elSelector;
                         }
                     }
-                    foreach (Terminal terminal in standardcomponent.inputStack_Copy.Children)
+                    foreach (Terminal terminal in standardcomponent.OutputStack.Children)
                     {
 
 

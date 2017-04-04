@@ -15,11 +15,11 @@ namespace WpfApplication9.LogicGate
     {
 
         public Output()
-            : base(1,0, "M0.5,0.5 L27,0.5 L27,27.5 L0.5,27.5 z","OUTPUT")
+            : base(1,0,0, "M0.5,0.5 L27,0.5 L27,27.5 L0.5,27.5 z","OUTPUT")
         {
             state = false;
             this.typeComponenet.Fill = Brushes.Red;
-            inputStack_Copy.Children.Clear();
+            OutputStack.Children.Clear();
         }
 
 

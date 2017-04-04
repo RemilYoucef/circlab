@@ -23,9 +23,9 @@ namespace WpfApplication9.Component
     {
         public Boolean IsOutpt;//si vrai => ouput ,si false => intput;
         public ArrayList wires; //Un terminal de sortie peut être brancher à plusieurs entrés 
-        public Boolean etat;
         public Wireclass logestWire;
-        public Boolean IsInversed;// 
+        public Boolean IsInversed;//
+        public bool etat; 
 
         public Terminal()
         {
@@ -75,6 +75,7 @@ namespace WpfApplication9.Component
             Canvas canvas = UserClass.TryFindParent<Canvas>(img);
             MainWindow.sourceEllipse = sender as Ellipse;
             MainWindow.wire = new Wireclass();
+            MainWindow.SelectedTerminalIsSource = this.IsOutpt;
             Mouse.Capture(canvas);
             
         }
