@@ -82,6 +82,7 @@ namespace WpfApplication9
             int numInputs = int.Parse(gate.Attribute("NumInputs").Value);
             switch (gate.Attribute("Type").Value)
             {
+
                 case "AND":
                     return new AND(numInputs);
                 case "NAND":

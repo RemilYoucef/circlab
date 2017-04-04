@@ -414,6 +414,152 @@ namespace WpfApplication9
 
         }
 
+        private void addST(object sender, RoutedEventArgs e)
+        {
+            SynchToogle img = new SynchToogle();
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+        private void addT(object sender, RoutedEventArgs e)
+        {
+            AsynchToogle img = new AsynchToogle();
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+        private void addRS(object sender, RoutedEventArgs e)
+        {
+            RSLatche img = new RSLatche();
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+        private void addRST(object sender, RoutedEventArgs e)
+        {
+            RSHLatche img = new RSHLatche();
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+        private void addJK(object sender, RoutedEventArgs e)
+        {
+            JKLatch img = new JKLatch(JKLatch.TriggerType.RisingEdge);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+        private void addRegister(object sender, RoutedEventArgs e)
+        {
+            Registre img = new Registre(Registre.TriggerType.RisingEdge, 4);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+        private void addPRegister(object sender, RoutedEventArgs e)
+        {
+            programmablRegister img = new programmablRegister(programmablRegister.TriggerType.RisingEdge, 3);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+
+        private void addCregister(object sender, RoutedEventArgs e)
+        {
+            CirculerRegister img = new CirculerRegister(CirculerRegister.TriggerType.RisingEdge, 4, CirculerRegister.Type.Left);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+        private void addFD(object sender, RoutedEventArgs e)
+        {
+            FrequencyDevider img = new FrequencyDevider();
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+
+        private void addCounterN(object sender, RoutedEventArgs e)
+        {
+            compteurN img = new compteurN(6, 3);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+        private void addCMN(object sender, RoutedEventArgs e)
+        {
+            CompteurModN img = new CompteurModN(6, 3);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+        private void addCDN(object sender, RoutedEventArgs e)
+        {
+            DecompteurN img = new DecompteurN(6, 3);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+        private void addCDMN(object sender, RoutedEventArgs e)
+        {
+            DecompteurModN img = new DecompteurModN(6, 3);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+
+        }
+
         private void addComment(object sender, RoutedEventArgs e)
         {
             Comment img = new Comment("Label");

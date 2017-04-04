@@ -52,7 +52,7 @@ namespace WpfApplication9.Component
                 terminal.IsOutpt = false;
                 inputStack.Children.Add(terminal);
                 if (nbrOutput != 1)
-                    terminal.Margin = new Thickness(0, ((Math.Max(nbrinput, nbrOutput) * terminal.Height)) / (Math.Pow(2, nbrinput)) - terminal.Height / 2, 0, terminal.Height / 2);
+                    terminal.Margin = new Thickness(0, ((Math.Max(nbrinput, nbrOutput) * terminal.Height)) / (Math.Pow(2, nbrinput)) - terminal.Height / 2, 0, terminal.Height / (nbrinput+10));
             }
 
             inputStack_Copy.Children.Remove(output);
@@ -60,7 +60,7 @@ namespace WpfApplication9.Component
             {
                 RotateTransform rt = new RotateTransform(180);
                 terminal = new Terminal();
-                terminal.Margin = new Thickness(0, ((Math.Max(nbrinput, nbrOutput) * terminal.Height)) / (Math.Pow(2, nbrOutput)) - terminal.Height / 2, 0, terminal.Height / 2);
+                terminal.Margin = new Thickness(0, ((Math.Max(nbrinput, nbrOutput) * terminal.Height)) / (Math.Pow(2, nbrOutput)) - terminal.Height / 2, 0, terminal.Height / (nbrinput+10));
 
                 terminal.terminal_grid.LayoutTransform = rt;
                 terminal.IsOutpt = true;
