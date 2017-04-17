@@ -47,7 +47,7 @@ namespace WpfApplication9.Component
             this.path = path;
             Terminal terminal = new Terminal();//on crée un terminal 
             typeComponenet = new Path();//le nombre d'input ;
-
+       
             for (int i = 0; i < nbrinput; i++)
             {
                 terminal = new Terminal();
@@ -66,7 +66,7 @@ namespace WpfApplication9.Component
 
                 terminal.terminal_grid.LayoutTransform = rt;
                 terminal.IsOutpt = true;
-                OutputStack.Children.Add(terminal);
+                OutputStack.Children.Add(terminal);               
 
             }
 
@@ -271,7 +271,7 @@ namespace WpfApplication9.Component
             
 
             MainWindow window = UserClass.TryFindParent<MainWindow>(canvas);
-            if (!(sender is Input) && !(sender is Output) && !(sender is Clock) && !(sender is FlipFlop))
+            if (UserClass.IsInputChangeable((StandardComponent) sender))
             {
                 window.activeProp();
                 window.modifieProperties();
@@ -285,6 +285,8 @@ namespace WpfApplication9.Component
             else
             {
                 window.desactiveProp();
+                window.modifieProperties();
+
             }
 
 

@@ -257,6 +257,9 @@
                                 <ComboBoxItem>4</ComboBoxItem>
                                 <ComboBoxItem>8</ComboBoxItem>
                             </ComboBox>
+                            <TextBlock x:Name="ClockFrequency"
+                                Text="Fréquence de l'horloge"
+                                VerticalAlignment="Center" Margin="0,6.2" Visibility="Collapsed" />
                         </Grid>
                         <Grid DockPanel.Dock="Bottom"
                               Margin="10">
@@ -381,9 +384,11 @@
 
 
                             </Canvas.Background>
+                            <TextBox x:Name="Frequency" Height="23" Canvas.Left="-140" TextWrapping="Wrap" Text="TextBox" Canvas.Top="134" Width="120" Visibility="Collapsed"/>
+
                         </Canvas>
                     </ScrollViewer>
-                    
+
                     <Button x:Name="ToolboxOpener"
                             Style="{DynamicResource MaterialDesignFloatingActionAccentButton}"
                             Margin="0,0,50,50"
@@ -622,6 +627,7 @@
                                              x:Name="MainSnackbar"
                                              Grid.Column="2" />
                 </Grid>
+
 
             </DockPanel>
         </materialDesign:DrawerHost>
