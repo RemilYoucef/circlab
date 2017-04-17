@@ -39,7 +39,6 @@ namespace WpfApplication9
             var ph = new PaletteHelper();
             ph.ReplacePrimaryColor("deeppurple");
             ph.ReplaceAccentColor("deeppurple");
-            Wireclass.mwindow = mwindow;
             Wireclass.myCanvas = canvas;
             desactiveProp();
             StandardComponent.canvas = canvas;
@@ -585,10 +584,10 @@ namespace WpfApplication9
 
         }
 
-        private void annuler(object sender, MouseButtonEventArgs e)
+     /*   private void annuler(object sender, MouseButtonEventArgs e)
         {
             Wireclass.selected = false;
-        }
+        }*/
 
       
 
