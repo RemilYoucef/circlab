@@ -925,7 +925,17 @@ namespace WpfApplication9
 
             }
         }
+        private void addChrono(object sender, RoutedEventArgs e)
+        {
+            Chronogramme img = new Chronogramme(2);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
 
+
+        }
         private void UpdateTitle()
         {
             StringBuilder ttl = new StringBuilder();

@@ -529,6 +529,12 @@
                                             Width="100"
                                             Margin="5"
                                             Click="addComment" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="Chrono"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addChrono" />
                                 </StackPanel>
                             </TabItem>
                             <TabItem Header="Sequential">
