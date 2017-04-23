@@ -20,17 +20,17 @@ namespace WpfApplication9.ComplexComponent
         }
 
 
-        public static ArrayList ConvertToBinary(int val, int size)
+        public static ArrayList ConvertToBinary(int val,int size)
         {
-            ArrayList Binary = new ArrayList();
+            ArrayList Binary = new ArrayList () ;
             while (val != 0)
             {
                 if ((val % 2) == 1) Binary.Add(true);
                 else Binary.Add(false);
-                val = val / 2;
+                val = val / 2 ;
             }
             for (int i = Binary.Count; i < size; i++) Binary.Add(false);
-            return Binary;
+            return Binary ;                
         }
     }
 }

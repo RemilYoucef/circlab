@@ -16,6 +16,8 @@ namespace WpfApplication9
         static public XElement CreateCircuitXML(Canvas canvas)
         {
             XElement circuit = new XElement("Circuit");
+            circuit.SetAttributeValue("Width", canvas.Width);
+            circuit.SetAttributeValue("Height", canvas.Height);
 
             XElement gates = new XElement("Gates");
             var gid = new Dictionary<StandardComponent, int>();
@@ -35,6 +37,12 @@ namespace WpfApplication9
                     {
                         gt.SetAttributeValue("HighLevelms", ((Clock)g).HighLevelms);
                         gt.SetAttributeValue("LowLevelms", ((Clock)g).LowLevelms);
+                    }
+                    if(shape is JK)
+                    {
+                        if (((JK)shape).Trigger == JK.TriggerType.FallingEdge)
+                            gt.SetAttributeValue("TriggerType", 0);
+                        else gt.SetAttributeValue("TriggerType", 1);
                     }
                     gates.Add(gt);
                     gid.Add(g, id);
@@ -77,6 +85,8 @@ namespace WpfApplication9
             CreateCircuitXML(canvas).Save(path);
         }
 
+        
+
         private static StandardComponent CreateGate(XElement gate)
         {
             int numInputs = int.Parse(gate.Attribute("NumInputs").Value);
@@ -105,9 +115,9 @@ namespace WpfApplication9
                     int highms = int.Parse(gate.Attribute("HighLevelms").Value);
                     int lowms = int.Parse(gate.Attribute("LowLevelms").Value);
                     return new Clock(highms, lowms, MainWindow.Delay);
-                case "FlipFlop":
-                    // Add this Attribute and retrieve it from Xml
-                    return new FlipFlop(FlipFlop.TriggerType.HighLevel);
+                case "JK":
+                    int temp = int.Parse(gate.Attribute("TriggerType").Value);
+                    return new JK((temp == 0) ? JK.TriggerType.FallingEdge : JK.TriggerType.RisingEdge);
             }
             throw new ArgumentException("unknown gate");
         }
@@ -115,12 +125,35 @@ namespace WpfApplication9
         {
             var circuit = XElement.Load(path);
             canvas.Children.Clear();
+            canvas.Width = int.Parse(circuit.Attribute("Width").Value);
+            canvas.Height = int.Parse(circuit.Attribute("Height").Value);
+            var gid = new Dictionary<int, StandardComponent>();
             foreach (XElement gate in circuit.Element("Gates").Elements())
             {
                 StandardComponent shape = CreateGate(gate);
-                canvas.Children.Add(shape);
                 shape.SetValue(Canvas.LeftProperty, double.Parse(gate.Attribute("X").Value));
                 shape.SetValue(Canvas.TopProperty, double.Parse(gate.Attribute("Y").Value));
+                shape.PosX = (double)shape.GetValue(Canvas.LeftProperty);
+                shape.PosY = (double)shape.GetValue(Canvas.TopProperty);
+                gid[int.Parse(gate.Attribute("ID").Value)] = shape;
+                canvas.Children.Add(shape);
+            }
+            foreach (XElement wire in circuit.Element("Wires").Elements())
+            {
+                canvas.UpdateLayout();
+                MainWindow.wire = new Wireclass();
+                int temp;
+                if(!int.TryParse(wire.Element("From").Attribute("ID").Value,out temp)) continue;
+                StandardComponent gateSrc = gid[temp];
+                if (!int.TryParse(wire.Element("To").Attribute("ID").Value, out temp)) continue;
+                StandardComponent gateDest = gid[temp];
+                if (!int.TryParse(wire.Element("From").Attribute("Port").Value, out temp)) continue;
+                int portSrc = temp;
+                if (!int.TryParse(wire.Element("To").Attribute("Port").Value, out temp)) continue;
+                int portDest = temp;
+                Wireclass.selection1 = ((Terminal)gateSrc.OutputStack.Children[portSrc]).elSelector;
+                Wireclass.selection2 = ((Terminal)gateDest.inputStack.Children[portDest]).elSelector;
+                MainWindow.wire.relier();
             }
         }
     }

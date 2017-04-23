@@ -20,6 +20,9 @@ using WpfApplication9.SequentialComponent;
 using MaterialDesignThemes.Wpf;
 using System.IO;
 using System.Windows.Markup;
+using System.Threading;
+using System.ComponentModel;
+using WpfApplication9.ComplexComponent;
 
 namespace WpfApplication9
 {
@@ -30,12 +33,38 @@ namespace WpfApplication9
     {
         public static string APP_TITLE = "CircLab";
         public static List<StandardComponent> elementsSelected= new List<StandardComponent>();
-        private string _filename;
+        private string _filename = "";
         public static float Delay = 1;
+        Stack<Canvas> undos = new Stack<Canvas>();
+        Stack<Canvas> redos = new Stack<Canvas>();
+
+        private bool _mute = false;
+        private Brush oldBackground;
+        public bool Mute
+        {
+            get {  return _mute; }
+            set
+            {
+                if (value)
+                {
+                    oldBackground = canvas.Background;
+                    canvas.Background = Brushes.White;
+
+
+                }
+                else
+                {
+                    canvas.Background = oldBackground;
+
+                }
+                _mute = value;
+            }
+        }
 
         public MainWindow()
         {
             InitializeComponent();
+            gridActivatorCheckbox.DataContext = this;
             var ph = new PaletteHelper();
             ph.ReplacePrimaryColor("deeppurple");
             ph.ReplaceAccentColor("deeppurple");
@@ -44,6 +73,7 @@ namespace WpfApplication9
             StandardComponent.canvas = canvas;
             canvas.PreviewMouseMove += this.MouseMove2;
             canvas.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp2;
+            this.Closing += new CancelEventHandler(WindowClosing);
             sourceEllipse = null;
         }
 
@@ -57,6 +87,7 @@ namespace WpfApplication9
    
         private new void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            miseAJourPile();
             // In this event, we get the current mouse position on the control to use it in the MouseMove event.
             Control img = sender as Control;
             Canvas canvas = img.Parent as Canvas;
@@ -290,44 +321,86 @@ namespace WpfApplication9
         }
         private void addAND(object sender, RoutedEventArgs e)
         {
-            //canvas.Children.Clear();
-            AND img = new AND(2);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-        }
-
-        private void addOR(object sender, RoutedEventArgs e)
-        {
-            OR img = new OR(2);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-        }
-
-        private void addXOR(object sender, RoutedEventArgs e)
-        {
-            XOR img = new XOR(2);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-        }
-
-        private void addNAND(object sender, RoutedEventArgs e)
-        {
-            NAND img = new NAND(2);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+            miseAJourPile();
+            UIElement gate;
+            switch (name)
+            {
+                case "AND":
+                    gate = new AND(2); break;
+                case "NAND":
+                    gate = new NAND(2); break;
+                case "NOR":
+                    gate = new NOR(2); break;
+                case "Not":
+                    gate = new Not(); break;
+                case "OR":
+                    gate = new OR(2); break;
+                case "XNOR":
+                    gate = new XNOR(2); break;
+                case "XOR":
+                    gate = new XOR(2); break;
+                case "Input":
+                    gate = new Input(); break;
+                case "Output":
+                    gate = new Output(); break;
+                case "Chronogram":
+                    gate = new Chronogramme(2); break;
+                case "Decoder":
+                    gate = new Decodeur(2, 4); break;
+                case "Encoder":
+                    gate = new Encodeur(4, 2); break;
+                case "FullAdder":
+                    gate = new FullAdder(3, 2); break;
+                case "HalfAdder":
+                    gate = new HalfAdder(2, 2);  break;
+                case "HalfSub":
+                    gate = new HalfSub(2, 2); break;
+                case "FullSub":
+                    gate = new FullSub(3, 2); break;
+                case "Comparator":
+                    gate = new Comparateur(4, 3); break;
+                case "Multiplexer":
+                    gate = new Multiplexer(4, 1, 2); break;
+                case "Demultiplexer":
+                    gate = new Demultiplexer(1, 4, 2); break;
+                case "Clock":
+                    gate = new SequentialComponent.Clock(100, 100, MainWindow.Delay); break;
+                case "Comment":
+                    gate = new Comment("Label"); break;
+                case "SToggle":
+                    gate = new SynchToogle(); break;
+                case "AToggle":
+                    gate = new AsynchToogle(); break;
+                case "RSLatche":
+                    gate = new RSLatche(); break;
+                case "RSTLatche":
+                    gate = new RSHLatche(); break;
+                case "JK":
+                    gate = new JK(JK.TriggerType.RisingEdge); break;
+                case "Register":
+                    gate = new Registre(Registre.TriggerType.RisingEdge, 4); break;
+                case "PRegister":
+                    gate = new programmablRegister(programmablRegister.TriggerType.RisingEdge, 3); break;
+                case "CRegister":
+                    gate = new CirculerRegister(CirculerRegister.TriggerType.RisingEdge, 4, CirculerRegister.Type.Left); break;
+                case "FDevider":
+                    gate = new FrequencyDevider(); break;
+                case "CounterN":
+                    gate = new compteurN(6, 3); break;
+                case "CounterModN":
+                    gate = new CompteurModN(6, 3); break;
+                case "CDownN":
+                    gate = new DecompteurN(6, 3); break;
+                case "CDownMN":
+                    gate = new DecompteurModN(6, 3); break;
+                default:
+                    throw new ArgumentException("unknown gate");
+            }
+            canvas.Children.Add(gate);
+            gate.AllowDrop = true;
+            gate.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            gate.PreviewMouseMove += this.MouseMove;
+            gate.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
         }
         private void add7segments(object sender, RoutedEventArgs e)
         {
@@ -339,19 +412,10 @@ namespace WpfApplication9
             img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
         }
 
-        private void addNOR(object sender, RoutedEventArgs e)
+        private void addGate(object sender, RoutedEventArgs e)
         {
-            NOR img = new NOR(2);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
+            CreateNewGate(((Button)sender).Content.ToString());
         }
-
-
-      
         
         double differnceX;//Calculer la difference de deplacement des absices
         double differenceY;//meme chose :3
@@ -407,254 +471,45 @@ namespace WpfApplication9
 
             }
         }
+        
 
-
-        private void addXNOR(object sender, RoutedEventArgs e)
-        {
-            XNOR img = new XNOR(2);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-        }
-
-        private void addInput(object sender, RoutedEventArgs e)
-        {
-            Input img = new Input();
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-            
-
-        }
-
-        private void addOutput(object sender, RoutedEventArgs e)
-        {
-            Output img = new Output();
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-
-        private void addClock(object sender, RoutedEventArgs e)
-        {
-            var img = new SequentialComponent.Clock(500,1000, (float)delay.Value);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-
-        private void addFlipFlop(object sender, RoutedEventArgs e)
-        {
-            FlipFlop img = new FlipFlop(FlipFlop.TriggerType.HighLevel );
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-
-        private void addST(object sender, RoutedEventArgs e)
-        {
-            SynchToogle img = new SynchToogle();
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-        private void addT(object sender, RoutedEventArgs e)
-        {
-            AsynchToogle img = new AsynchToogle();
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-        private void addRS(object sender, RoutedEventArgs e)
-        {
-            RSLatche img = new RSLatche();
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-        private void addRST(object sender, RoutedEventArgs e)
-        {
-            RSHLatche img = new RSHLatche();
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-        private void addJK(object sender, RoutedEventArgs e)
-        {
-            JKLatch img = new JKLatch(JKLatch.TriggerType.RisingEdge);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-        private void addRegister(object sender, RoutedEventArgs e)
-        {
-            Registre img = new Registre(Registre.TriggerType.RisingEdge, 4);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-        private void addPRegister(object sender, RoutedEventArgs e)
-        {
-            programmablRegister img = new programmablRegister(programmablRegister.TriggerType.RisingEdge, 3);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-
-        private void addCregister(object sender, RoutedEventArgs e)
-        {
-            CirculerRegister img = new CirculerRegister(CirculerRegister.TriggerType.RisingEdge, 4, CirculerRegister.Type.Left);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-        private void addFD(object sender, RoutedEventArgs e)
-        {
-            FrequencyDevider img = new FrequencyDevider();
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-
-        private void addCounterN(object sender, RoutedEventArgs e)
-        {
-            compteurN img = new compteurN(6, 3);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-        private void addCMN(object sender, RoutedEventArgs e)
-        {
-            CompteurModN img = new CompteurModN(6, 3);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-        private void addCDN(object sender, RoutedEventArgs e)
-        {
-            DecompteurN img = new DecompteurN(6, 3);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-        private void addCDMN(object sender, RoutedEventArgs e)
-        {
-            DecompteurModN img = new DecompteurModN(6, 3);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-
-        private void addComment(object sender, RoutedEventArgs e)
-        {
-            Comment img = new Comment("Label");
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-
-
-        private void addNot(object sender, RoutedEventArgs e)
-        {
-            Not img = new Not();
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-
-        }
-
-     /*   private void annuler(object sender, MouseButtonEventArgs e)
-        {
-            Wireclass.selected = false;
-        }*/
 
       
 
         private void closeWindow(object sender, MouseButtonEventArgs e)
         {
             Close();
+
+        }
+
+        private async void WindowClosing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true;
+            SaveClose dlg = new SaveClose(CircuitName.Text);
+            var result = await DialogHost.Show(dlg, "RootDialog");
+            if (dlg.Selected == SaveClose.Result.DONT_SAVE)
+            {
+                this.Closing -= WindowClosing;
+                Close();
+            }
+            if(dlg.Selected == SaveClose.Result.SAVE)
+            {
+                btnSave_Click(null, null);
+                this.Closing -= WindowClosing;
+                Close();
+            }
+
         }
 
         private void RightDrawerHostOpen(object sender, RoutedEventArgs e)
         {
             drawerHost.IsRightDrawerOpen = true;
             drawerHost.IsLeftDrawerOpen = false;
+        }
+        private void HelpOpen(object sender, RoutedEventArgs e)
+        {
+            Help helpWindow = new Help();
+            helpWindow.Show();
         }
 
         private void ComboBoxProperties_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -725,8 +580,9 @@ namespace WpfApplication9
         }
 
                
-        private void checkBox2_Click(object sender, RoutedEventArgs e)
+         private void checkBox2_Click(object sender, RoutedEventArgs e)
         {
+            miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[1];
             terminal.IsInversed = checkBox2.IsChecked.Value;
             terminal.input_inversed();
@@ -735,7 +591,8 @@ namespace WpfApplication9
 
         private void checkBox3_Click(object sender, RoutedEventArgs e)
         {
-           Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[2];
+            miseAJourPile();
+            Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[2];
             terminal.IsInversed = checkBox3.IsChecked.Value;
             terminal.input_inversed();
             elementsSelected[0].Run();
@@ -743,6 +600,7 @@ namespace WpfApplication9
 
         private void checkBox4_Click(object sender, RoutedEventArgs e)
         {
+            miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[3];
             terminal.IsInversed = checkBox4.IsChecked.Value;
             terminal.input_inversed();
@@ -751,6 +609,7 @@ namespace WpfApplication9
 
         private void checkBox5_Click(object sender, RoutedEventArgs e)
         {
+            miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[4];
             terminal.IsInversed = checkBox5.IsChecked.Value;
             terminal.input_inversed();
@@ -759,6 +618,7 @@ namespace WpfApplication9
 
         private void checkBox6_Click(object sender, RoutedEventArgs e)
         {
+            miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[5];
             terminal.IsInversed = checkBox6.IsChecked.Value;
             terminal.input_inversed();
@@ -767,6 +627,7 @@ namespace WpfApplication9
 
         private void checkBox7_Click(object sender, RoutedEventArgs e)
         {
+            miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[6];
             terminal.IsInversed = checkBox7.IsChecked.Value;
             terminal.input_inversed();
@@ -775,6 +636,7 @@ namespace WpfApplication9
 
         private void checkBox8_Click(object sender, RoutedEventArgs e)
         {
+            miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[7];
             terminal.IsInversed = checkBox8.IsChecked.Value;
             terminal.input_inversed();
@@ -783,6 +645,7 @@ namespace WpfApplication9
 
         private void checkBox1_Click(object sender, RoutedEventArgs e)
         {
+            miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[0];
             terminal.IsInversed = checkBox1.IsChecked.Value;
             terminal.input_inversed();
@@ -794,7 +657,6 @@ namespace WpfApplication9
         private void BottomDrawerHostOpen(object sender, RoutedEventArgs e)
         {
             drawerHost.IsBottomDrawerOpen = true;
-            //MessageBox.Show("hi");
         }
 
 
@@ -852,6 +714,422 @@ namespace WpfApplication9
           
             Mouse.Capture(null);
             sourceEllipse = null;
+        }
+
+        public void refaire(object sender, RoutedEventArgs e)
+        {
+            //remplir undos
+            undos.Push(instancier(canvas));
+            retourBouton.IsEnabled = true;
+
+            //Faire la modif
+            Canvas nouveau = redos.Pop();
+            if (redos.Count == 0)
+            {
+                refaireBouton.IsEnabled = false;
+            }
+
+            canvas.Children.RemoveRange(0, canvas.Children.Count);
+            UIElement[] tableau = new UIElement[1000];
+            int length = nouveau.Children.Count;
+            nouveau.Children.CopyTo(tableau, 0);
+            for (int i = 0; i < length; i++)
+            {
+                nouveau.Children.Remove(tableau[i]);
+                canvas.Children.Add(tableau[i]);
+                
+            }
+        }
+        public void retour(object sender, RoutedEventArgs e)
+        {
+            //remplir redos
+            redos.Push(instancier(canvas));
+            refaireBouton.IsEnabled = true;
+
+            //Faire la modif
+            Canvas nouveau = undos.Pop();
+            if (undos.Count == 0)
+            {
+                retourBouton.IsEnabled = false;
+            }
+
+            /*foreach(UIElement u in canvas.Children)
+            {
+                if (typeof(Ellipse) != u.GetType())
+                {
+                    canvas.Children.Remove(u);
+                }
+            }*/
+            canvas.Children.RemoveRange(0, canvas.Children.Count);
+            UIElement[] tableau = new UIElement[1000];
+            int length = nouveau.Children.Count;
+            nouveau.Children.CopyTo(tableau, 0);
+            for (int i = 0; i < length; i++)
+            {
+                nouveau.Children.Remove(tableau[i]);
+                canvas.Children.Add(tableau[i]);
+                if (tableau[i] is Ellipse) MessageBox.Show("ok");
+            }
+            canvas.UpdateLayout();
+            Wireclass.myCanvas = canvas;
+        }
+
+        public void miseAJourPile()
+        {
+            Canvas canvasPrecedent = instancier(canvas);
+            undos.Push(canvasPrecedent);
+            retourBouton.IsEnabled = true;
+            //Console.Out.Write("*********"+undos.Count+"\n");
+        }
+        public Canvas instancier(Canvas canvas)
+        {
+            Canvas retour = new Canvas();
+            UIElement[] tableau = new UIElement[1000];
+            List<Wireclass> wireA = new List<Wireclass>();
+            List<Wireclass> wireN = new List<Wireclass>();
+
+            List<Wireclass> wires = new List<Wireclass>();
+
+            int length = canvas.Children.Count;
+            //Console.Out.WriteLine("**" + length + "**");
+            canvas.Children.CopyTo(tableau, 0);
+
+
+            for (int i = 0; i < length; i++)
+            {
+                UIElement newChild = null;
+
+                Console.Out.Write("test" + tableau[i].GetType());
+
+                if (typeof(AND) == tableau[i].GetType())
+                {
+                    // newChild = new AND((tableau[i] as AND).nbrinput);
+                    newChild = new AND((tableau[i] as AND).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as AND).nbrInputs(); j++)
+                    {
+
+                        Terminal terminal_1 = (Terminal)((tableau[i] as AND).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as AND).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+
+                    }
+
+                }
+                else if (typeof(OR) == tableau[i].GetType())
+                {
+                    newChild = new OR((tableau[i] as OR).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as OR).nbrInputs(); j++)
+                    {
+
+                        Terminal terminal_1 = (Terminal)((tableau[i] as OR).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as OR).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+
+                    }
+                }
+
+                else if (typeof(NAND) == tableau[i].GetType())
+                {
+                    newChild = new NAND((tableau[i] as NAND).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as NAND).nbrInputs(); j++)
+                    {
+
+                        Terminal terminal_1 = (Terminal)((tableau[i] as NAND).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as NAND).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+
+                    }
+                }
+                else if (typeof(NOR) == tableau[i].GetType())
+                {
+                    newChild = new NOR((tableau[i] as NOR).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as NOR).nbrInputs(); j++)
+                    {
+                        Terminal terminal_1 = (Terminal)((tableau[i] as NOR).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as NOR).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+
+                    }
+                }
+
+                else if (typeof(Not) == tableau[i].GetType())
+                {
+                    newChild = new Not();
+
+                    Terminal terminal_1 = (Terminal)((tableau[i] as Not).inputStack.Children[0]);
+                    Terminal terminal_2 = (Terminal)((newChild as Not).inputStack.Children[0]);
+
+                    if (terminal_1.IsInversed)
+                    {
+                        terminal_2.IsInversed = true;
+                        terminal_2.input_inversed();
+                    }
+                }
+
+                else if (typeof(Output) == tableau[i].GetType())
+                {
+                    newChild = new Output();
+                }
+
+                else if (typeof(Input) == tableau[i].GetType())
+                {
+                    newChild = new Input();
+                    (newChild as Input).state = (tableau[i] as Input).state;
+
+                }
+
+                else if (typeof(XNOR) == tableau[i].GetType())
+                {
+                    newChild = new XNOR((tableau[i] as XNOR).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as XNOR).nbrInputs(); j++)
+                    {
+
+                        Terminal terminal_1 = (Terminal)((tableau[i] as XNOR).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as XNOR).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+
+                    }
+                }
+                else if (typeof(XOR) == tableau[i].GetType())
+                {
+                    newChild = new XOR((tableau[i] as XOR).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as XOR).nbrInputs(); j++)
+                    {
+
+                        Terminal terminal_1 = (Terminal)((tableau[i] as XOR).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as XOR).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+
+                    }
+                }
+
+                else if (typeof(Comparateur) == tableau[i].GetType())
+                {
+                    newChild = new Comparateur((tableau[i] as Comparateur).nbrInputs(), (tableau[i] as Comparateur).nbrOutputs());
+
+                }
+
+                else if (typeof(Decodeur) == tableau[i].GetType())
+                {
+                    newChild = new Decodeur((tableau[i] as Decodeur).nbrInputs(), (tableau[i] as Decodeur).nbrOutputs());
+                }
+
+                else if (typeof(Demultiplexer) == tableau[i].GetType())
+                {
+                    newChild = new Demultiplexer((tableau[i] as Demultiplexer).nbrInputs(), (tableau[i] as Demultiplexer).nbrOutputs(), (tableau[i] as Demultiplexer).nbrSelections());
+                }
+
+                else if (typeof(Encodeur) == tableau[i].GetType())
+                {
+                    newChild = new Encodeur((tableau[i] as Encodeur).nbrInputs(), (tableau[i] as Encodeur).nbrOutputs());
+                }
+
+                else if (typeof(FullAdder) == tableau[i].GetType())
+                {
+                    newChild = new FullAdder((tableau[i] as FullAdder).nbrInputs(), (tableau[i] as FullAdder).nbrOutputs());
+                }
+
+                else if (typeof(FullSub) == tableau[i].GetType())
+                {
+                    newChild = new FullSub((tableau[i] as FullSub).nbrInputs(), (tableau[i] as FullSub).nbrOutputs());
+                }
+
+                else if (typeof(HalfAdder) == tableau[i].GetType())
+                {
+                    newChild = new HalfAdder((tableau[i] as HalfAdder).nbrInputs(), (tableau[i] as HalfAdder).nbrOutputs());
+                }
+
+                else if (typeof(HalfSub) == tableau[i].GetType())
+                {
+                    newChild = new HalfSub((tableau[i] as HalfSub).nbrInputs(), (tableau[i] as HalfSub).nbrOutputs());
+                }
+
+                else if (typeof(Multiplexer) == tableau[i].GetType())
+                {
+                    newChild = new Multiplexer((tableau[i] as Multiplexer).nbrInputs(), (tableau[i] as Multiplexer).nbrOutputs(), (tableau[i] as Multiplexer).nbrSelections());
+                }
+
+                else if (typeof(SequentialComponent.Clock) == tableau[i].GetType())
+                {
+                    newChild = new SequentialComponent.Clock((tableau[i] as SequentialComponent.Clock).LowLevelms, (tableau[i] as SequentialComponent.Clock).HighLevelms, MainWindow.Delay);
+                }
+                
+                else if (typeof(TextBlock) == tableau[i].GetType())
+                {
+                    newChild = new TextBlock();
+                }
+
+                if (newChild != null)
+                {
+                    Terminal[] tabTerminauxA = new Terminal[100];
+                    Terminal[] tabTerminauxN = new Terminal[100];
+                    (tableau[i] as StandardComponent).inputStack.Children.CopyTo(tabTerminauxA, 0);
+                    (newChild as StandardComponent).inputStack.Children.CopyTo(tabTerminauxN, 0);
+                    int len = (tableau[i] as StandardComponent).inputStack.Children.Count;
+
+                    for (int jj = 0; jj < len; jj++)
+                    {
+                        if (tabTerminauxA[jj].wires.Count > 0)
+                        {
+                            if (!wireA.Contains((tabTerminauxA[jj].wires)[0] as Wireclass))
+                            {
+                                Wireclass wire = new Wireclass(retour);
+                                tabTerminauxN[jj].wires.Add(wire);
+                                wire.destination = tabTerminauxN[jj];
+
+                                wire.btn111 = new Ellipse();
+                                wire.btn222 = new Ellipse();
+                                wire.state = ((tabTerminauxA[jj].wires)[0] as Wireclass).state;
+
+                                if (wire.noued != null)
+                                {
+                                    wire.noued = new Ellipse();
+                                    retour.Children.Add(wire.noued);
+                                }
+                                retour.Children.Add(wire.btn111);
+                                retour.Children.Add(wire.btn222);
+
+                                wireA.Add((tabTerminauxA[jj].wires)[0] as Wireclass);
+                                wireN.Add(wire);
+                            }
+                            else
+                            {
+                                int index = wireA.IndexOf((tabTerminauxA[jj].wires)[0] as Wireclass);
+                                tabTerminauxN[jj].wires.Add(wireN[index]);
+                                wireN[index].destination = tabTerminauxN[jj];
+                            }
+
+                        }
+                    }
+
+                    (tableau[i] as StandardComponent).OutputStack.Children.CopyTo(tabTerminauxA, 0);
+                    (newChild as StandardComponent).OutputStack.Children.CopyTo(tabTerminauxN, 0);
+                    len = (tableau[i] as StandardComponent).OutputStack.Children.Count;
+
+                    for (int jj = 0; jj < len; jj++)
+                    {
+                        foreach (Wireclass w in tabTerminauxA[jj].wires)
+                        {
+                            if (!wireA.Contains(w))
+                            {
+                                Wireclass wire = new Wireclass(retour);
+                                tabTerminauxN[jj].wires.Add(wire);
+                                wireA.Add(w);
+                                wireN.Add(wire);
+                                wire.source = tabTerminauxN[jj];
+                                wire.btn111 = w.btn111;
+                                wire.btn222 = w.btn222;
+                                wire.state = w.state;
+                                wire.noued = w.noued;
+
+                                wire.btn111 = new Ellipse();
+                                wire.btn222 = new Ellipse();
+                                wire.state = w.state;
+
+                                if (wire.noued != null)
+                                {
+                                    wire.noued = new Ellipse();
+                                    retour.Children.Add(wire.noued);
+                                }
+                                retour.Children.Add(wire.btn111);
+                                retour.Children.Add(wire.btn222);
+                                //indiceLiaison++;
+                            }
+                            else
+                            {
+                                int index = wireA.IndexOf(w);
+                                tabTerminauxN[jj].wires.Add(wireN[index]);
+                                wireN[index].source = tabTerminauxN[jj];
+                            }
+                        }
+                    }
+
+
+
+
+                    retour.Children.Add(newChild);
+                    newChild.AllowDrop = true;
+                    newChild.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+                    newChild.PreviewMouseMove += this.MouseMove;
+                    newChild.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+                    newChild.SetValue(Canvas.LeftProperty, tableau[i].GetValue(Canvas.LeftProperty));
+                    newChild.SetValue(Canvas.TopProperty, tableau[i].GetValue(Canvas.TopProperty));
+
+                    try
+                    {
+                        StandardComponent component = newChild as StandardComponent;
+                        component.recalculer_pos();
+                    }
+                    catch { };
+                }
+
+            }
+
+            afficherLignes(retour, wireA, wireN);
+
+            return retour;
+        }
+
+        public void afficherLignes(Canvas retour, List<Wireclass> wireA, List<Wireclass> wireN)
+        {
+            Line[] ligne = new Line[3];
+            Line[] ligneN = new Line[3];
+            for (int i = 0; i < wireA.Count; i++)
+            {
+                ligne[0] = wireA[i].l1;
+                ligne[1] = wireA[i].l2;
+                ligne[2] = wireA[i].l3;
+
+                ligneN[0] = wireN[i].l1;
+                ligneN[1] = wireN[i].l2;
+                ligneN[2] = wireN[i].l3;
+
+                for (int j = 0; j < 3; j++)
+                {
+                    Line l1 = ligneN[j];
+                    Line line = ligne[j];
+
+                    l1.ContextMenu = line.ContextMenu;
+
+                    l1.Stroke = new SolidColorBrush(Colors.Black);
+                    l1.StrokeThickness = 2.0;
+                    l1.X1 = line.X1;
+                    l1.X2 = line.X2;
+                    l1.Y1 = line.Y1;
+                    l1.Y2 = line.Y2;
+                }
+            }
         }
 
         private void SimulationStart_ButtonClick(object sender, RoutedEventArgs e)
@@ -927,30 +1205,7 @@ namespace WpfApplication9
                     break;
             }
         }
-
-        private void btnSaveAs_click(object sender, MouseButtonEventArgs e)
-        {
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.DefaultExt = ".clc";
-            dlg.Filter = "CircLab Circuit (.clc)|*.clc";
-            bool? result = dlg.ShowDialog();
-
-            if (result == true)
-            {
-                try
-                {
-                    CircuitXML.Save(dlg.FileName, canvas);
-                    _filename = dlg.FileName;
-                    btnSave.IsEnabled = true;
-                    UpdateTitle();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Unable to save circuit as requested: " + ex.ToString());
-                }
-            }
-        }
-
+        
         private void MouseMove2(object sender, MouseEventArgs e)
         {
             
@@ -977,15 +1232,19 @@ namespace WpfApplication9
 
             if (result == true)
             {
-                foreach (Window w in Application.Current.Windows)
-                {
-                    if (w != this)
-                        w.Close();
-                }
                 try
                 {
                     CircuitXML.Load(dlg.FileName, ref canvas);
-                    
+                    foreach (FrameworkElement gate in canvas.Children)
+                    {
+                        if (gate is StandardComponent)
+                        {
+                            gate.AllowDrop = true;
+                            gate.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+                            gate.PreviewMouseMove += this.MouseMove;
+                            gate.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+                        }
+                    }
                     btnSave.IsEnabled = true;
                     _filename = dlg.FileName;
                     UpdateTitle();
@@ -998,14 +1257,160 @@ namespace WpfApplication9
             }
         }
 
-        private void Frequency_KeyDown(object sender, KeyEventArgs e)
+        private void btnSaveAs_click(object sender, MouseButtonEventArgs e)
         {
-            try
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.DefaultExt = ".clc";
+            dlg.Filter = "CircLab Circuit (.clc)|*.clc";
+            bool? result = dlg.ShowDialog();
+
+            if (result == true)
             {
-                ((SequentialComponent.Clock)elementsSelected[0]).Delay = float.Parse(Frequency.Text);
+                try
+                {
+                    CircuitXML.Save(dlg.FileName, canvas);
+                    _filename = dlg.FileName;
+                    btnSave.IsEnabled = true;
+                    UpdateTitle();
+                    MainSnackbar.MessageQueue.Enqueue("Saved Circuit Successfully!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to save circuit as requested: " + ex.ToString());
+                }
             }
-            catch
+        }
+        
+        private async void btnNew_click(object sender, MouseButtonEventArgs e)
+        {
+            NewFileDialog dlg = new NewFileDialog();
+            var result = await DialogHost.Show(dlg, "RootDialog");
+            if(dlg.Selected == NewFileDialog.Result.CREATE)
             {
+                _filename = "";
+                canvas.Children.Clear();
+                int temp;
+                if (!int.TryParse(dlg.CircuitWidth.Text, out temp)) temp = 2000;
+                canvas.Width = Math.Min(10000,Math.Max(100, temp));
+                if (!int.TryParse(dlg.CircuitHeight.Text, out temp)) temp = 2000;
+                canvas.Height = Math.Min(10000, Math.Max(100, temp));
+                UpdateTitle();
+            }
+
+        }
+
+        private void About_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            aboutBtn.Command.Execute(aboutBtn.CommandParameter);
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            if(_filename == "")
+            {
+                btnSaveAs_click(null, null);
+            }
+            else
+            {
+                try
+                {
+                    CircuitXML.Save(_filename, canvas);
+                    btnSave.IsEnabled = true;
+                    UpdateTitle();
+                    MainSnackbar.MessageQueue.Enqueue("Saved Circuit Successfully!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to save circuit as requested: " + ex.ToString());
+                }
+            }
+        }
+
+        private void mwindow_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                if(e.Key == Key.S)
+                {
+                    btnSave_Click(null, null);
+                }
+            }
+        }
+
+        private void btnCapture_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.DefaultExt = ".png";
+            dlg.Filter = "PNG Image (.png)|*.png|JPEG Image (.jpg)|*.jpg|Bitmap Image (.bmp)|*.bmp";
+            bool? result = dlg.ShowDialog();
+            if (result == true)
+            {
+                BitmapEncoder be = null;
+                switch (dlg.FilterIndex)
+                {
+                    case 0:
+                        be = new PngBitmapEncoder();
+                        break;
+                    case 1:
+                        be = new JpegBitmapEncoder();
+                        break;
+                    case 2:
+                        be = new BmpBitmapEncoder();
+                        break;
+                }
+                Mute = true;
+                canvas.UpdateLayout();
+                RenderTargetBitmap rtb = new RenderTargetBitmap((int)(canvas.ActualWidth), (int)(canvas.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+                rtb.Render(canvas);
+                Mute = false;
+                be.Frames.Add(BitmapFrame.Create(rtb));
+                try
+                {
+                    System.IO.FileStream fs = System.IO.File.Create(dlg.FileName);
+                    be.Save(fs);
+                    fs.Close();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to save image as requested: " + ex.ToString());
+                }
+            }
+        }
+
+        private void btnPrint_Click(object sender, RoutedEventArgs e)
+        {
+            PrintDialog printDlg = new System.Windows.Controls.PrintDialog();
+
+            if (printDlg.ShowDialog() == true)
+            {
+                System.Printing.PrintCapabilities capabilities = printDlg.PrintQueue.GetPrintCapabilities(printDlg.PrintTicket);
+                
+                Mute = true;
+                canvas.UpdateLayout();
+                RenderTargetBitmap rtb = new RenderTargetBitmap((int)(canvas.ActualWidth), (int)(canvas.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+                rtb.Render(canvas);
+                BitmapSource bs = rtb;
+                Image i = new Image();
+                i.Source = bs;
+                i.Stretch = Stretch.Uniform;
+                i.Width = capabilities.PageImageableArea.ExtentWidth;
+                i.Height = capabilities.PageImageableArea.ExtentHeight;
+
+                Size sz = new Size(capabilities.PageImageableArea.ExtentWidth, capabilities.PageImageableArea.ExtentHeight);
+
+                //update the layout of the visual to the printer page size.
+
+                i.Measure(sz);
+
+                i.Arrange(new Rect(new Point(capabilities.PageImageableArea.OriginWidth, capabilities.PageImageableArea.OriginHeight), sz));
+
+
+                //now print the visual to printer to fit on the one page.
+
+                printDlg.PrintVisual(i, "Circuit");
+
+                Mute = false;
 
             }
         }
@@ -1160,7 +1565,7 @@ namespace WpfApplication9
             }
             else
             {
-                ttl.Append(_filename.Substring(_filename.LastIndexOf(@"\") + 1));
+                ttl.Append(_filename.Substring(_filename.LastIndexOf(@"\") + 1, _filename.LastIndexOf(".") - _filename.LastIndexOf(@"\") - 1));
             }
 
             ttl.Append(" - ");

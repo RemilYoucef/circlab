@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using WpfApplication9.Component;
 
@@ -22,6 +24,12 @@ namespace WpfApplication9.SequentialComponent
         {
             _val = false;
             this.typeComponenet.Fill = Brushes.Red;
+            Path signalShape = new Path();
+            signalShape.Data = StreamGeometry.Parse("M10,8 L20,8 L20,15 L30,15");
+            signalShape.StrokeThickness = 2;
+            signalShape.Stroke = Brushes.Black;
+            signalShape.Margin = new Thickness(14, 25, 0, 0);
+            grid.Children.Add(signalShape);
 
             t = new DispatcherTimer();
             t.Interval = TimeSpan.FromMilliseconds(lowLevlms * Delay);
