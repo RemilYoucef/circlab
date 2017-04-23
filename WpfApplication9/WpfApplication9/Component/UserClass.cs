@@ -43,9 +43,24 @@ namespace WpfApplication9.Component
             return arrayList;
         }
 
-        /*public enum InputChangeable{
-            AND,NAND,NOR,OR
-        };*/
+       public static bool IsFrontChangeable(StandardComponent component)
+       {
+            if (component is SequentialComponent.FlipFlop) return true;
+            else if (component is SequentialComponent.programmablRegister) return true;
+            else if (component is SequentialComponent.CirculerRegister) return true;
+            else if (component is SequentialComponent.Registre) return true;
+            else if (component is SequentialComponent.JKLatch) return true;
+            else return false;
+       }
+
+       public static bool IsNiveauChangeable(StandardComponent component)
+       {
+           if (component is SequentialComponent.FlipFlop) return true;
+           else if (component is SequentialComponent.programmablRegister) return true;
+           else if (component is SequentialComponent.CirculerRegister) return true;
+           else if (component is SequentialComponent.Registre) return true;
+           else return false;
+       }
 
         public static bool IsInputChangeable(StandardComponent component)
         {
@@ -55,6 +70,15 @@ namespace WpfApplication9.Component
             else if (component is OR) return true;
             else return false;
 
+        }
+        
+        public static bool IsCompteur(StandardComponent component)
+        {
+            if (component is SequentialComponent.compteurN) return true;
+            else if (component is SequentialComponent.CompteurModN) return true;
+            else if (component is SequentialComponent.DecompteurN) return true;
+            else if (component is SequentialComponent.DecompteurModN) return true;
+            else return false;
         }
     }
 }

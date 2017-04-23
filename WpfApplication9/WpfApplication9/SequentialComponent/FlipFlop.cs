@@ -17,6 +17,11 @@ namespace WpfApplication9.SequentialComponent
         
         private bool _val;
         private TriggerType _trigger = TriggerType.RisingEdge;
+        public TriggerType Trigger
+        {
+            get { return _trigger; }
+            set { _trigger = value; }
+        }
         private bool oldClockValue;
         public FlipFlop(TriggerType trigger)
             :base(2,2,0, "M 0,0 L 30,0 L 30,30 L 0,30 z","FlipFlop")

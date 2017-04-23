@@ -231,36 +231,98 @@
                                Background="{x:Null}"
                                Margin="0,20,0,20"
                                DockPanel.Dock="Top" />
-                        <Grid DockPanel.Dock="Top"
+                        <StackPanel DockPanel.Dock="Top"
                               Margin="5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <TextBlock x:Name="NbrEntreText"
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="NbrEntreText"
                                        Text="Nombre d'entrés"
                                        VerticalAlignment="Center" />
-                            <ComboBox x:Name="ComboBoxProperties"
-                                      Grid.Column="1"
+                                <ComboBox x:Name="ComboBoxProperties"
                                       SelectedIndex="0"
                                       HorizontalContentAlignment="Center"
                                       VerticalContentAlignment="Center"
                                       VerticalAlignment="Stretch"
-                                      SelectionChanged="ComboBoxProperties_SelectionChanged">
-                                <ComboBoxItem>2</ComboBoxItem>
-                                <ComboBoxItem>3</ComboBoxItem>
-                                <ComboBoxItem>4</ComboBoxItem>
-                                <ComboBoxItem>8</ComboBoxItem>
-                            </ComboBox>
-                            <TextBlock x:Name="ClockFrequency"
-                                Text="Fréquence de l'horloge"
-                                VerticalAlignment="Center" Margin="0,6.2" Visibility="Collapsed" />
-                        </Grid>
+                                      SelectionChanged="ComboBoxProperties_SelectionChanged" Margin="62,2,0,0" Width="72">
+                                    <ComboBoxItem Content="2"/>
+                                    <ComboBoxItem Content="3"/>
+                                    <ComboBoxItem Content="4"/>
+                                    <ComboBoxItem Content="8"/>
+                                </ComboBox>
+                            </StackPanel>
+                            
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="ClockFrequency"
+                                Text="Fréquence de l'horloge (1 - 5)"
+                                VerticalAlignment="Center" Margin="0,0" />
+                                <TextBox x:Name="Frequency" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,2,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="98" KeyDown="Frequency_KeyDown"    />
+                            </StackPanel>
+
+                            <StackPanel x:Name="Type" Orientation="Horizontal">
+                                <TextBlock 
+                                       Text="Type"
+                                       VerticalAlignment="Center"
+                                       Margin="5,0,0,0"/>
+                                <ComboBox x:Name="ComboBoxFrontNiveau"
+                                      SelectedIndex="0"
+                                      HorizontalContentAlignment="Center"
+                                      VerticalContentAlignment="Center"
+                                      VerticalAlignment="Stretch"
+                                      Margin="60,2,0,0" Width="160" SelectionChanged="ComboBoxFrontNiveau_SelectionChanged">
+                                    <ComboBoxItem Content="Front montant"/>
+                                    <ComboBoxItem Content="Front descandant"/>
+                                    <ComboBoxItem x:Name="NiveauHaut" Content="Niveau haut"/>
+                                    <ComboBoxItem x:Name="NiveauBas" Content="Niveau bas"/>
+                                </ComboBox>
+                            </StackPanel>
+                            
+                            <StackPanel x:Name="Compteur" Orientation="Horizontal">
+                                <TextBlock 
+                                       Text="Le nombre max"
+                                       VerticalAlignment="Center"
+                                       Margin="5,0,0,0"
+                                       x:Name="TextCompteur"/>
+                                <ComboBox x:Name="ComboBoxCompteur"
+                                      SelectedIndex="0"
+                                      HorizontalContentAlignment="Center"
+                                      VerticalContentAlignment="Center"
+                                      VerticalAlignment="Stretch"
+                                      Margin="50,2,0,0" Width="100" SelectionChanged="ComboBoxCompteur_SelectionChanged" >
+                                    <ComboBoxItem Content="2"/>
+                                    <ComboBoxItem Content="3"/>
+                                    <ComboBoxItem Content="4"/>
+                                    <ComboBoxItem Content="5"/>
+                                    <ComboBoxItem Content="6"/>
+                                    <ComboBoxItem Content="7"/>
+                                    <ComboBoxItem Content="8"/>
+                                    <ComboBoxItem Content="9"/>
+                                    <ComboBoxItem Content="10"/>
+                                    <ComboBoxItem Content="11"/>
+                                    <ComboBoxItem Content="12"/>
+                                    <ComboBoxItem Content="13"/>
+                                    <ComboBoxItem Content="14"/>
+                                    <ComboBoxItem Content="15"/>
+                                    <ComboBoxItem Content="16"/>
+                                    <ComboBoxItem Content="17"/>
+                                    <ComboBoxItem Content="18"/>
+                                    <ComboBoxItem Content="19"/>
+                                    <ComboBoxItem Content="20"/>
+                                    <ComboBoxItem Content="21"/>
+                                    <ComboBoxItem Content="22"/>
+                                    <ComboBoxItem Content="23"/>
+                                    <ComboBoxItem Content="24"/>
+                                    <ComboBoxItem Content="25"/>
+                                    <ComboBoxItem Content="26"/>
+                                    <ComboBoxItem Content="27"/>
+                                    <ComboBoxItem Content="28"/>
+                                    <ComboBoxItem Content="29"/>
+                                    <ComboBoxItem Content="30"/>
+                                    <ComboBoxItem Content="31"/>
+                                    <ComboBoxItem Content="32"/>
+                                </ComboBox>
+                            </StackPanel>
+                           
+
+                        </StackPanel>
                         <Grid DockPanel.Dock="Bottom"
                               Margin="10">
                             <Grid.ColumnDefinitions>
@@ -290,7 +352,7 @@
                         </Grid>
                         <Grid x:Name="GridCheckBox"
                               Margin="0,1,0,0"
-                              Width="257">
+                              Width="257" Visibility="Collapsed">
                             <CheckBox x:Name="checkBox1"
                                       Content="1 input"
                                       Height="40"
@@ -349,6 +411,7 @@
                                       Click="checkBox8_Click" />
                         </Grid>
 
+
                     </DockPanel>
                     <GridSplitter Grid.Column="1"
                                   ResizeDirection="Columns"
@@ -384,7 +447,6 @@
 
 
                             </Canvas.Background>
-                            <TextBox x:Name="Frequency" Height="23" Canvas.Left="-140" TextWrapping="Wrap" Text="TextBox" Canvas.Top="134" Width="120" Visibility="Collapsed"/>
 
                         </Canvas>
                     </ScrollViewer>
@@ -531,6 +593,18 @@
                                             Margin="8,24,16,24">
                                     <Button Background="RoyalBlue"
                                             Height="100"
+                                            Content="CounterN"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addCounterN" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="CounterModN"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addCMN" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
                                             Content="Clock"
                                             Width="100"
                                             Margin="5"
@@ -595,12 +669,7 @@
                                             Width="100"
                                             Margin="5"
                                             Click="addFD" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="CounterN"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addCounterN" />
+                                   
                                     <Button Background="RoyalBlue"
                                             Height="100"
                                             Content="CounterModN"
