@@ -1017,7 +1017,7 @@ namespace WpfApplication9
             img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
             img.PreviewMouseMove += this.MouseMove;
             img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
+        }
 
         private void ComboBoxFrontNiveau_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
