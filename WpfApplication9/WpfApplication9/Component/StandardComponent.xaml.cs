@@ -41,6 +41,14 @@ namespace WpfApplication9.Component
         {
             inputs_tab = new ArrayList();
             outputs_tab = new ArrayList();
+            if (nbrSelection != 0)
+            {
+                selections_tab = new ArrayList();
+                for(int i = 0; i < nbrSelection; i++)
+                {
+                    selections_tab.Add(false);
+                }
+            }
             for(int i = 0; i < nbrinput; i++)
             {
                 inputs_tab.Add(false);
@@ -100,7 +108,7 @@ namespace WpfApplication9.Component
             typeComponenet.VerticalAlignment = VerticalAlignment.Top;
             grid.Height = terminal.Height * Math.Max(nbrinput, nbrOutput)+25;
             grid.Children.Add(typeComponenet);
-
+            
 
             selectionStack.Margin = new Thickness(terminal.Width,0,terminal.Width,0);
                 
@@ -121,14 +129,8 @@ namespace WpfApplication9.Component
                 terminalSelection.Margin = new Thickness(-terminal.Width/Math.Pow(2,nbrSelection)+x, 0, 0, 2);
                 selectionStack.Children.Add(terminalSelection);
             }
-         
-            //on ajoute le typecomponenent 
-            // OutputStack.Height =
-            foreach (Terminal terminal1 in OutputStack.Children)
-            {
-                // terminal1.terminal_grid.Width = grid.Height / Math.Pow(2, Math.Max(nbrinput, nbrOutput));
-                //  terminal1.BorderThickness = new Thickness(0,10,0,0);
-            }
+
+  
 
         }
 
@@ -151,8 +153,7 @@ namespace WpfApplication9.Component
         {
             //StandardComponent component =UserClass.TryFindParent<StandardComponent>((((MenuItem)sender).Parent as ContextMenu).PlacementTarget);
             foreach(StandardComponent component in MainWindow.elementsSelected)
-            {
-                
+            { 
                 foreach (Terminal terminal in component.inputStack.Children)
                 {
                     try
@@ -169,7 +170,6 @@ namespace WpfApplication9.Component
                         wire.Destroy();
                     }*/
                 }
-
                 foreach (Terminal terminal in component.OutputStack.Children)
                 {
 

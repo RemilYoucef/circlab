@@ -329,6 +329,15 @@ namespace WpfApplication9
             img.PreviewMouseMove += this.MouseMove;
             img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
         }
+        private void add7segments(object sender, RoutedEventArgs e)
+        {
+            SeptSegmentsClass img = new SeptSegmentsClass();
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+        }
 
         private void addNOR(object sender, RoutedEventArgs e)
         {
@@ -1000,6 +1009,15 @@ namespace WpfApplication9
 
             }
         }
+        private void addChrono(object sender, RoutedEventArgs e)
+        {
+            Chronogramme img = new Chronogramme(2);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
 
         private void ComboBoxFrontNiveau_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

@@ -11,6 +11,7 @@ using WpfApplication9.Component;
 
 namespace WpfApplication9.LogicGate
 {
+   
     class Output : StandardComponent
     {
 
@@ -20,6 +21,7 @@ namespace WpfApplication9.LogicGate
             state = false;
             this.typeComponenet.Fill = Brushes.Red;
             OutputStack.Children.Clear();
+            
         }
 
 

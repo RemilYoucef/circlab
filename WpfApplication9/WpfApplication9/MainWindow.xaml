@@ -563,6 +563,11 @@
                                             Content="Not"
                                             Width="100"
                                             Margin="5" />
+                                    <Button Height="100"
+                                            Content="SeptSegment"
+                                            Width="100"
+                                            Margin="5" 
+                                            Click="add7segments"/>
                                 </StackPanel>
                             </TabItem>
                             <TabItem Header="Input/Output">
@@ -586,6 +591,12 @@
                                             Width="100"
                                             Margin="5"
                                             Click="addComment" />
+                                    <Button Background="RoyalBlue"
+                                            Height="100"
+                                            Content="Chrono"
+                                            Width="100"
+                                            Margin="5"
+                                            Click="addChrono" />
                                 </StackPanel>
                             </TabItem>
                             <TabItem Header="Sequential">
