@@ -23,15 +23,12 @@ namespace WpfApplication9.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Setting {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Theme {
             get {
-                return ((bool)(this["Setting"]));
-            }
-            set {
-                this["Setting"] = value;
+                return ((int)(this["Theme"]));
             }
         }
     }

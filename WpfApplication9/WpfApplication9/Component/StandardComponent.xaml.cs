@@ -312,6 +312,26 @@ namespace WpfApplication9.Component
             return tmp;
         }
 
+        public int nbrOutputs()
+        {
+            int tmp = 0;
+            foreach (Terminal terminal in OutputStack.Children)
+            {
+                tmp++;
+            }
+            return tmp;
+        }
+
+        public int nbrSelections()
+        {
+            int tmp = 0;
+            foreach (Terminal terminal in selectionStack.Children)
+            {
+                tmp++;
+            }
+            return tmp;
+        }
+
         public virtual void redessiner(string path)
         {
             Terminal terminal = new Terminal();

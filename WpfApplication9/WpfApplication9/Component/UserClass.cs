@@ -24,6 +24,18 @@ namespace WpfApplication9.Component
                 return TryFindParent<T>(parent);
         }
 
+        public static T TryFindLogicalParent<T>(FrameworkElement current) where T : class
+        {
+            DependencyObject parent = current.Parent;
+            if (parent == null)
+                return null;
+
+            if (parent is T)
+                return parent as T;
+            else
+                return TryFindLogicalParent<T>((FrameworkElement)parent);
+        }
+
         public static ArrayList FiltreSrandardComponent(Canvas canvas)
         {
             ArrayList arrayList = new ArrayList();

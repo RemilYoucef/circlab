@@ -12,7 +12,7 @@ namespace WpfApplication9.LogicGate
     class AND:StandardComponent
     {
         public AND(int nbrinput)
-            :base(nbrinput,1,3, "M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15","AND")
+            :base(nbrinput,1,0, "M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15","AND")
         {
             
         }

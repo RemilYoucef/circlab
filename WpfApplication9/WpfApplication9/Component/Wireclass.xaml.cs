@@ -68,6 +68,45 @@ namespace WpfApplication9.Component
             }
         }
 
+        public Wireclass(Canvas canvas)
+        {
+            destinations = new ArrayList();
+            l1 = new Line();
+            l2 = new Line();
+            l3 = new Line();
+
+            MenuItem supprim = new MenuItem();
+            supprim.Header = "Supprime";
+            supprim.Click += this.Suppression;
+            menu = new ContextMenu();
+            menu.Items.Add(supprim);
+            l1.ContextMenu = menu;
+            l2.ContextMenu = menu;
+            l3.ContextMenu = menu;
+            listeLine = new ArrayList();
+            listeLine.Add(l1);
+            listeLine.Add(l2);
+            listeLine.Add(l3);
+
+            //myCanvas.Children.Add(l2);
+            l2.PreviewMouseMove += MouseMove2;
+
+            canvas.Children.Add(l1);
+            canvas.Children.Add(l2);
+            canvas.Children.Add(l3);
+
+            l2.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown2;
+
+            l3.PreviewMouseMove += MouseMove1;
+            l3.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown1;
+            //myCanvas.Children.Add(l1);
+
+            //myCanvas.Children.Add(l3);
+
+
+
+        }
+
 
         public Wireclass()
         {
@@ -166,7 +205,7 @@ namespace WpfApplication9.Component
                 l1.X2 = (btn1Point.X + btn2Point.X + 2 * selection1.ActualWidth) / 2;
                 l1.Y1 = btn1Point.Y + selection1.ActualHeight / 2;
                 l1.Y2 = btn1Point.Y + selection1.ActualHeight / 2;
-                myCanvas.Children.Add(l1);
+                if(!myCanvas.Children.Contains(l1)) myCanvas.Children.Add(l1);
 
           
                 l2.Stroke = new SolidColorBrush(Colors.Black);
@@ -175,7 +214,7 @@ namespace WpfApplication9.Component
                 l2.X2 = l1.X2;
                 l2.Y1 = l1.Y1;
                 l2.Y2 = btn2Point.Y - selection2.ActualHeight / 2;
-                myCanvas.Children.Add(l2);
+                if(!myCanvas.Children.Contains(l2)) myCanvas.Children.Add(l2);
 
                
                 l3.Stroke = new SolidColorBrush(Colors.Black);
@@ -184,9 +223,9 @@ namespace WpfApplication9.Component
                 l3.X2 = (btn2Point.X);
                 l3.Y1 = l2.Y2;
                 l3.Y2 = l2.Y2;
-                myCanvas.Children.Add(l3);
-         
-       
+                if (!myCanvas.Children.Contains(l3)) myCanvas.Children.Add(l3);
+
+
             UserClass.TryFindParent<StandardComponent>(source).Run();
                 selected = false;
                 UserClass.TryFindParent<StandardComponent>(destination).Run();
@@ -258,7 +297,10 @@ namespace WpfApplication9.Component
         public void recalculer(Boolean source)
         {
 
-          
+            if (UserClass.TryFindLogicalParent<Canvas>(btn111) == null)
+            {
+                myCanvas.UpdateLayout();
+            }
         btn1Point = btn111.TransformToAncestor(myCanvas).Transform(new Point(0, 0));
             l1 = (Line)listeLine[0];
             l2 = (Line)listeLine[1];

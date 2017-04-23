@@ -22,13 +22,15 @@
         Foreground="#DDFFFFFF"
         Icon="logo.bmp"
         x:Name="mwindow"
-        mc:Ignorable="d">
+        mc:Ignorable="d"
+        KeyUp="mwindow_KeyUp">
     <Window.Resources>
         <ResourceDictionary>
             <!-- Animation of the popup -->
 
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Shadows.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
@@ -89,19 +91,61 @@
                              Margin="0 16 0 16"
                              SelectedIndex="0">
                         <ListBoxItem Padding="20,8,8,8"
-                                     Content="Open"
-                                     MouseLeftButtonUp="btnOpen_click" />
+                                     MouseLeftButtonUp="btnNew_click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="File"
+                                                         Margin="5,0" />
+                                <TextBlock>New Circuit</TextBlock>
+                            </StackPanel>
+                        </ListBoxItem>
                         <ListBoxItem Padding="20,8,8,8"
-                                     Content="Save" />
+                                     MouseLeftButtonUp="btnOpen_click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="OpenInApp"
+                                                         Margin="5,0" />
+                                <TextBlock>Open</TextBlock>
+                            </StackPanel>
+                        </ListBoxItem>
                         <ListBoxItem Padding="20,8,8,8"
-                                     Content="Save As ..."
-                                     MouseLeftButtonUp="btnSaveAs_click" />
+                                     MouseLeftButtonUp="btnSave_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ContentSave"
+                                                         Margin="5,0" />
+                                <TextBlock>Save</TextBlock>
+                            </StackPanel>
+                        </ListBoxItem>
                         <ListBoxItem Padding="20,8,8,8"
-                                     MouseLeftButtonUp="RightDrawerHostOpen"
-                                     Content="Options" />
+                                     MouseLeftButtonUp="btnSaveAs_click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ContentSaveAll"
+                                                         Margin="5,0" />
+                                <TextBlock>Save as ...</TextBlock>
+                            </StackPanel>
+                        </ListBoxItem>
                         <ListBoxItem Padding="20,8,8,8"
-                                     MouseLeftButtonUp="closeWindow"
-                                     Content="Close" />
+                                     MouseLeftButtonUp="RightDrawerHostOpen">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Settings"
+                                                         Margin="5,0" />
+                                <TextBlock>Settings</TextBlock>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem Padding="20,8,8,8"
+                                     MouseLeftButtonUp="HelpOpen">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Help"
+                                                         Margin="5,0" />
+                                <TextBlock>Help</TextBlock>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem Padding="20,8,8,8"
+                                     MouseLeftButtonUp="closeWindow">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Close" 
+                                                         Margin="5,0"/>
+                                <TextBlock> Close</TextBlock>
+                            </StackPanel>
+                        </ListBoxItem>
                     </ListBox>
                 </DockPanel>
             </materialDesign:DrawerHost.LeftDrawerContent>
@@ -122,19 +166,61 @@
                         <DockPanel Margin="20,0">
                             <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Theme</TextBlock>
                             <ComboBox MinWidth="100" SelectionChanged="ChangeTheme"
-                                      Margin="10,0,0,0">
+                                      Margin="10,0,0,0"
+                                      SelectedIndex="0">
                                 <ComboBoxItem Content="Purple" />
                                 <ComboBoxItem Content="Blue" />
                                 <ComboBoxItem Content="Orange" />
                                 <ComboBoxItem Content="Red" />
                             </ComboBox>
                         </DockPanel>
-                        <ListBox Margin="0 16 0 16"
+                        <CheckBox Margin="20,10,0,0"
+                                  Padding="10,8,8,8" x:Name="gridActivatorCheckbox" IsChecked="{Binding Mute}">
+                            <TextBlock>Show Grid</TextBlock>
+                        </CheckBox>
+                        <ListBox Margin="0 10 0 0"
                                  SelectedIndex="0">
-                            <ListBoxItem Padding="20,8,8,8"
-                                         Content="About" />
-                            <ListBoxItem Padding="20,8,8,8"
-                                         Content="Contact" />
+                            <ListBoxItem Padding="20,8,8,8" MouseLeftButtonUp="About_MouseLeftButtonUp">
+                                <StackPanel>
+                                    <TextBlock>About</TextBlock>
+                                    <Button x:Name="aboutBtn"
+                                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                                            Visibility="Collapsed">
+                                        <Button.CommandParameter>
+                                            <!-- the simplest view model of all, a DateTime. the view can be found in the resources of MainWindow.xaml  -->
+                                            <StackPanel Margin="20">
+                                                <TextBlock>About Circlab</TextBlock>
+                                                <TextBlock>Version : 1.0.0</TextBlock>
+                                                <TextBlock>OpenSource on Github: www.github.com/DouahIlies/Circlab</TextBlock>
+                                                <TextBlock>This Project is made for eduction purposes.</TextBlock>
+                                                <TextBlock>Team :</TextBlock>
+                                                <TextBlock>- Douah Ilies</TextBlock>
+                                                <TextBlock>- Remil Youcef</TextBlock>
+                                                <TextBlock>- Medjkoune Tinhinane</TextBlock>
+                                                <TextBlock>- Boumadane Abdelmoumene</TextBlock>
+                                                <TextBlock>- Bouchada Ilyes</TextBlock>
+                                                <TextBlock>- Khenniche Rosa</TextBlock>
+                                                <TextBlock>Tutors :</TextBlock>
+                                                <TextBlock>M. Dahamni</TextBlock>
+                                                <TextBlock>M. Hadji</TextBlock>
+                                                <TextBlock Margin="0,5,0,0">Made with 
+                                                        <materialDesign:PackIcon Kind="Heart"
+                                                                                Height="10"
+                                                                                Width="10" />
+                                                        and <materialDesign:PackIcon Kind="Coffee"
+                                                                                     Height="10"
+                                                                                     Width="10" /></TextBlock>
+                                                <Button  Margin="0 8 0 0"
+                                                         IsDefault="True"
+                                                         Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                                         Style="{DynamicResource MaterialDesignFlatButton}">Back</Button>
+                                            </StackPanel>
+
+                                        </Button.CommandParameter>
+                                    </Button>
+                                </StackPanel>
+                            </ListBoxItem>
+                            
                         </ListBox>
                     </StackPanel>
                 </DockPanel>
@@ -156,17 +242,10 @@
                             <StackPanel>
                                 <Button Click="RightDrawerHostOpen"
                                         Content="Options" />
-                                <Button Click="RightDrawerHostOpen"
+                                <Button Click="HelpOpen"
                                         Content="Help" />
                             </StackPanel>
                         </materialDesign:PopupBox>
-                        <Button DockPanel.Dock="Right"
-                                Style="{DynamicResource MaterialDesignToolForegroundButton}"
-                                Margin="0,0,20,0">
-                            <materialDesign:PackIcon Kind="ChartTimeline"
-                                                     Height="30"
-                                                     Width="30" />
-                        </Button>
                         <Button DockPanel.Dock="Right"
                                 Style="{DynamicResource MaterialDesignToolForegroundButton}"
                                 Margin="0,0,20,0"
@@ -179,7 +258,7 @@
                         <TextBlock x:Name="CircuitName"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   FontSize="22"><Run Text="CircLab" /></TextBlock>
+                                   FontSize="22"><Run Text="[Untitled] - CircLab" /></TextBlock>
                     </DockPanel>
                 </materialDesign:ColorZone>
                 <Grid>
@@ -199,14 +278,35 @@
                         <ToolBarTray DockPanel.Dock="Top">
                             <ToolBar Style="{DynamicResource MaterialDesignToolBar}"
                                      ClipToBounds="False">
+                                <Button x:Name="btnCapture"
+                                        ToolTip="Save As Image"
+                                        Click="btnCapture_Click">
+                                    <materialDesign:PackIcon Kind="Image" />
+                                </Button>
+                                <Button x:Name="btnPrint"
+                                        ToolTip="Print Circuit"
+                                        Click="btnPrint_Click">
+                                    <materialDesign:PackIcon Kind="Printer" />
+                                </Button>
                                 <Button x:Name="btnSave"
-                                        ToolTip="Save">
+                                        ToolTip="Save"
+                                        Click="btnSave_Click">
                                     <materialDesign:PackIcon Kind="ContentSave" />
                                 </Button>
-                                <Button ToolTip="Undo">
+                            </ToolBar>
+                        </ToolBarTray>
+                        <ToolBarTray DockPanel.Dock="Top">
+                            <ToolBar>
+                                <Button x:Name="retourBouton"
+                                        ToolTip="Undo"
+                                        Click="retour"
+                                        IsEnabled="False">
                                     <materialDesign:PackIcon Kind="Undo" />
                                 </Button>
-                                <Button ToolTip="Redo">
+                                <Button ToolTip="Redo"
+                                        IsEnabled="False"
+                                        Click="refaire"
+                                        x:Name="refaireBouton">
                                     <materialDesign:PackIcon Kind="Redo" />
                                 </Button>
                                 <Separator />
@@ -266,22 +366,14 @@
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
-                                <RowDefinition />
                             </Grid.RowDefinitions>
-                            <TextBlock HorizontalAlignment="Center"><Run Text="Zoom" /></TextBlock>
-                            <Slider Grid.Column="1"
-                                    TickFrequency="5"
-                                    Minimum="1"
-                                    Maximum="50"
-                                    Value="25" />
-                            <TextBlock Grid.Row="1"
-                                       HorizontalAlignment="Center"><Run Text="Delay" /></TextBlock>
+                            
+                            <TextBlock HorizontalAlignment="Center"><Run Text="Delay" /></TextBlock>
                             <Slider x:Name="delay"
-                                    Grid.Row="1"
                                     Grid.Column="1"
                                     TickFrequency="5"
                                     Minimum="0"
-                                    Maximum="5"
+                                    Maximum="3"
                                     Value="1"
                                     ValueChanged="delay_ValueChanged" />
                         </Grid>
@@ -354,11 +446,15 @@
                                   VerticalAlignment="Stretch"
                                   Margin="0"
                                   x:Name="GridSplitter1" />
-                    <ScrollViewer   x:Name="canvasContainer"
-                                    Grid.Column="2">
+                    <ScrollViewer   x:Name="canvasScroller"
+                                    Grid.Column="2"
+                                    HorizontalScrollBarVisibility="Auto"
+                                    VerticalScrollBarVisibility="Auto">
                         <Canvas x:Name="canvas"
                                 Margin="0"
-                                MouseDown="canvas_MouseDown">
+                                MouseDown="canvas_MouseDown"
+                                Width="2000"
+                                Height="2000">
                             <Canvas.Background>
                                 <!-- see http://mark-dot-net.blogspot.com/2007/06/creating-hatched-patterned-brush-in-wpf.html -->
                                 <VisualBrush TileMode="Tile"
@@ -425,7 +521,18 @@
                                     BorderBrush="White"
                                     BorderThickness="0,1,0,0">
                             <TabControl.Resources>
-                                <Style TargetType="TabItem">
+                                    <Style TargetType="{x:Type Button}"
+                                           BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                                        <Setter Property="Margin"
+                                                Value="5" />
+                                        <Setter Property="Height"
+                                                Value="70" />
+                                        <Setter Property="Width"
+                                                Value="70" />
+                                        <Setter Property="FontSize"
+                                                Value="10" />
+                                </Style>
+                                    <Style TargetType="TabItem">
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="TabItem">
@@ -460,161 +567,103 @@
                                 </Style>
                             </TabControl.Resources>
                             <TabItem Header="Basic Gates">
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="8,24,16,24">
-                                    <Button Height="100"
-                                            Content="AND"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addAND" />
-                                    <Button Height="100"
-                                            Content="NAND"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addNAND" />
-                                    <Button Height="100"
-                                            Content="NOR"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addNOR" />
-                                    <Button Height="100"
-                                            Content="OR"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addOR" />
-                                    <Button Height="100"
-                                            Content="XOR"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addXOR" />
-                                    <Button Height="100"
-                                            Content="XNOR"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addXNOR" />
-                                    <Button Height="100"
-                                            Content="Not"
-                                            Width="100"
-                                            Margin="5" />
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                              VerticalScrollBarVisibility="Disabled">
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="8,24,16,24">
+                                        <Button Content="AND"
+                                            Click="addGate" />
+                                    <Button Content="NAND"
+                                            Click="addGate" />
+                                    <Button Content="NOR"
+                                            Click="addGate" />
+                                    <Button Content="OR"
+                                            Click="addGate" />
+                                    <Button Content="XOR"
+                                            Click="addGate" />
+                                    <Button Content="XNOR"
+                                            Click="addGate" />
+                                    <Button Content="Not"
+                                            Click="addGate" />
+
                                 </StackPanel>
+                                </ScrollViewer>
                             </TabItem>
                             <TabItem Header="Input/Output">
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                              VerticalScrollBarVisibility="Disabled">
                                 <StackPanel Orientation="Horizontal"
                                             Margin="8,24,16,24">
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="Input"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addInput" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="Output"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addOutput" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="Comment"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addComment" />
+                                    <Button Content="Input"
+                                            Click="addGate" />
+                                    <Button Content="Output"
+                                            Click="addGate" />
+                                    <Button Content="Comment"
+                                            Click="addGate" />
                                 </StackPanel>
+                                </ScrollViewer>
                             </TabItem>
-                            <TabItem Header="Sequential">
+                            <TabItem Header="Complex Components">
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="8,24,16,24">
+                                        <Button Content="Decoder"
+                                                Click="addGate" />
+                                        <Button Content="Encoder"
+                                                Click="addGate" />
+                                        <Button Content="FullAdder"
+                                                Click="addGate" />
+                                        <Button Content="HalfAdder"
+                                                Click="addGate" />
+                                        <Button Content="HalfSub"
+                                                Click="addGate" />
+                                        <Button Content="FullSub"
+                                                Click="addGate" />
+                                        <Button Content="Comparator"
+                                                Click="addGate" />
+                                        <Button Content="Multiplexer"
+                                                Click="addGate" />
+                                        <Button Content="Demultiplexer"
+                                                Click="addGate" />
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </TabItem>
+                            <TabItem Header="Sequential Components">
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                              VerticalScrollBarVisibility="Auto">
                                 <StackPanel Orientation="Horizontal"
                                             Margin="8,24,16,24">
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="Clock"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addClock" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="FlipFlop"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addFlipFlop" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="SToggle"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addST" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="AToggle"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addT" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="RSLatche"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addRS" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="RSTLatche"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addRST" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="JKLatche"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addJK" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="Register"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addRegister" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="PRegister"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addPRegister" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="CRegister"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addCregister" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="FDevider"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addFD" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="CounterN"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addCounterN" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="CounterModN"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addCMN" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="CtDownN"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addCDN" />
-                                    <Button Background="RoyalBlue"
-                                            Height="100"
-                                            Content="CDownMN"
-                                            Width="100"
-                                            Margin="5"
-                                            Click="addCDMN" />
+                                    <Button Content="Clock"
+                                            Click="addGate" />
+                                    <Button Content="SToggle"
+                                            Click="addGate" />
+                                    <Button Content="AToggle"
+                                            Click="addGate" />
+                                    <Button Content="RSLatche"
+                                            Click="addGate" />
+                                    <Button Content="RSTLatche"
+                                            Click="addGate" />
+                                    <Button Content="JK"
+                                            Click="addGate" />
+                                    <Button Content="Register"
+                                            Click="addGate" />
+                                    <Button Content="PRegister"
+                                            Click="addGate" />
+                                    <Button Content="CRegister"
+                                            Click="addGate" />
+                                    <Button Content="FDevider"
+                                            Click="addGate" />
+                                    <Button Content="CounterN"
+                                            Click="addGate" />
+                                    <Button Content="CounterModN"
+                                            Click="addGate" />
+                                    <Button Content="CDownN"
+                                            Click="addGate" />
+                                    <Button Content="CDownMN"
+                                            Click="addGate" />
                                 </StackPanel>
+                                </ScrollViewer>
                             </TabItem>
                         </TabControl>
                     </DockPanel>
