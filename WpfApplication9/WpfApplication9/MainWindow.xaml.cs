@@ -275,6 +275,8 @@ namespace WpfApplication9
                     gate = new Input(); break;
                 case "Output":
                     gate = new Output(); break;
+                case "Chronogram":
+                    gate = new Chronogramme(2); break;
                 case "Decoder":
                     gate = new Decodeur(2, 4); break;
                 case "Encoder":
@@ -402,10 +404,7 @@ namespace WpfApplication9
             }
         }
         
-        private void annuler(object sender, MouseButtonEventArgs e)
-        {
-            Wireclass.selected = false;
-        }
+
 
       
 

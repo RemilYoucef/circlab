@@ -42,8 +42,8 @@ namespace WpfApplication9.Component
         public double y1;
         public double y2;
         private ContextMenu menu;
-        private Ellipse btn111;
-        private  Ellipse btn222;
+        public Ellipse btn111;
+        public  Ellipse btn222;
         public Ellipse noued;
         private Boolean _state;
         public Boolean state
@@ -88,20 +88,17 @@ namespace WpfApplication9.Component
             listeLine.Add(l2);
             listeLine.Add(l3);
 
-            //myCanvas.Children.Add(l2);
-            l2.PreviewMouseMove += MouseMove2;
+            myCanvas.Children.Add(l2);
+            l2.PreviewMouseMove += MouseMoveHorizental;
 
-            canvas.Children.Add(l1);
-            canvas.Children.Add(l2);
-            canvas.Children.Add(l3);
+            l2.PreviewMouseLeftButtonDown += this.MouseLeftButtonDownHorizental;
+            // l1.PreviewMouseMove += MouseMove1;//Partie a descuter 
+            //   l1.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown1;
+            l3.PreviewMouseMove += MouseMoveVertical;
+            l3.PreviewMouseLeftButtonDown += this.MouseLeftButtonDownVertical;
+            myCanvas.Children.Add(l1);
 
-            l2.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown2;
-
-            l3.PreviewMouseMove += MouseMove1;
-            l3.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown1;
-            //myCanvas.Children.Add(l1);
-
-            //myCanvas.Children.Add(l3);
+            myCanvas.Children.Add(l3);
 
 
 

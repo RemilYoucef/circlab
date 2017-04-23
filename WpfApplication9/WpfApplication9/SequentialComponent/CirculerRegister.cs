@@ -9,27 +9,28 @@ namespace WpfApplication9.SequentialComponent
 {
     class CirculerRegister : StandardComponent
     {
-        public enum TriggerType
+        public enum TriggerType //les options pour l'horloge 
         {
             RisingEdge, FallingEdge, HighLevel, LowLevel
         }
-        public enum Type
+        public enum Type //type du decalage 
         {
             Right, Left
         }
-        private Type _type = Type.Left;
+        private Type _type;
         private int _nbroutputs;
         private TriggerType _trigger = TriggerType.RisingEdge;
         private bool oldClockValue;
-        public CirculerRegister(TriggerType trigger, int nbrinput, Type ty)
-            : base(nbrinput + 3, nbrinput,0, "M 0,0 L 30,0 L 30,30 L 0,30 z", "CirculaRegister")
+        private bool newClockValue;
+        public CirculerRegister(TriggerType trigger, int nbrinput, Type ty) //constructeur de la Class 
+            : base(nbrinput, nbrinput, 3, "M 0,0 L 30,0 L 30,30 L 0,30 z", "CirculaRegister")
         {
             _nbroutputs = nbrinput;
             _trigger = trigger;
             _type = ty;
 
-            oldClockValue = false;
-            outputs_tab.Clear();
+            oldClockValue = false;//initialiser l'entrée de l'horloge 
+            outputs_tab.Clear(); //initialiser les sorties 
             for (int i = 0; i < _nbroutputs; i++)
             {
                 outputs_tab.Add(false);
@@ -37,34 +38,35 @@ namespace WpfApplication9.SequentialComponent
 
         }
 
-        public override void Run()
+        public override void Run()//methode pour la mise à jour des resultats 
         {
-            //inputs_tab[0]==clock
-            //inouts_tab[1]==clear
-            //inputs_tab[2]==load
+            //selections_tab[0]==clock
+            //selections_tab[1]==clear
+            //selections_tab[2]==load
 
             bool _val;
-            update_input();
-            bool newClockValue = (bool)inputs_tab[0];
-            if ((bool)inputs_tab[1] == true) { for (int k = 0; k < _nbroutputs; k++) outputs_tab[k] = false; }
+            update_input(); //mise à jour des entrées 
+            newClockValue = (bool)selections_tab[0]; //recuperer la valeur de l'horloge 
+            if ((bool)selections_tab[1] == true) { for (int k = 0; k < _nbroutputs; k++) outputs_tab[k] = false; }//clear 
             else
             {
-                if ((bool)inputs_tab[2] == true) { for (int k = 0; k < _nbroutputs; k++) outputs_tab[k] = inputs_tab[k + 3]; }
-                else { 
-                
-                if ((_trigger == TriggerType.RisingEdge && newClockValue == true && oldClockValue == false) ||
-                    (_trigger == TriggerType.FallingEdge && newClockValue == false && oldClockValue == true) ||
-                    (_trigger == TriggerType.HighLevel && newClockValue == true) ||
-                    (_trigger == TriggerType.LowLevel && newClockValue == false))
-                
+                if ((bool)selections_tab[2] == true) { for (int k = 0; k < _nbroutputs; k++) outputs_tab[k] = inputs_tab[k]; } //load
+                else
+                {
+
+                    if ((_trigger == TriggerType.RisingEdge && newClockValue == true && oldClockValue == false) || //front montant 
+                        (_trigger == TriggerType.FallingEdge && newClockValue == false && oldClockValue == true) ||//front descendant 
+                        (_trigger == TriggerType.HighLevel && newClockValue == true) || //etat haut 
+                        (_trigger == TriggerType.LowLevel && newClockValue == false)) //etat bas 
+
                     {
-                        if (_type == Type.Left)
+                        if (_type == Type.Left) //decalage gauche 
                         {
                             _val = (bool)outputs_tab[0];
                             for (int k = 0; k < _nbroutputs - 1; k++) { outputs_tab[k] = outputs_tab[k + 1]; }
                             outputs_tab[_nbroutputs - 1] = _val;
                         }
-                        if (_type == Type.Right)
+                        if (_type == Type.Right) //decalage droit 
                         {
                             _val = (bool)outputs_tab[_nbroutputs - 1];
                             for (int k = _nbroutputs - 1; k > 0; k--) { outputs_tab[k] = outputs_tab[k - 1]; }
@@ -74,9 +76,9 @@ namespace WpfApplication9.SequentialComponent
                 }
 
             }
-            oldClockValue = newClockValue;
+            oldClockValue = newClockValue; //sauvegarde de l'etat de l'horloge 
 
-            update_output();
+            update_output(); //mise à jour des resultats 
         }
     }
 }

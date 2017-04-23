@@ -30,6 +30,7 @@ namespace WpfApplication9.Component
         public string type;
         public double PosX;//Position x dans le canvas
         public double PosY;//Position y dans le canvas 
+        private int rotation = 0;
 
 
         protected ArrayList inputs_tab;
@@ -464,6 +465,29 @@ namespace WpfApplication9.Component
                 }
                 i++;
             }
+        }
+
+        public void RotateRight(object sender, RoutedEventArgs e)
+        {
+            rotation += 90;
+            RotateComponent(rotation);
+
+        }
+
+        public void RotateLeft(object sender, RoutedEventArgs e)
+        {
+            rotation -= 90;
+            RotateComponent(rotation);
+
+        }
+
+        public void RotateComponent(int rotation)
+        {
+            RotateTransform rt = new RotateTransform(rotation);
+            this.LayoutTransform = rt;
+            this.recalculer_pos();
+            canvas.UpdateLayout();
+
         }
 
     }

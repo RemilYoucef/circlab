@@ -603,6 +603,8 @@
                                             Click="addGate" />
                                     <Button Content="Output"
                                             Click="addGate" />
+                                    <Button Content="Chronogram"
+                                            Click="addGate" />
                                     <Button Content="Comment"
                                             Click="addGate" />
                                 </StackPanel>
