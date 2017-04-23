@@ -16,7 +16,12 @@ namespace WpfApplication9.SequentialComponent
         }
 
         private int _nbroutputs;
-        private TriggerType _trigger;
+        private TriggerType _trigger = TriggerType.RisingEdge;
+        public TriggerType Trigger
+        {
+            get { return _trigger; }
+            set { _trigger = value; }
+        }
         private bool oldClockValue;
         private bool newClockValue;
 

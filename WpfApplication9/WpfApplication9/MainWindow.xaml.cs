@@ -140,11 +140,14 @@ namespace WpfApplication9
         public void modifieProperties()
         {
             if (elementsSelected!=null && elementsSelected.Count == 1)
-            {       
+            {
+                   
                 if (UserClass.IsInputChangeable(elementsSelected[0]))
                 {
                     ClockFrequency.Visibility = Visibility.Collapsed;
                     Frequency.Visibility = Visibility.Collapsed;
+                    Type.Visibility = Visibility.Collapsed;
+                    Compteur.Visibility = Visibility.Collapsed;
 
                     if (elementsSelected[0].nbrInputs() != 8)
                         ComboBoxProperties.SelectedIndex = elementsSelected[0].nbrInputs() - 2;
@@ -241,17 +244,82 @@ namespace WpfApplication9
                 }
                 else if (elementsSelected[0] is SequentialComponent.Clock)
                 {
+                    Type.Visibility = Visibility.Collapsed;
+                    Frequency.Text = ((SequentialComponent.Clock)elementsSelected[0]).Delay.ToString();
                     ClockFrequency.Visibility = Visibility.Visible;
                     Frequency.Visibility = Visibility.Visible;
-                    
-                    
+                               
+                }
+                else if(UserClass.IsFrontChangeable(elementsSelected[0]) && UserClass.IsNiveauChangeable(elementsSelected[0]))
+                {
+                    NiveauBas.Visibility = Visibility.Visible;
+                    NiveauHaut.Visibility = Visibility.Visible;
+                    Type.Visibility = Visibility.Visible;
+
+                    if (elementsSelected[0] is SequentialComponent.FlipFlop)
+                    {
+                        comboBoxtype(((SequentialComponent.FlipFlop)elementsSelected[0]).Trigger.ToString());
+                    }
+                    else if((elementsSelected[0] is SequentialComponent.Registre))
+                    {
+                        comboBoxtype(((SequentialComponent.Registre)elementsSelected[0]).Trigger.ToString());
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.CirculerRegister))
+                    {
+                        comboBoxtype(((SequentialComponent.CirculerRegister)elementsSelected[0]).Trigger.ToString());
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.programmablRegister))
+                    {
+                        comboBoxtype(((SequentialComponent.programmablRegister)elementsSelected[0]).Trigger.ToString());
+                    }
+                    Type.Visibility = Visibility.Visible;
+                }
+                else if (UserClass.IsFrontChangeable(elementsSelected[0]))
+                {
+                    Type.Visibility = Visibility.Visible;
+                    Compteur.Visibility = Visibility.Collapsed;
+                    comboBoxtype(((SequentialComponent.JKLatch)elementsSelected[0]).Trigger.ToString());
+                    NiveauBas.Visibility = Visibility.Collapsed;
+                    NiveauHaut.Visibility = Visibility.Collapsed;
+                }
+                else if (UserClass.IsCompteur(elementsSelected[0]))
+                {
+                    Compteur.Visibility = Visibility.Visible;
+                    if(elementsSelected[0] is SequentialComponent.compteurN)
+                    {
+                        ComboBoxCompteur.SelectedIndex = ((SequentialComponent.compteurN)elementsSelected[0]).Val - 2;
+                        TextCompteur.Text = "Le nombre max";
+                    }
+                    else if (elementsSelected[0] is SequentialComponent.CompteurModN)
+                    {
+                        ComboBoxCompteur.SelectedIndex = ((SequentialComponent.CompteurModN)elementsSelected[0]).Val - 2;
+                       
+                        TextCompteur.Text = "Modulo";
+                    }
+                    else if (elementsSelected[0] is SequentialComponent.DecompteurN)
+                    {
+                        ComboBoxCompteur.SelectedIndex = ((SequentialComponent.DecompteurN)elementsSelected[0]).Val - 2;
+                        TextCompteur.Text = "Le nombre max";
+                    }
+                    else if (elementsSelected[0] is SequentialComponent.DecompteurModN)
+                    {
+                        ComboBoxCompteur.SelectedIndex = ((SequentialComponent.DecompteurModN)elementsSelected[0]).Val - 2;
+                        TextCompteur.Text = "Modulo";
+                    }
                 }
             }
-           
+          
             
         }
-
-        private void CreateNewGate(string name)
+        //RisingEdge, FallingEdge, HighLevel, LowLevel
+        private void comboBoxtype(string type)
+        {
+            if (type == "RisingEdge") ComboBoxFrontNiveau.SelectedIndex = 0;
+            else if(type== "FallingEdge") ComboBoxFrontNiveau.SelectedIndex = 1;
+            else if (type == "HighLevel") ComboBoxFrontNiveau.SelectedIndex = 2;
+            else if (type == "LowLevel") ComboBoxFrontNiveau.SelectedIndex = 3;
+        }
+        private void addAND(object sender, RoutedEventArgs e)
         {
             miseAJourPile();
             UIElement gate;
@@ -483,6 +551,10 @@ namespace WpfApplication9
             NbrEntreText.Visibility = Visibility.Collapsed;
             ComboBoxProperties.Visibility=Visibility.Collapsed;
             GridCheckBox.Visibility = Visibility.Collapsed;
+            ClockFrequency.Visibility = Visibility.Collapsed;
+            Frequency.Visibility = Visibility.Collapsed;
+            Type.Visibility = Visibility.Collapsed;
+            Compteur.Visibility = Visibility.Collapsed;
         }
 
         public void activeProp()
@@ -1352,7 +1424,137 @@ namespace WpfApplication9
             img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
 
 
+        private void ComboBoxFrontNiveau_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (ComboBoxFrontNiveau.SelectedIndex == 0) //Front montant 
+                {
+                    if (elementsSelected[0] is SequentialComponent.FlipFlop)
+                    {
+                        ((SequentialComponent.FlipFlop)elementsSelected[0]).Trigger = FlipFlop.TriggerType.RisingEdge;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.Registre))
+                    {
+                        ((SequentialComponent.Registre)elementsSelected[0]).Trigger = Registre.TriggerType.RisingEdge;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.CirculerRegister))
+                    {
+                        ((SequentialComponent.CirculerRegister)elementsSelected[0]).Trigger = CirculerRegister.TriggerType.RisingEdge; ;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.programmablRegister))
+                    {
+                        ((SequentialComponent.programmablRegister)elementsSelected[0]).Trigger = programmablRegister.TriggerType.RisingEdge;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.JKLatch))
+                    {
+                        ((SequentialComponent.JKLatch)elementsSelected[0]).Trigger = JKLatch.TriggerType.RisingEdge;
+                    }
+                }
+                else if (ComboBoxFrontNiveau.SelectedIndex == 1) //front descandant
+                {
+                    if (elementsSelected[0] is SequentialComponent.FlipFlop)
+                    {
+                        ((SequentialComponent.FlipFlop)elementsSelected[0]).Trigger = FlipFlop.TriggerType.FallingEdge;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.Registre))
+                    {
+                        ((SequentialComponent.Registre)elementsSelected[0]).Trigger = Registre.TriggerType.FallingEdge;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.CirculerRegister))
+                    {
+                        ((SequentialComponent.CirculerRegister)elementsSelected[0]).Trigger = CirculerRegister.TriggerType.FallingEdge;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.programmablRegister))
+                    {
+                        ((SequentialComponent.programmablRegister)elementsSelected[0]).Trigger = programmablRegister.TriggerType.FallingEdge;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.JKLatch))
+                    {
+                        ((SequentialComponent.JKLatch)elementsSelected[0]).Trigger = JKLatch.TriggerType.FallingEdge;
+                    }
+                }
+                else if (ComboBoxFrontNiveau.SelectedIndex == 2) //Niveau haut
+                {
+                    if (elementsSelected[0] is SequentialComponent.FlipFlop)
+                    {
+                        ((SequentialComponent.FlipFlop)elementsSelected[0]).Trigger = FlipFlop.TriggerType.HighLevel;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.Registre))
+                    {
+                        ((SequentialComponent.Registre)elementsSelected[0]).Trigger = Registre.TriggerType.HighLevel;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.CirculerRegister))
+                    {
+                        ((SequentialComponent.CirculerRegister)elementsSelected[0]).Trigger = CirculerRegister.TriggerType.HighLevel;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.programmablRegister))
+                    {
+                        ((SequentialComponent.programmablRegister)elementsSelected[0]).Trigger = programmablRegister.TriggerType.HighLevel;
+                    }
+
+                }
+                else
+                {
+                    if (elementsSelected[0] is SequentialComponent.FlipFlop)
+                    {
+                        ((SequentialComponent.FlipFlop)elementsSelected[0]).Trigger = FlipFlop.TriggerType.LowLevel;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.Registre))
+                    {
+                        ((SequentialComponent.Registre)elementsSelected[0]).Trigger = Registre.TriggerType.LowLevel;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.CirculerRegister))
+                    {
+                        ((SequentialComponent.CirculerRegister)elementsSelected[0]).Trigger = CirculerRegister.TriggerType.LowLevel;
+                    }
+                    else if ((elementsSelected[0] is SequentialComponent.programmablRegister))
+                    {
+                        ((SequentialComponent.programmablRegister)elementsSelected[0]).Trigger = programmablRegister.TriggerType.LowLevel;
+                    }
+                }
+            }
+            catch { }
+            
         }
+
+        private void ComboBoxCompteur_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (elementsSelected[0] is SequentialComponent.compteurN)
+                {
+                    ((SequentialComponent.compteurN)elementsSelected[0]).Val = ComboBoxCompteur.SelectedIndex + 2;
+                    ((SequentialComponent.compteurN)elementsSelected[0]).Nbroutputs = (int)Math.Floor(Math.Log(ComboBoxCompteur.SelectedIndex + 2, 2))+1;
+                    ((SequentialComponent.compteurN)elementsSelected[0]).redessiner("M 0,0 L 30,0 L 30,30 L 0,30 z");
+
+                }
+                else if (elementsSelected[0] is SequentialComponent.CompteurModN)
+                {
+                    ((SequentialComponent.CompteurModN)elementsSelected[0]).Val = ComboBoxCompteur.SelectedIndex + 2;
+                    ((SequentialComponent.CompteurModN)elementsSelected[0]).Nbroutputs = (int)Math.Floor(Math.Log(ComboBoxCompteur.SelectedIndex + 2, 2))+1;
+                    ((SequentialComponent.CompteurModN)elementsSelected[0]).redessiner("M 0,0 L 30,0 L 30,30 L 0,30 z");
+                }
+                else if (elementsSelected[0] is SequentialComponent.DecompteurN)
+                {
+                    ((SequentialComponent.DecompteurN)elementsSelected[0]).Val = ComboBoxCompteur.SelectedIndex + 2;
+                    ((SequentialComponent.DecompteurN)elementsSelected[0]).Nbroutputs = (int)Math.Floor(Math.Log(ComboBoxCompteur.SelectedIndex + 2, 2))+1;
+                    ((SequentialComponent.DecompteurN)elementsSelected[0]).redessiner("M 0,0 L 30,0 L 30,30 L 0,30 z");
+                }
+                else if (elementsSelected[0] is SequentialComponent.DecompteurModN)
+                {
+                    ((SequentialComponent.DecompteurModN)elementsSelected[0]).Val = ComboBoxCompteur.SelectedIndex + 2;
+                    ((SequentialComponent.DecompteurModN)elementsSelected[0]).Nbroutputs = (int)Math.Floor(Math.Log(ComboBoxCompteur.SelectedIndex + 2, 2))+1;
+                    ((SequentialComponent.DecompteurModN)elementsSelected[0]).redessiner("M 0,0 L 30,0 L 30,30 L 0,30 z");
+                }
+            }
+            catch
+            {
+
+            }
+           
+        }
+
         private void UpdateTitle()
         {
             StringBuilder ttl = new StringBuilder();

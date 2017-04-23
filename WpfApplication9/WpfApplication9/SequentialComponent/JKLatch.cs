@@ -17,6 +17,11 @@ namespace WpfApplication9.SequentialComponent
 
         private bool _val1, _val2, _out1, _out2;
         private TriggerType _trigger = TriggerType.RisingEdge;
+        public TriggerType Trigger
+        {
+            get { return _trigger; }
+            set { _trigger = value; }
+        }
         private bool oldClockValue;
         public TriggerType Trigger
         {
@@ -54,6 +59,7 @@ namespace WpfApplication9.SequentialComponent
                 if (_val1 == true && _val2 == true) { outputs_tab[0] = _out2; outputs_tab[1] = _out1; }
                 if (_val1 == false && _val2 == false) { outputs_tab[0] = _out1; outputs_tab[1] = !_out1; }
             }
+            oldClockValue = newClockValue;
             update_output();
         }
     }

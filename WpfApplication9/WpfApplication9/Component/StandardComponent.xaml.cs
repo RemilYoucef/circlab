@@ -78,11 +78,11 @@ namespace WpfApplication9.Component
             OutputStack.Children.Remove(output);
             for (int i = 0; i < nbrOutput; i++)
             {
-                RotateTransform rt = new RotateTransform(180);
+                
                 terminal = new Terminal();
                 terminal.Margin = new Thickness(0, ((Math.Max(nbrinput, nbrOutput) * terminal.Height)) / (Math.Pow(2, nbrOutput)) - terminal.Height / 2, 0, terminal.Height / (nbrinput+10));
 
-                terminal.terminal_grid.LayoutTransform = rt;
+                terminal.terminal_grid.LayoutTransform = new RotateTransform(180);
                 terminal.IsOutpt = true;
                 OutputStack.Children.Add(terminal);               
 
@@ -186,6 +186,9 @@ namespace WpfApplication9.Component
                    
                 }
                 canvas.Children.Remove(component);
+                MainWindow window = UserClass.TryFindParent<MainWindow>(canvas);
+                window.desactiveProp();
+
 
             }
             

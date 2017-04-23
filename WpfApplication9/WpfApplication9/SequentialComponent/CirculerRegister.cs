@@ -20,6 +20,11 @@ namespace WpfApplication9.SequentialComponent
         private Type _type;
         private int _nbroutputs;
         private TriggerType _trigger = TriggerType.RisingEdge;
+        public TriggerType Trigger
+        {
+            get { return _trigger; }
+            set { _trigger = value; }
+        }
         private bool oldClockValue;
         private bool newClockValue;
         public CirculerRegister(TriggerType trigger, int nbrinput, Type ty) //constructeur de la Class 
