@@ -14,6 +14,7 @@
                 <MenuItem Command="Delete"></MenuItem>
             </ContextMenu>
         </Grid.ContextMenu>
+        <StackPanel x:Name="selectionStack" Height="33" VerticalAlignment="Top" Orientation="Horizontal" Margin="15,0,0,0" HorizontalAlignment="Left" Width="54"/>
         <TextBlock x:Name="TypeLabel"
                    Foreground="Black"
                    HorizontalAlignment="Center"
@@ -22,8 +23,7 @@
                    FontSize="10"></TextBlock>
         <StackPanel x:Name="selectionStack" Height="33" VerticalAlignment="Top" Orientation="Horizontal"/>
         <StackPanel Name="inputStack" Margin="-5,25,0,0" HorizontalAlignment="Left" Width="19" Height="300" VerticalAlignment="Top"/>
-        <!--<Path x:Name="typecomponent" Data="M 17,17 v 30 h 15 a 2,2 1 0 0 0,-30 h -15" Stretch="Fill" Width="61" StrokeThickness="0" Fill="Black" Margin="14,0,0,0" HorizontalAlignment="Left" Height="126" VerticalAlignment="Top"/>-->
-        <StackPanel x:Name="OutputStack" Margin="50,25,0,-234" HorizontalAlignment="Left" Width="19" Height="300" VerticalAlignment="Top">
+       <StackPanel x:Name="OutputStack" Margin="50,25,0,-234" HorizontalAlignment="Left" Width="19" Height="300" VerticalAlignment="Top">
             <local:Terminal x:Name="output" Margin="4.5,44,4.5,0" d:LayoutOverrides="Height" RenderTransformOrigin="-0.895,0.734" Width="Auto">
                 <local:Terminal.RenderTransform>
                     <TransformGroup>

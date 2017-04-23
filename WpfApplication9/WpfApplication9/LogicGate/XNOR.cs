@@ -20,7 +20,7 @@ namespace WpfApplication9.LogicGate
         public override void Run()
         {
             update_input();
-            outputs_tab.Add(false);
+            outputs_tab[0]=(false);
             if ((bool)inputs_tab[0] != (bool)inputs_tab[1]) outputs_tab[0] = false;
             else outputs_tab[0] = true;
             update_output();

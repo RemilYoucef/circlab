@@ -50,7 +50,7 @@ namespace WpfApplication9.Component
         {
             foreach(Wireclass wire in wires)
             {
-                wire.recalculer(IsOutpt);
+                wire.recalculer();
             }
         }
 

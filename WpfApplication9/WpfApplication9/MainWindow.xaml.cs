@@ -68,7 +68,6 @@ namespace WpfApplication9
             var ph = new PaletteHelper();
             ph.ReplacePrimaryColor("deeppurple");
             ph.ReplaceAccentColor("deeppurple");
-            Wireclass.mwindow = mwindow;
             Wireclass.myCanvas = canvas;
             desactiveProp();
             StandardComponent.canvas = canvas;
@@ -140,134 +139,112 @@ namespace WpfApplication9
 
         public void modifieProperties()
         {
-            if(elementsSelected!=null)
-            {
-                if (elementsSelected.Count == 1 && !(elementsSelected[0] is Input) && !(elementsSelected[0] is Output) && !(elementsSelected[0] is Comment))
+            if (elementsSelected!=null && elementsSelected.Count == 1)
+            {       
+                if (UserClass.IsInputChangeable(elementsSelected[0]))
                 {
+                    ClockFrequency.Visibility = Visibility.Collapsed;
+                    Frequency.Visibility = Visibility.Collapsed;
+
                     if (elementsSelected[0].nbrInputs() != 8)
                         ComboBoxProperties.SelectedIndex = elementsSelected[0].nbrInputs() - 2;
                     else ComboBoxProperties.SelectedIndex = 3;
 
                     if(elementsSelected[0].nbrInputs()==2)
                     {
-                        checkBox1.IsChecked= ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
-                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
-                        checkBox3.Visibility = Visibility.Collapsed;
-                        checkBox3.IsChecked = false;
-                        checkBox4.Visibility = Visibility.Collapsed;
-                        checkBox4.IsChecked = false;
-                        checkBox5.Visibility = Visibility.Collapsed;
-                        checkBox5.IsChecked = false;
-                        checkBox6.Visibility = Visibility.Collapsed;
-                        checkBox6.IsChecked = false;
-                        checkBox7.Visibility = Visibility.Collapsed;
-                        checkBox7.IsChecked = false;
-                        checkBox8.Visibility = Visibility.Collapsed;
-                        checkBox8.IsChecked = false;
+                        for (int i = 0; i < 2; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                        for (int i = 2; i < 8; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = false;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Collapsed;
+                        }
+
                     }
                     else if(elementsSelected[0].nbrInputs()==3)
                     {
-                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
-                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
-                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
-                        checkBox3.Visibility = Visibility.Visible;
-                        checkBox4.Visibility = Visibility.Collapsed;
-                        checkBox4.IsChecked = false;
-                        checkBox5.Visibility = Visibility.Collapsed;
-                        checkBox5.IsChecked = false;
-                        checkBox6.Visibility = Visibility.Collapsed;
-                        checkBox6.IsChecked = false;
-                        checkBox7.Visibility = Visibility.Collapsed;
-                        checkBox7.IsChecked = false;
-                        checkBox8.Visibility = Visibility.Collapsed;
-                        checkBox8.IsChecked = false;
+                        
+                        for(int i = 0;i< 3; i++){
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked= ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                        for (int i = 3; i < 8; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = false;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Collapsed;
+                        }
+                       
                     }
                     else if(elementsSelected[0].nbrInputs()==4)
                     {
-                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
-                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
-                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
-                        checkBox4.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[3]).IsInversed;
-                        checkBox3.Visibility = Visibility.Visible;
-                        checkBox4.Visibility = Visibility.Visible;
-                        checkBox5.Visibility = Visibility.Collapsed;
-                        checkBox5.IsChecked = false;
-                        checkBox6.Visibility = Visibility.Collapsed;
-                        checkBox6.IsChecked = false;
-                        checkBox7.Visibility = Visibility.Collapsed;
-                        checkBox7.IsChecked = false;
-                        checkBox8.Visibility = Visibility.Collapsed;
-                        checkBox8.IsChecked = false;
+                        for (int i = 0; i < 4; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                        for (int i = 4; i < 8; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = false;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Collapsed;
+                        }
                     }
                     else if (elementsSelected[0].nbrInputs() == 5)
                     {
-                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
-                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
-                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
-                        checkBox4.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[3]).IsInversed;
-                        checkBox5.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[4]).IsInversed;
-                        checkBox3.Visibility = Visibility.Visible;
-                        checkBox4.Visibility = Visibility.Visible;
-                        checkBox5.Visibility = Visibility.Visible;
-                        checkBox6.Visibility = Visibility.Collapsed;
-                        checkBox6.IsChecked = false;
-                        checkBox7.Visibility = Visibility.Collapsed;
-                        checkBox7.IsChecked = false;
-                        checkBox8.Visibility = Visibility.Collapsed;
-                        checkBox8.IsChecked = false;
+                        for (int i = 0; i < 5; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                        for (int i = 5; i < 8; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = false;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Collapsed;
+                        }
                     }
                     else if (elementsSelected[0].nbrInputs() == 6)
                     {
-                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
-                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
-                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
-                        checkBox4.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[3]).IsInversed;
-                        checkBox5.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[4]).IsInversed;
-                        checkBox6.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[5]).IsInversed;
-                        checkBox3.Visibility = Visibility.Visible;
-                        checkBox4.Visibility = Visibility.Visible;
-                        checkBox5.Visibility = Visibility.Visible;
-                        checkBox6.Visibility = Visibility.Visible;
-                        checkBox7.Visibility = Visibility.Collapsed;
-                        checkBox7.IsChecked = false;
-                        checkBox8.Visibility = Visibility.Collapsed;
-                        checkBox8.IsChecked = false;
+                        for (int i = 0; i < 6; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                        for (int i = 6; i < 8; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = false;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Collapsed;
+                        }
                     }
                     else if (elementsSelected[0].nbrInputs() == 7)
                     {
-                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
-                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
-                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
-                        checkBox4.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[3]).IsInversed;
-                        checkBox5.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[4]).IsInversed;
-                        checkBox6.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[5]).IsInversed;
-                        checkBox7.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[6]).IsInversed;
-                        checkBox3.Visibility = Visibility.Visible;
-                        checkBox4.Visibility = Visibility.Visible;
-                        checkBox5.Visibility = Visibility.Visible;
-                        checkBox6.Visibility = Visibility.Visible;
-                        checkBox7.Visibility = Visibility.Visible;
-                        checkBox8.Visibility = Visibility.Collapsed;
-                        checkBox8.IsChecked = false;
+                        for (int i = 0; i < 7; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                       
+                        ((CheckBox)GridCheckBox.Children[7]).IsChecked = false;
+                        ((CheckBox)GridCheckBox.Children[7]).Visibility = Visibility.Collapsed;
+                        
                     }
                     else if (elementsSelected[0].nbrInputs() == 8)
                     {
-                        checkBox1.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[0]).IsInversed;
-                        checkBox2.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[1]).IsInversed;
-                        checkBox3.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[2]).IsInversed;
-                        checkBox4.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[3]).IsInversed;
-                        checkBox5.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[4]).IsInversed;
-                        checkBox6.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[5]).IsInversed;
-                        checkBox7.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[6]).IsInversed;
-                        checkBox8.IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[7]).IsInversed;
-                        checkBox3.Visibility = Visibility.Visible;
-                        checkBox4.Visibility = Visibility.Visible;
-                        checkBox5.Visibility = Visibility.Visible;
-                        checkBox6.Visibility = Visibility.Visible;
-                        checkBox7.Visibility = Visibility.Visible;
-                        checkBox8.Visibility = Visibility.Visible;
+                        for (int i = 0; i <8 ; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
                     }
                     elementsSelected[0].recalculer_pos();
+                }
+                else if (elementsSelected[0] is SequentialComponent.Clock)
+                {
+                    ClockFrequency.Visibility = Visibility.Visible;
+                    Frequency.Visibility = Visibility.Visible;
+                    
+                    
                 }
             }
            
@@ -354,6 +331,15 @@ namespace WpfApplication9
             gate.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
             gate.PreviewMouseMove += this.MouseMove;
             gate.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+        }
+        private void add7segments(object sender, RoutedEventArgs e)
+        {
+            SeptSegmentsClass img = new SeptSegmentsClass();
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
         }
 
         private void addGate(object sender, RoutedEventArgs e)
@@ -465,7 +451,7 @@ namespace WpfApplication9
             {
                 if (elementsSelected.Count != 0)
                 {
-                    if (!(elementsSelected[0] is Input) && !(elementsSelected[0] is Output))
+                    if (UserClass.IsInputChangeable(elementsSelected[0]))
                     {
                         int selecteVal = ComboBoxProperties.SelectedIndex + 2;
                         if (ComboBoxProperties.SelectedIndex == 3) selecteVal = 8;
@@ -497,7 +483,7 @@ namespace WpfApplication9
         {
             NbrEntreText.Visibility = Visibility.Collapsed;
             ComboBoxProperties.Visibility=Visibility.Collapsed;
-             GridCheckBox.Visibility = Visibility.Collapsed;
+            GridCheckBox.Visibility = Visibility.Collapsed;
         }
 
         public void activeProp()
@@ -1357,7 +1343,17 @@ namespace WpfApplication9
 
             }
         }
+        private void addChrono(object sender, RoutedEventArgs e)
+        {
+            Chronogramme img = new Chronogramme(2);
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
 
+
+        }
         private void UpdateTitle()
         {
             StringBuilder ttl = new StringBuilder();

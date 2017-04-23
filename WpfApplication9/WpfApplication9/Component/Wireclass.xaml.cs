@@ -26,14 +26,14 @@ namespace WpfApplication9.Component
         public Line l2 { get; set; }
         public Line l3 { get; set; }
         
-        public static Boolean selected = false;
+       // public static Boolean selected = false;
         public static Point btn1Point;
-        public static Point btn2Point;
+        public  static Point btn2Point;
         public static Ellipse selection1;
         public static Ellipse selection2;
         public static Canvas myCanvas;
-        public static Window mwindow;
-        public  Terminal source;
+       // public static Window mwindow;
+        public   Terminal source;
         public  Terminal destination;
     
         public ArrayList destinations;
@@ -42,8 +42,8 @@ namespace WpfApplication9.Component
         public double y1;
         public double y2;
         private ContextMenu menu;
-        public Ellipse btn111;
-        public Ellipse btn222;
+        private Ellipse btn111;
+        private  Ellipse btn222;
         public Ellipse noued;
         private Boolean _state;
         public Boolean state
@@ -131,16 +131,17 @@ namespace WpfApplication9.Component
             listeLine.Add(l3);
      
             myCanvas.Children.Add(l2);
-            l2.PreviewMouseMove += MouseMove2;
+            l2.PreviewMouseMove += MouseMoveHorizental;
 
 
+      
 
 
-            l2.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown2;
+            l2.PreviewMouseLeftButtonDown += this.MouseLeftButtonDownHorizental;
            // l1.PreviewMouseMove += MouseMove1;//Partie a descuter 
          //   l1.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown1;
-            l3.PreviewMouseMove += MouseMove1;
-            l3.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown1;
+            l3.PreviewMouseMove += MouseMoveVertical;
+            l3.PreviewMouseLeftButtonDown += this.MouseLeftButtonDownVertical;
             myCanvas.Children.Add(l1);
            
             myCanvas.Children.Add(l3);
@@ -169,7 +170,7 @@ namespace WpfApplication9.Component
                     }
                     else
                     {
-                        selected = false;
+                        //selected = false;
                         return;
                     }
                 }
@@ -177,14 +178,14 @@ namespace WpfApplication9.Component
                 {
                     if (destination.IsOutpt == true)
                     {
-                        selected = false;
+                        //selected = false;
                         return;
                     }
                 }
 
                 if (destination.wires.Count >= 1)
                 {
-                    selected = false;
+                    //selected = false;
                     return;
                 }
 
@@ -227,7 +228,7 @@ namespace WpfApplication9.Component
 
 
             UserClass.TryFindParent<StandardComponent>(source).Run();
-                selected = false;
+                //selected = false;
                 UserClass.TryFindParent<StandardComponent>(destination).Run();
                 destinations.Add(UserClass.TryFindParent<StandardComponent>(destination));
             
@@ -294,7 +295,7 @@ namespace WpfApplication9.Component
             catch (NullReferenceException) { }
         }
 
-        public void recalculer(Boolean source)
+        public void recalculer()
         {
 
             if (UserClass.TryFindLogicalParent<Canvas>(btn111) == null)
@@ -394,20 +395,10 @@ namespace WpfApplication9.Component
    
         }
 
-        private new void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            // In this event, we get the current mouse position on the control to use it in the MouseMove event.
-            Ellipse img = sender as Ellipse;
-            Canvas canvas = img.Parent as Canvas;
-            MainWindow.sourceEllipse = img;
-            Mouse.Capture(canvas);
-            MainWindow.wire = new Wireclass();
-
-        }
 
 
         Line l;
-        private  void MouseLeftButtonDown2(object sender, MouseButtonEventArgs e)
+        private  void MouseLeftButtonDownHorizental(object sender, MouseButtonEventArgs e)
         {
 
             Mouse.Capture(sender as Line);
@@ -417,7 +408,7 @@ namespace WpfApplication9.Component
 
  
 
-        private  void MouseMove2(object sender, MouseEventArgs e) 
+        private  void MouseMoveHorizental(object sender, MouseEventArgs e) 
         {
       
             Line lBefore;
@@ -465,13 +456,12 @@ namespace WpfApplication9.Component
                     l.Y2 = lAfter.Y1;
                     lAfter.ContextMenu = menu;
                     myCanvas.Children.Add(lAfter);
-                    lAfter.Stroke = Brushes.Black;
                     lAfter.StrokeThickness = 2;
 
                     listeLine.Add(lAfter);
                     l3 = lAfter;
-                    lAfter.PreviewMouseMove += MouseMove1;
-                    lAfter.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown1;
+                    lAfter.PreviewMouseMove += MouseMoveVertical;
+                    lAfter.PreviewMouseLeftButtonDown += this.MouseLeftButtonDownVertical;
                     lastIsHorizental = true;
                 }
 
@@ -518,7 +508,7 @@ namespace WpfApplication9.Component
         }
 
  
-        private void MouseLeftButtonDown1(object sender, MouseButtonEventArgs e)
+        private void MouseLeftButtonDownVertical(object sender, MouseButtonEventArgs e)
         {
             Mouse.Capture(sender as Line);
             l = sender as Line;
@@ -528,7 +518,7 @@ namespace WpfApplication9.Component
 
 
 
-        private void MouseMove1(object sender, MouseEventArgs e)
+        private void MouseMoveVertical(object sender, MouseEventArgs e)
         {
             Line lBefore;
             Line lAfter;
@@ -585,8 +575,8 @@ namespace WpfApplication9.Component
                     lAfter.Y2 = btn2Point.Y;
                     listeLine.Add(lAfter);
                     myCanvas.Children.Add(lAfter);
-                    lAfter.PreviewMouseMove += this.MouseMove2;
-                    lAfter.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown2;
+                    lAfter.PreviewMouseMove += this.MouseMoveHorizental;
+                    lAfter.PreviewMouseLeftButtonDown += this.MouseLeftButtonDownHorizental;
                     lastIsHorizental = false;
                     l3 = lAfter;
                     lAfter.ContextMenu = menu;

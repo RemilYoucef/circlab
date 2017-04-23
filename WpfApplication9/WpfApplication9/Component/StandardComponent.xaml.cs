@@ -41,13 +41,30 @@ namespace WpfApplication9.Component
         {
             inputs_tab = new ArrayList();
             outputs_tab = new ArrayList();
+            if (nbrSelection != 0)
+            {
+                selections_tab = new ArrayList();
+                for(int i = 0; i < nbrSelection; i++)
+                {
+                    selections_tab.Add(false);
+                }
+            }
+            for(int i = 0; i < nbrinput; i++)
+            {
+                inputs_tab.Add(false);
+            }
+            for (int i = 0; i < nbrOutput; i++)
+            {
+                outputs_tab.Add(false);
+            }
+      
             selections_tab = new ArrayList();
             InitializeComponent();
             this.type = type;
             this.path = path;
             Terminal terminal = new Terminal();//on crée un terminal 
             typeComponenet = new Path();//le nombre d'input ;
-
+       
             for (int i = 0; i < nbrinput; i++)
             {
                 terminal = new Terminal();
@@ -66,11 +83,11 @@ namespace WpfApplication9.Component
 
                 terminal.terminal_grid.LayoutTransform = rt;
                 terminal.IsOutpt = true;
-                OutputStack.Children.Add(terminal);
+                OutputStack.Children.Add(terminal);               
 
             }
 
-
+            
 
             //output.Margin = new Thickness(15, 15, 15, 15);
 
@@ -91,7 +108,7 @@ namespace WpfApplication9.Component
             typeComponenet.VerticalAlignment = VerticalAlignment.Top;
             grid.Height = terminal.Height * Math.Max(nbrinput, nbrOutput)+25;
             grid.Children.Add(typeComponenet);
-
+            
 
             selectionStack.Margin = new Thickness(terminal.Width,0,terminal.Width,0);
                 
@@ -99,19 +116,21 @@ namespace WpfApplication9.Component
             {
                 Terminal terminalSelection = new Terminal();
                 double x = terminalSelection.terminal_grid.Height;
-
+                
                 terminalSelection.LayoutTransform = new RotateTransform(90);
-                terminalSelection.Margin = new Thickness(0, 0, 0, 2);
+                if (i == 0) {
+                    x = terminal.Width;
+                }
+                else
+                {
+                    x = 0;
+                }
+
+                terminalSelection.Margin = new Thickness(-terminal.Width/Math.Pow(2,nbrSelection)+x, 0, 0, 2);
                 selectionStack.Children.Add(terminalSelection);
             }
 
-            //on ajoute le typecomponenent 
-            // OutputStack.Height =
-            foreach (Terminal terminal1 in OutputStack.Children)
-            {
-                // terminal1.terminal_grid.Width = grid.Height / Math.Pow(2, Math.Max(nbrinput, nbrOutput));
-                //  terminal1.BorderThickness = new Thickness(0,10,0,0);
-            }
+  
 
         }
 
@@ -134,8 +153,7 @@ namespace WpfApplication9.Component
         {
             //StandardComponent component =UserClass.TryFindParent<StandardComponent>((((MenuItem)sender).Parent as ContextMenu).PlacementTarget);
             foreach(StandardComponent component in MainWindow.elementsSelected)
-            {
-                
+            { 
                 foreach (Terminal terminal in component.inputStack.Children)
                 {
                     try
@@ -152,7 +170,6 @@ namespace WpfApplication9.Component
                         wire.Destroy();
                     }*/
                 }
-
                 foreach (Terminal terminal in component.OutputStack.Children)
                 {
 
@@ -192,6 +209,7 @@ namespace WpfApplication9.Component
             Terminal terminal = new Terminal();
             terminal.IsOutpt = false;
             inputStack.Children.Add(terminal);
+            inputs_tab.Add(false);
            
             
         }
@@ -200,6 +218,7 @@ namespace WpfApplication9.Component
         {
             Terminal terminal=null;
             Wireclass wire=null;
+         
             foreach(Terminal tmp in inputStack.Children)
             {
                 terminal = tmp;
@@ -210,6 +229,7 @@ namespace WpfApplication9.Component
             }
             if(wire!=null) wire.Destroy();
             inputStack.Children.Remove(terminal);
+            inputs_tab.RemoveAt(1);
           
             
         }
@@ -271,7 +291,7 @@ namespace WpfApplication9.Component
             
 
             MainWindow window = UserClass.TryFindParent<MainWindow>(canvas);
-            if (!(sender is Input) && !(sender is Output) && !(sender is Clock) && !(sender is FlipFlop))
+            if (UserClass.IsInputChangeable((StandardComponent) sender))
             {
                 window.activeProp();
                 window.modifieProperties();
@@ -285,6 +305,8 @@ namespace WpfApplication9.Component
             else
             {
                 window.desactiveProp();
+                window.modifieProperties();
+
             }
 
 
@@ -348,7 +370,7 @@ namespace WpfApplication9.Component
             else nbrInput = this.nbrInputs();
 
             output.Margin = new Thickness(4.5, 11 * (nbrInput - 1), 4.5, 0);
-            grid.Height = nbrInput * 22;
+            grid.Height = nbrInput * 22+25;
             typeComponenet.Height = terminal.Height * nbrInput;
             typeComponenet.Width = terminal.Width * 4;
            
@@ -356,7 +378,7 @@ namespace WpfApplication9.Component
             typeComponenet.Stretch = Stretch.Fill;
             typeComponenet.StrokeThickness = 0;
             typeComponenet.Fill = Brushes.RoyalBlue;
-            typeComponenet.Margin = new Thickness(14, 0, 0, 0);
+            typeComponenet.Margin = new Thickness(14, 25, 0, 0);
             typeComponenet.HorizontalAlignment = HorizontalAlignment.Left;
             typeComponenet.VerticalAlignment = VerticalAlignment.Top;
             recalculer_pos();
@@ -367,13 +389,17 @@ namespace WpfApplication9.Component
 
         public void update_input()
         {
-            inputs_tab.Clear();
+           // inputs_tab.Clear();
             selections_tab.Clear();
-            outputs_tab.Clear();
+            
+            
+      
+            //outputs_tab.Clear();
+          
             int i = 0;
             foreach (Terminal terminal in inputStack.Children)
             {
-                inputs_tab.Add(false);
+                inputs_tab[i]=(false);
                 if (terminal.wires.Count != 0)
                 {
                    

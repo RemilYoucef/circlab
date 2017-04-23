@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using WpfApplication9.LogicGate;
+
 namespace WpfApplication9.Component
 {
     public static class UserClass
@@ -51,6 +53,20 @@ namespace WpfApplication9.Component
             }
             catch { }
             return arrayList;
+        }
+
+        /*public enum InputChangeable{
+            AND,NAND,NOR,OR
+        };*/
+
+        public static bool IsInputChangeable(StandardComponent component)
+        {
+            if (component is AND) return true;
+            else if (component is NAND) return true;
+            else if (component is NOR) return true;
+            else if (component is OR) return true;
+            else return false;
+
         }
     }
 }

@@ -20,7 +20,7 @@ namespace WpfApplication9.LogicGate
         public override void Run()
         {
             update_input();
-            outputs_tab.Add(true);
+            outputs_tab[0]=true;
         
             foreach(bool tmp in inputs_tab)
             {

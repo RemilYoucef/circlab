@@ -64,9 +64,28 @@
     <Reference Include="ReachFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Printing" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Web.DataVisualization">
+      <HintPath>..\packages\Microsoft.Chart.Controls.3.5.30729\lib\net35\System.Web.DataVisualization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.DataVisualization.Design">
+      <HintPath>..\packages\Microsoft.Chart.Controls.3.5.30729\lib\net35\System.Web.DataVisualization.Design.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\WPF Toolkit\v3.5.50211.1\System.Windows.Controls.DataVisualization.Toolkit.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization">
+      <HintPath>..\packages\Microsoft.Chart.Controls.3.5.30729\lib\net35\System.Windows.Forms.DataVisualization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization.Design">
+      <HintPath>..\packages\Microsoft.Chart.Controls.3.5.30729\lib\net35\System.Windows.Forms.DataVisualization.Design.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -102,6 +121,10 @@
     <Compile Include="Component\Wireclass.xaml.cs">
       <DependentUpon>Wireclass.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LogicGate\SeptSegmentsClass.cs" />
+    <Compile Include="LogicGate\Sept_Segments.xaml.cs">
+      <DependentUpon>Sept_Segments.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LogicGate\AND.cs" />
     <Compile Include="Component\StandardComponent.xaml.cs">
       <DependentUpon>StandardComponent.xaml</DependentUpon>
@@ -128,6 +151,13 @@
     </Compile>
     <Compile Include="SequentialComponent\AsynchToogle.cs" />
     <Compile Include="SequentialComponent\bus.cs" />
+    <Compile Include="SequentialComponent\Chart.xaml.cs">
+      <DependentUpon>Chart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SequentialComponent\Chronnogramme.cs" />
+    <Compile Include="SequentialComponent\ChronoWindow.xaml.cs">
+      <DependentUpon>ChronoWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SequentialComponent\CirculerRegister.cs" />
     <Compile Include="SequentialComponent\Clock.cs" />
     <Compile Include="SequentialComponent\CompteurModN.cs" />
@@ -158,6 +188,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="LogicGate\Sept_Segments.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LogicGate\test.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -183,6 +217,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SaveClose.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SequentialComponent\Chart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SequentialComponent\ChronoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

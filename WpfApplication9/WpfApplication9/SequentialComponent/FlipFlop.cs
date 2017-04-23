@@ -32,7 +32,6 @@ namespace WpfApplication9.SequentialComponent
 
         public override void Run()
         {
-           
             update_input();
             bool newClockValue = (bool)inputs_tab[1];
             _val = (bool)inputs_tab[0];

@@ -27,7 +27,7 @@ namespace WpfApplication9.SequentialComponent
 
         public override void Run()
         {
-            update_input();
+            update_input(); 
             _val = (bool)outputs_tab[0];
             _val1 = (bool)inputs_tab[0];
             _val2 = (bool)inputs_tab[1];
