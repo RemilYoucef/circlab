@@ -169,7 +169,7 @@
     <Compile Include="SequentialComponent\FlipFlop.cs" />
     <Compile Include="SequentialComponent\frequencydevider.cs" />
     <Compile Include="SequentialComponent\ISequential.cs" />
-    <Compile Include="SequentialComponent\JKLatch.cs" />
+    <Compile Include="SequentialComponent\JKL.cs" />
     <Compile Include="SequentialComponent\programmablRegister.cs" />
     <Compile Include="SequentialComponent\Registre.cs" />
     <Compile Include="SequentialComponent\RSHLatche.cs" />

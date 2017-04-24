@@ -23,10 +23,6 @@ namespace WpfApplication9.SequentialComponent
             set { _trigger = value; }
         }
         private bool oldClockValue;
-        public TriggerType Trigger
-        {
-            get { return _trigger; }
-        }
         public JK(TriggerType trigger)
             : base(3, 2,0, "M 0,0 L 30,0 L 30,30 L 0,30 z", "JK")
         {

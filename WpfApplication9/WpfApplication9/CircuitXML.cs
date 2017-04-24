@@ -44,6 +44,17 @@ namespace WpfApplication9
                             gt.SetAttributeValue("TriggerType", 0);
                         else gt.SetAttributeValue("TriggerType", 1);
                     }
+                    if(shape is Registre)
+                    {
+                        if (((Registre)shape).Trigger == Registre.TriggerType.FallingEdge)
+                            gt.SetAttributeValue("TriggerType", 0);
+                        else if (((Registre)shape).Trigger == Registre.TriggerType.RisingEdge)
+                            gt.SetAttributeValue("TriggerType", 1);
+                        else if (((Registre)shape).Trigger == Registre.TriggerType.LowLevel)
+                            gt.SetAttributeValue("TriggerType", 2);
+                        else if (((Registre)shape).Trigger == Registre.TriggerType.HighLevel)
+                            gt.SetAttributeValue("TriggerType", 3);
+                    }
                     gates.Add(gt);
                     gid.Add(g, id);
                     id++;
@@ -89,6 +100,7 @@ namespace WpfApplication9
 
         private static StandardComponent CreateGate(XElement gate)
         {
+            int temp;
             int numInputs = int.Parse(gate.Attribute("NumInputs").Value);
             switch (gate.Attribute("Type").Value)
             {
@@ -116,8 +128,25 @@ namespace WpfApplication9
                     int lowms = int.Parse(gate.Attribute("LowLevelms").Value);
                     return new Clock(highms, lowms, MainWindow.Delay);
                 case "JK":
-                    int temp = int.Parse(gate.Attribute("TriggerType").Value);
+                    temp = int.Parse(gate.Attribute("TriggerType").Value);
                     return new JK((temp == 0) ? JK.TriggerType.FallingEdge : JK.TriggerType.RisingEdge);
+                case "SynchToogle":
+                    return new SynchToogle();
+                case "AsynchToogle":
+                    return new AsynchToogle();
+                case "RSLatche":
+                    return new RSLatche();
+                case "RSHLatche":
+                    return new RSHLatche();
+                case "Registre":
+                    temp = int.Parse(gate.Attribute("TriggerType").Value);
+                    switch(temp)
+                    {
+                        case 0: return new Registre(Registre.TriggerType.FallingEdge, numInputs);
+                        case 1: return new Registre(Registre.TriggerType.RisingEdge, numInputs);
+                        case 2: return new Registre(Registre.TriggerType.LowLevel, numInputs);
+                        default: return new Registre(Registre.TriggerType.HighLevel, numInputs);
+                    }
             }
             throw new ArgumentException("unknown gate");
         }

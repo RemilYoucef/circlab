@@ -14,8 +14,12 @@
                           Click="RotateRight"></MenuItem>
                 <MenuItem Header="Rotate Left"
                           Click="RotateLeft"></MenuItem>
-                <MenuItem Command="Paste"></MenuItem>
-                <MenuItem Command="Delete"></MenuItem>
+                <MenuItem Name="Copier"
+                          Click="copier"
+                          Header="Copier"></MenuItem>
+                <MenuItem Name="Couper"
+                          Click="couper"
+                          Header="Couper"></MenuItem>
             </ContextMenu>
         </Grid.ContextMenu>
         <StackPanel x:Name="selectionStack" Height="33" VerticalAlignment="Top" Orientation="Horizontal" Margin="15,0,0,0" HorizontalAlignment="Left" Width="54"/>

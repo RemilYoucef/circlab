@@ -61,7 +61,7 @@ namespace WpfApplication9.Component
             else if (component is SequentialComponent.programmablRegister) return true;
             else if (component is SequentialComponent.CirculerRegister) return true;
             else if (component is SequentialComponent.Registre) return true;
-            else if (component is SequentialComponent.JKLatch) return true;
+            else if (component is SequentialComponent.JK) return true;
             else return false;
        }
 

@@ -37,6 +37,7 @@ namespace WpfApplication9
         public static float Delay = 1;
         Stack<Canvas> undos = new Stack<Canvas>();
         Stack<Canvas> redos = new Stack<Canvas>();
+        List<StandardComponent> liste_copier = new List<StandardComponent>();
 
         private bool _mute = false;
         private Brush oldBackground;
@@ -64,6 +65,7 @@ namespace WpfApplication9
         public MainWindow()
         {
             InitializeComponent();
+            StandardComponent.liste_copier = liste_copier;
             gridActivatorCheckbox.DataContext = this;
             var ph = new PaletteHelper();
             ph.ReplacePrimaryColor("deeppurple");
@@ -73,6 +75,7 @@ namespace WpfApplication9
             StandardComponent.canvas = canvas;
             canvas.PreviewMouseMove += this.MouseMove2;
             canvas.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp2;
+            this.PreviewKeyDown += new KeyEventHandler(Window1_EditFull_KeyDown);
             this.Closing += new CancelEventHandler(WindowClosing);
             sourceEllipse = null;
         }
@@ -85,7 +88,7 @@ namespace WpfApplication9
         public static bool SelectedTerminalIsSource;
 
    
-        private new void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        public new void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             miseAJourPile();
             // In this event, we get the current mouse position on the control to use it in the MouseMove event.
@@ -114,7 +117,7 @@ namespace WpfApplication9
         }
 
 
-        private new void PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        public new void PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
 
             Control img = sender as Control;
@@ -278,7 +281,7 @@ namespace WpfApplication9
                 {
                     Type.Visibility = Visibility.Visible;
                     Compteur.Visibility = Visibility.Collapsed;
-                    comboBoxtype(((SequentialComponent.JKLatch)elementsSelected[0]).Trigger.ToString());
+                    comboBoxtype(((SequentialComponent.JK)elementsSelected[0]).Trigger.ToString());
                     NiveauBas.Visibility = Visibility.Collapsed;
                     NiveauHaut.Visibility = Visibility.Collapsed;
                 }
@@ -319,7 +322,7 @@ namespace WpfApplication9
             else if (type == "HighLevel") ComboBoxFrontNiveau.SelectedIndex = 2;
             else if (type == "LowLevel") ComboBoxFrontNiveau.SelectedIndex = 3;
         }
-        private void addAND(object sender, RoutedEventArgs e)
+        private void CreateNewGate(string name)
         {
             miseAJourPile();
             UIElement gate;
@@ -420,7 +423,7 @@ namespace WpfApplication9
         double differnceX;//Calculer la difference de deplacement des absices
         double differenceY;//meme chose :3
 
-        private new void MouseMove(object sender, MouseEventArgs e)
+        public new void MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && sender == movingObject)
             {
@@ -1377,6 +1380,15 @@ namespace WpfApplication9
                 }
             }
         }
+        private void Frequency_KeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                ((SequentialComponent.Clock)elementsSelected[0]).Delay = float.Parse(Frequency.Text);
+            }
+            catch
+            { }
+        }
 
         private void btnPrint_Click(object sender, RoutedEventArgs e)
         {
@@ -1414,15 +1426,6 @@ namespace WpfApplication9
 
             }
         }
-        private void addChrono(object sender, RoutedEventArgs e)
-        {
-            Chronogramme img = new Chronogramme(2);
-            canvas.Children.Add(img);
-            img.AllowDrop = true;
-            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-            img.PreviewMouseMove += this.MouseMove;
-            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
 
         private void ComboBoxFrontNiveau_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1446,9 +1449,9 @@ namespace WpfApplication9
                     {
                         ((SequentialComponent.programmablRegister)elementsSelected[0]).Trigger = programmablRegister.TriggerType.RisingEdge;
                     }
-                    else if ((elementsSelected[0] is SequentialComponent.JKLatch))
+                    else if ((elementsSelected[0] is SequentialComponent.JK))
                     {
-                        ((SequentialComponent.JKLatch)elementsSelected[0]).Trigger = JKLatch.TriggerType.RisingEdge;
+                        ((SequentialComponent.JK)elementsSelected[0]).Trigger = JK.TriggerType.RisingEdge;
                     }
                 }
                 else if (ComboBoxFrontNiveau.SelectedIndex == 1) //front descandant
@@ -1469,9 +1472,9 @@ namespace WpfApplication9
                     {
                         ((SequentialComponent.programmablRegister)elementsSelected[0]).Trigger = programmablRegister.TriggerType.FallingEdge;
                     }
-                    else if ((elementsSelected[0] is SequentialComponent.JKLatch))
+                    else if ((elementsSelected[0] is SequentialComponent.JK))
                     {
-                        ((SequentialComponent.JKLatch)elementsSelected[0]).Trigger = JKLatch.TriggerType.FallingEdge;
+                        ((SequentialComponent.JK)elementsSelected[0]).Trigger = JK.TriggerType.FallingEdge;
                     }
                 }
                 else if (ComboBoxFrontNiveau.SelectedIndex == 2) //Niveau haut
@@ -1575,6 +1578,533 @@ namespace WpfApplication9
             Title = ttl.ToString();
             CircuitName.Text = ttl.ToString();
         }
+
+        public List<StandardComponent> parcourir_coupier()
+        {
+            UIElement[] tableau = new UIElement[1000];
+            List<StandardComponent> liste = new List<StandardComponent>();
+            int length = canvas.Children.Count;
+            canvas.Children.CopyTo(tableau, 0);
+            for (int i = 0; i < length; i++)
+            {
+                StandardComponent newChild = null;
+                if (!(typeof(Line) == tableau[i].GetType()) && ((tableau[i] as StandardComponent).IsSelect))
+                {
+
+                    if (typeof(AND) == tableau[i].GetType())
+                    {
+                        newChild = new AND((tableau[i] as AND).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as AND).nbrInputs(); j++)
+                        {
+
+                            Terminal terminal_1 = (Terminal)((tableau[i] as AND).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as AND).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+                        }
+                    }
+                    else if (typeof(OR) == tableau[i].GetType())
+                    {
+                        newChild = new OR((tableau[i] as OR).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as OR).nbrInputs(); j++)
+                        {
+
+                            Terminal terminal_1 = (Terminal)((tableau[i] as OR).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as OR).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+
+                        }
+                    }
+
+                    else if (typeof(NAND) == tableau[i].GetType())
+                    {
+                        newChild = new NAND((tableau[i] as NAND).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as NAND).nbrInputs(); j++)
+                        {
+
+                            Terminal terminal_1 = (Terminal)((tableau[i] as NAND).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as NAND).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+
+                        }
+                    }
+                    else if (typeof(NOR) == tableau[i].GetType())
+                    {
+                        newChild = new NOR((tableau[i] as NOR).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as NOR).nbrInputs(); j++)
+                        {
+                            Terminal terminal_1 = (Terminal)((tableau[i] as NOR).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as NOR).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+
+                        }
+                    }
+
+                    else if (typeof(Not) == tableau[i].GetType())
+                    {
+                        newChild = new Not();
+
+                        Terminal terminal_1 = (Terminal)((tableau[i] as Not).inputStack.Children[0]);
+                        Terminal terminal_2 = (Terminal)((newChild as Not).inputStack.Children[0]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+                    }
+
+                    else if (typeof(Output) == tableau[i].GetType())
+                    {
+                        newChild = new Output();
+                    }
+
+                    else if (typeof(Input) == tableau[i].GetType())
+                    {
+                        newChild = new Input();
+                        (newChild as Input).state = (tableau[i] as Input).state;
+
+                    }
+
+                    else if (typeof(XNOR) == tableau[i].GetType())
+                    {
+                        newChild = new XNOR((tableau[i] as XNOR).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as XNOR).nbrInputs(); j++)
+                        {
+
+                            Terminal terminal_1 = (Terminal)((tableau[i] as XNOR).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as XNOR).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+
+                        }
+                    }
+                    else if (typeof(XOR) == tableau[i].GetType())
+                    {
+                        newChild = new XOR((tableau[i] as XOR).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as XOR).nbrInputs(); j++)
+                        {
+
+                            Terminal terminal_1 = (Terminal)((tableau[i] as XOR).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as XOR).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+
+                        }
+                    }
+
+                    else if (typeof(Comparateur) == tableau[i].GetType())
+                    {
+                        newChild = new Comparateur((tableau[i] as Comparateur).nbrInputs(), (tableau[i] as Comparateur).nbrOutputs());
+
+                    }
+
+                    else if (typeof(Decodeur) == tableau[i].GetType())
+                    {
+                        newChild = new Decodeur((tableau[i] as Decodeur).nbrInputs(), (tableau[i] as Decodeur).nbrOutputs());
+                    }
+
+                    else if (typeof(Demultiplexer) == tableau[i].GetType())
+                    {
+                        newChild = new Demultiplexer((tableau[i] as Demultiplexer).nbrInputs(), (tableau[i] as Demultiplexer).nbrOutputs(), (tableau[i] as Demultiplexer).nbrSelections());
+                    }
+
+                    else if (typeof(Encodeur) == tableau[i].GetType())
+                    {
+                        newChild = new Encodeur((tableau[i] as Encodeur).nbrInputs(), (tableau[i] as Encodeur).nbrOutputs());
+                    }
+
+                    else if (typeof(FullAdder) == tableau[i].GetType())
+                    {
+                        newChild = new FullAdder((tableau[i] as FullAdder).nbrInputs(), (tableau[i] as FullAdder).nbrOutputs());
+                    }
+
+                    else if (typeof(FullSub) == tableau[i].GetType())
+                    {
+                        newChild = new FullSub((tableau[i] as FullSub).nbrInputs(), (tableau[i] as FullSub).nbrOutputs());
+                    }
+
+                    else if (typeof(HalfAdder) == tableau[i].GetType())
+                    {
+                        newChild = new HalfAdder((tableau[i] as HalfAdder).nbrInputs(), (tableau[i] as HalfAdder).nbrOutputs());
+                    }
+
+                    else if (typeof(HalfSub) == tableau[i].GetType())
+                    {
+                        newChild = new HalfSub((tableau[i] as HalfSub).nbrInputs(), (tableau[i] as HalfSub).nbrOutputs());
+                    }
+
+                    else if (typeof(Multiplexer) == tableau[i].GetType())
+                    {
+                        newChild = new Multiplexer((tableau[i] as Multiplexer).nbrInputs(), (tableau[i] as Multiplexer).nbrOutputs(), (tableau[i] as Multiplexer).nbrSelections());
+                    }
+
+                    else if (typeof(SequentialComponent.Clock) == tableau[i].GetType())
+                    {
+                        newChild = new SequentialComponent.Clock((tableau[i] as SequentialComponent.Clock).LowLevelms, (tableau[i] as SequentialComponent.Clock).HighLevelms, MainWindow.Delay);
+                    }
+                    
+
+                    liste.Add(newChild);
+                    newChild.AllowDrop = true;
+                    newChild.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+                    newChild.PreviewMouseMove += this.MouseMove;
+                    newChild.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+
+                    newChild.SetValue(Canvas.LeftProperty, tableau[i].GetValue(Canvas.LeftProperty));
+                    newChild.SetValue(Canvas.TopProperty, tableau[i].GetValue(Canvas.TopProperty));
+
+                    (newChild as StandardComponent).PosX = (tableau[i] as StandardComponent).PosX;
+
+                    (newChild as StandardComponent).PosY = (tableau[i] as StandardComponent).PosY;
+
+                    try
+                    {
+                        StandardComponent component = newChild as StandardComponent;
+                        component.recalculer_pos();
+                    }
+                    catch { };
+
+                    /**/
+                    miseAJourPile();
+                    foreach (Terminal terminal in (tableau[i] as StandardComponent).inputStack.Children)
+                    {
+                        try
+                        {
+                            for (int j = 0; j < terminal.wires.Count; j++)
+                            {
+                                ((Wireclass)terminal.wires[j]).Destroy();
+
+                            }
+                        }
+                        catch (ArgumentOutOfRangeException) { }
+
+                    }
+                    foreach (Terminal terminal in (tableau[i] as StandardComponent).OutputStack.Children)
+                    {
+
+                        for (int k = terminal.wires.Count - 1; k >= 0; k--)
+                        {
+
+                            ((Wireclass)terminal.wires[k]).Destroy();
+                        }
+                    }
+                    canvas.Children.Remove(tableau[i]);
+                }
+            }
+            return liste;
+        }
+
+
+        public List<StandardComponent> parcourir_copier()
+        {
+            UIElement[] tableau = new UIElement[1000];
+            List<StandardComponent> liste = new List<StandardComponent>();
+            int length = canvas.Children.Count;
+            canvas.Children.CopyTo(tableau, 0);
+            for (int i = 0; i < length; i++)
+            {
+
+                StandardComponent newChild = null;
+                if (!(typeof(Line) == tableau[i].GetType()) && ((tableau[i] as StandardComponent).IsSelect))
+                {
+
+                    if (typeof(AND) == tableau[i].GetType())
+                    {
+                        newChild = new AND((tableau[i] as AND).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as AND).nbrInputs(); j++)
+                        {
+
+                            Terminal terminal_1 = (Terminal)((tableau[i] as AND).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as AND).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+                        }
+                    }
+                    else if (typeof(OR) == tableau[i].GetType())
+                    {
+                        newChild = new OR((tableau[i] as OR).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as OR).nbrInputs(); j++)
+                        {
+
+                            Terminal terminal_1 = (Terminal)((tableau[i] as OR).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as OR).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+
+                        }
+                    }
+
+                    else if (typeof(NAND) == tableau[i].GetType())
+                    {
+                        newChild = new NAND((tableau[i] as NAND).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as NAND).nbrInputs(); j++)
+                        {
+
+                            Terminal terminal_1 = (Terminal)((tableau[i] as NAND).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as NAND).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+
+                        }
+                    }
+                    else if (typeof(NOR) == tableau[i].GetType())
+                    {
+                        newChild = new NOR((tableau[i] as NOR).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as NOR).nbrInputs(); j++)
+                        {
+                            Terminal terminal_1 = (Terminal)((tableau[i] as NOR).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as NOR).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+
+                        }
+                    }
+
+                    else if (typeof(Not) == tableau[i].GetType())
+                    {
+                        newChild = new Not();
+
+                        Terminal terminal_1 = (Terminal)((tableau[i] as Not).inputStack.Children[0]);
+                        Terminal terminal_2 = (Terminal)((newChild as Not).inputStack.Children[0]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+                    }
+
+                    else if (typeof(Output) == tableau[i].GetType())
+                    {
+                        newChild = new Output();
+                    }
+
+                    else if (typeof(Input) == tableau[i].GetType())
+                    {
+                        newChild = new Input();
+                        (newChild as Input).state = (tableau[i] as Input).state;
+
+                    }
+
+                    else if (typeof(XNOR) == tableau[i].GetType())
+                    {
+                        newChild = new XNOR((tableau[i] as XNOR).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as XNOR).nbrInputs(); j++)
+                        {
+
+                            Terminal terminal_1 = (Terminal)((tableau[i] as XNOR).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as XNOR).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+
+                        }
+                    }
+                    else if (typeof(XOR) == tableau[i].GetType())
+                    {
+                        newChild = new XOR((tableau[i] as XOR).nbrInputs());
+                        for (int j = 0; j < (tableau[i] as XOR).nbrInputs(); j++)
+                        {
+                            Terminal terminal_1 = (Terminal)((tableau[i] as XOR).inputStack.Children[j]);
+                            Terminal terminal_2 = (Terminal)((newChild as XOR).inputStack.Children[j]);
+
+                            if (terminal_1.IsInversed)
+                            {
+                                terminal_2.IsInversed = true;
+                                terminal_2.input_inversed();
+                            }
+                        }
+                    }
+
+                    else if (typeof(Comparateur) == tableau[i].GetType())
+                    {
+                        newChild = new Comparateur((tableau[i] as Comparateur).nbrInputs(), (tableau[i] as Comparateur).nbrOutputs());
+
+                    }
+
+                    else if (typeof(Decodeur) == tableau[i].GetType())
+                    {
+                        newChild = new Decodeur((tableau[i] as Decodeur).nbrInputs(), (tableau[i] as Decodeur).nbrOutputs());
+                    }
+
+                    else if (typeof(Demultiplexer) == tableau[i].GetType())
+                    {
+                        newChild = new Demultiplexer((tableau[i] as Demultiplexer).nbrInputs(), (tableau[i] as Demultiplexer).nbrOutputs(), (tableau[i] as Demultiplexer).nbrSelections());
+                    }
+
+                    else if (typeof(Encodeur) == tableau[i].GetType())
+                    {
+                        newChild = new Encodeur((tableau[i] as Encodeur).nbrInputs(), (tableau[i] as Encodeur).nbrOutputs());
+                    }
+
+                    else if (typeof(FullAdder) == tableau[i].GetType())
+                    {
+                        newChild = new FullAdder((tableau[i] as FullAdder).nbrInputs(), (tableau[i] as FullAdder).nbrOutputs());
+                    }
+
+                    else if (typeof(FullSub) == tableau[i].GetType())
+                    {
+                        newChild = new FullSub((tableau[i] as FullSub).nbrInputs(), (tableau[i] as FullSub).nbrOutputs());
+                    }
+
+                    else if (typeof(HalfAdder) == tableau[i].GetType())
+                    {
+                        newChild = new HalfAdder((tableau[i] as HalfAdder).nbrInputs(), (tableau[i] as HalfAdder).nbrOutputs());
+                    }
+
+                    else if (typeof(HalfSub) == tableau[i].GetType())
+                    {
+                        newChild = new HalfSub((tableau[i] as HalfSub).nbrInputs(), (tableau[i] as HalfSub).nbrOutputs());
+                    }
+
+                    else if (typeof(Multiplexer) == tableau[i].GetType())
+                    {
+                        newChild = new Multiplexer((tableau[i] as Multiplexer).nbrInputs(), (tableau[i] as Multiplexer).nbrOutputs(), (tableau[i] as Multiplexer).nbrSelections());
+                    }
+
+                    else if (typeof(SequentialComponent.Clock) == tableau[i].GetType())
+                    {
+                        newChild = new SequentialComponent.Clock((tableau[i] as SequentialComponent.Clock).LowLevelms, (tableau[i] as SequentialComponent.Clock).HighLevelms, MainWindow.Delay);
+                    }
+
+                    
+
+                    liste.Add(newChild);
+                    newChild.AllowDrop = true;
+                    newChild.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+                    newChild.PreviewMouseMove += this.MouseMove;
+                    newChild.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+                    newChild.SetValue(Canvas.LeftProperty, tableau[i].GetValue(Canvas.LeftProperty));
+                    newChild.SetValue(Canvas.TopProperty, tableau[i].GetValue(Canvas.TopProperty));
+                    (newChild as StandardComponent).PosX = (tableau[i] as StandardComponent).PosX;
+                    (newChild as StandardComponent).PosY = (tableau[i] as StandardComponent).PosY;
+
+                    try
+                    {
+                        StandardComponent component = newChild as StandardComponent;
+                        component.recalculer_pos();
+                    }
+                    catch { };
+                }
+            }
+            return liste;
+        }
+
+        public void copier(object sender, RoutedEventArgs e)
+        {
+            liste_copier.Clear();
+            List<StandardComponent> liste = parcourir_copier();
+
+            for (int i = 0; i < liste.Count; i++)
+            {
+                liste_copier.Add(liste[i]);
+            }
+
+            
+        }
+
+        public void couper(object sender, RoutedEventArgs e)
+        {
+            List<StandardComponent> liste = parcourir_coupier();
+            liste_copier.Clear();
+
+            for (int i = 0; i < liste.Count; i++)
+            {
+                liste_copier.Add(liste[i]);
+            }
+
+        }
+
+        public void coller(object sender, RoutedEventArgs e)
+        {
+            for (int j = 0; j < liste_copier.Count; j++)
+            {
+                canvas.Children.Add(liste_copier[j]);
+            }
+        }
+
+
+        // Rac Clavier 
+
+        private void Window1_EditFull_KeyDown(object sender, KeyEventArgs e)
+        {
+
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                if (e.Key == Key.Z && retourBouton.IsEnabled)
+                {
+                    retour(sender, e);
+                }
+                if (e.Key == Key.Y && refaireBouton.IsEnabled)
+                {
+                    refaire(sender, e);
+                }
+
+                if (e.Key == Key.C)
+                {
+                    copier(sender, e);
+                }
+
+                if (e.Key == Key.X)
+                {
+                    couper(sender, e);
+                }
+
+                if (e.Key == Key.V)
+                {
+                    coller(sender, e);
+                }
+
+            }
+        }
+
     }
 
 

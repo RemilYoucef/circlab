@@ -19,6 +19,11 @@ namespace WpfApplication9.SequentialComponent
 
         private int _nbroutput; //contenir le nombre de sorties 
         private TriggerType _trigger;//contenir le type du changement 
+        public TriggerType Trigger
+        {
+            get { return _trigger; }
+            set { _trigger = value; }
+        }
         private bool oldClockValue;//contenir l'ancienne valeur de l'horloge 
         private bool newClockValue;//contenir la nouvelle valeur de l'horloge 
 

@@ -203,7 +203,7 @@ namespace WpfApplication9.Component
                 l1.X2 = (btn1Point.X + btn2Point.X + 2 * selection1.ActualWidth) / 2;
                 l1.Y1 = btn1Point.Y + selection1.ActualHeight / 2;
                 l1.Y2 = btn1Point.Y + selection1.ActualHeight / 2;
-                if(!myCanvas.Children.Contains(l1)) myCanvas.Children.Add(l1);
+                if(!myCanvas.Children.Contains(l1))myCanvas.Children.Add(l1);
 
           
                 l2.Stroke = new SolidColorBrush(Colors.Black);
@@ -212,7 +212,7 @@ namespace WpfApplication9.Component
                 l2.X2 = l1.X2;
                 l2.Y1 = l1.Y1;
                 l2.Y2 = btn2Point.Y - selection2.ActualHeight / 2;
-                if(!myCanvas.Children.Contains(l2)) myCanvas.Children.Add(l2);
+                if (!myCanvas.Children.Contains(l2))myCanvas.Children.Add(l2);
 
                
                 l3.Stroke = new SolidColorBrush(Colors.Black);
