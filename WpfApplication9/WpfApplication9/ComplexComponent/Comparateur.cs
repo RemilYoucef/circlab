@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfApplication9.ComplexComponent;
-using WpfApplication9.Component;
+using CircLab.ComplexComponent;
+using CircLab.Component;
+using System.Windows.Media;
+using System.Windows;
 
-
-namespace WpfApplication9.ComplexComponent
+namespace CircLab.ComplexComponent
 {
     class Comparateur : StandardComponent
     {
@@ -66,6 +67,26 @@ namespace WpfApplication9.ComplexComponent
             }
 
             update_output();
+        }
+
+        public override void redessiner(string path)
+        {
+            Terminal terminal = new Terminal();
+           
+            grid.Height = inputStack.Children.Count * 22 + 25;
+            typeComponenet.Height = terminal.Height * inputStack.Children.Count;
+            typeComponenet.Width = terminal.Width * 4;
+
+            typeComponenet.Data = StreamGeometry.Parse(path);
+            typeComponenet.Stretch = Stretch.Fill;
+            typeComponenet.StrokeThickness = 0;
+            typeComponenet.Fill = Brushes.RoyalBlue;
+            typeComponenet.Margin = new Thickness(14, 25, 0, 0);
+            typeComponenet.HorizontalAlignment = HorizontalAlignment.Left;
+            typeComponenet.VerticalAlignment = VerticalAlignment.Top;
+            recalculer_pos();
+            if (IsSelect) selectElement(this);
+            canvas.UpdateLayout();
         }
     }
 }

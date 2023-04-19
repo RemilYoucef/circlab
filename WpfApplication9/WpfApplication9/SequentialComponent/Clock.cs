@@ -8,9 +8,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using WpfApplication9.Component;
+using CircLab.Component;
 
-namespace WpfApplication9.SequentialComponent
+namespace CircLab.SequentialComponent
 {
     class Clock:StandardComponent, ISequential
     {
@@ -22,6 +22,7 @@ namespace WpfApplication9.SequentialComponent
         public Clock(int lowLevlms, int highLevelms, float delay)
             : base(0,1,0, "M0.5,0.5 L27,0.5 L27,27.5 L0.5,27.5 z","Clock")
         {
+            TypeLabel.Text = "Clock";
             _val = false;
             this.typeComponenet.Fill = Brushes.Red;
             Path signalShape = new Path();

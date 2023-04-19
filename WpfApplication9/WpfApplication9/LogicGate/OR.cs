@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfApplication9.Component;
+using CircLab.Component;
 
-namespace WpfApplication9.LogicGate
+namespace CircLab.LogicGate
 {
     class OR : StandardComponent
     {
@@ -13,7 +13,7 @@ namespace WpfApplication9.LogicGate
         public OR(int nbrinput)
             : base(nbrinput,1,0, "M 15,17 h 10 c 10,0 20,5 25,15 c -5,10 -15,15 -25,15 h -10 c 5,-10 5,-20 0,-30","OR")
         {
-            
+            TypeLabel.Text = "Or";
         }
 
 

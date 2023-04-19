@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfApplication9.Component;
-using WpfApplication9.ComplexComponent;
+using CircLab.Component;
+using CircLab.ComplexComponent;
 using System.Windows.Media;
 using System.Windows;
 
-namespace WpfApplication9.SequentialComponent
+namespace CircLab.SequentialComponent
 {
     class compteurN : StandardComponent
     {
@@ -29,7 +29,8 @@ namespace WpfApplication9.SequentialComponent
         public compteurN(int N,int nbr)
             :base(1,nbr,0, "M 0,0 L 30,0 L 30,30 L 0,30 z","frequencyDivider")
         {
-            for(int k = 0; k < inputs_tab.Count; k++) { outputs_tab[k] = false; }
+            TypeLabel.Text = "Compteur";
+            for (int k = 0; k < inputs_tab.Count; k++) { outputs_tab[k] = false; }
             _val = N ;
             oldClockValue = false;
             _nbroutputs = nbr;
@@ -38,6 +39,8 @@ namespace WpfApplication9.SequentialComponent
             {
                 outputs_tab.Add(false);
             }
+            TypeLabel.Text = "ComptN";
+            ((Terminal)inputStack.Children[0]).terminal_grid.ToolTip = "Clock";
 
         }
 

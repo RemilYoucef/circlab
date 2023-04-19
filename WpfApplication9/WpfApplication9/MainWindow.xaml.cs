@@ -14,17 +14,19 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WpfApplication9.Component;
-using WpfApplication9.LogicGate;
-using WpfApplication9.SequentialComponent;
+using CircLab.Component;
+using CircLab.LogicGate;
+using CircLab.SequentialComponent;
 using MaterialDesignThemes.Wpf;
 using System.IO;
 using System.Windows.Markup;
 using System.Threading;
 using System.ComponentModel;
-using WpfApplication9.ComplexComponent;
+using CircLab.ComplexComponent;
+using WpfApplication9.LogicGate;
+using System.Xml.Linq;
 
-namespace WpfApplication9
+namespace CircLab
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -32,11 +34,12 @@ namespace WpfApplication9
     public partial class MainWindow : Window
     {
         public static string APP_TITLE = "CircLab";
+        public Canvas canvastest;
         public static List<StandardComponent> elementsSelected= new List<StandardComponent>();
         private string _filename = "";
         public static float Delay = 1;
-        Stack<Canvas> undos = new Stack<Canvas>();
-        Stack<Canvas> redos = new Stack<Canvas>();
+        Stack<XElement> undos = new Stack<XElement>();
+        Stack<XElement> redos = new Stack<XElement>();
         List<StandardComponent> liste_copier = new List<StandardComponent>();
 
         private bool _mute = false;
@@ -62,6 +65,7 @@ namespace WpfApplication9
             }
         }
 
+     
         public MainWindow()
         {
             InitializeComponent();
@@ -73,11 +77,13 @@ namespace WpfApplication9
             Wireclass.myCanvas = canvas;
             desactiveProp();
             StandardComponent.canvas = canvas;
+            StandardComponent.fenetre = this;
             canvas.PreviewMouseMove += this.MouseMove2;
             canvas.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp2;
             this.PreviewKeyDown += new KeyEventHandler(Window1_EditFull_KeyDown);
             this.Closing += new CancelEventHandler(WindowClosing);
             sourceEllipse = null;
+           canvastest = this.canvas;
         }
 
         private object movingObject;
@@ -151,6 +157,10 @@ namespace WpfApplication9
                     Frequency.Visibility = Visibility.Collapsed;
                     Type.Visibility = Visibility.Collapsed;
                     Compteur.Visibility = Visibility.Collapsed;
+                    NbrEnreComparateur.Visibility = Visibility.Collapsed;
+                    TypeDec.Visibility = Visibility.Collapsed;
+                    TypeEnc.Visibility = Visibility.Collapsed;
+                    TypeReg.Visibility = Visibility.Collapsed;
 
                     if (elementsSelected[0].nbrInputs() != 8)
                         ComboBoxProperties.SelectedIndex = elementsSelected[0].nbrInputs() - 2;
@@ -243,12 +253,51 @@ namespace WpfApplication9
                             ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
                         }
                     }
+
+                    if (UserClass.IsFrontChangeable(elementsSelected[0]) && UserClass.IsNiveauChangeable(elementsSelected[0]))
+                    {
+                        NiveauBas.Visibility = Visibility.Visible;
+                        NiveauHaut.Visibility = Visibility.Visible;
+                        Type.Visibility = Visibility.Visible;
+
+                       
+                        if ((elementsSelected[0] is SequentialComponent.Registre))
+                        {
+                            comboBoxtype(((SequentialComponent.Registre)elementsSelected[0]).Trigger.ToString());
+                        }
+                        else if ((elementsSelected[0] is SequentialComponent.CirculerRegister))
+                        {
+                            comboBoxtype(((SequentialComponent.CirculerRegister)elementsSelected[0]).Trigger.ToString());
+                            TypeReg.Visibility = Visibility.Visible;
+                            if (((CirculerRegister)elementsSelected[0]).typeDec == CirculerRegister.Type.Right)
+                            {
+                                ComboBoxPropertiesReg.SelectedIndex = 0;
+                            }
+                            else
+                            {
+                                ComboBoxPropertiesReg.SelectedIndex = 1;
+                            }
+                        }
+                        else if ((elementsSelected[0] is SequentialComponent.programmablRegister))
+                    {
+                        comboBoxtype(((SequentialComponent.programmablRegister)elementsSelected[0]).Trigger.ToString());
+                    }
+                        Type.Visibility = Visibility.Visible;
+                    }
                     elementsSelected[0].recalculer_pos();
                 }
-                else if (elementsSelected[0] is SequentialComponent.Clock)
+                else if ((elementsSelected[0] is SequentialComponent.Clock) ||(elementsSelected[0] is SequentialComponent.Chronogramme))
                 {
                     Type.Visibility = Visibility.Collapsed;
-                    Frequency.Text = ((SequentialComponent.Clock)elementsSelected[0]).Delay.ToString();
+                    if((elementsSelected[0] is SequentialComponent.Clock))
+                    {
+                        Frequency.Text = ((SequentialComponent.Clock)elementsSelected[0]).Delay.ToString();
+                    }
+                    else
+                    {
+                        Frequency.Text = ((SequentialComponent.Chronogramme)elementsSelected[0]).Delay.ToString();
+                    }
+                       
                     ClockFrequency.Visibility = Visibility.Visible;
                     Frequency.Visibility = Visibility.Visible;
                                
@@ -270,6 +319,15 @@ namespace WpfApplication9
                     else if ((elementsSelected[0] is SequentialComponent.CirculerRegister))
                     {
                         comboBoxtype(((SequentialComponent.CirculerRegister)elementsSelected[0]).Trigger.ToString());
+                        TypeReg.Visibility = Visibility.Visible;
+                        if (((CirculerRegister)elementsSelected[0]).typeDec == CirculerRegister.Type.Right)
+                        {
+                            ComboBoxPropertiesReg.SelectedIndex = 0;
+                        }
+                        else
+                        {
+                            ComboBoxPropertiesReg.SelectedIndex = 1;
+                        }
                     }
                     else if ((elementsSelected[0] is SequentialComponent.programmablRegister))
                     {
@@ -310,6 +368,124 @@ namespace WpfApplication9
                         TextCompteur.Text = "Modulo";
                     }
                 }
+                else if(elementsSelected[0] is Decodeur)
+                {
+                    TypeDec.Visibility = Visibility.Visible;
+                    GridCheckBox.Visibility = Visibility.Visible;
+                   
+                    if (elementsSelected[0].nbrInputs() == 2)
+                        ComboBoxPropertiesDec.SelectedIndex = 0;
+                    else ComboBoxPropertiesDec.SelectedIndex = 1;
+
+                    if (elementsSelected[0].nbrInputs() == 2)
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                        for (int i = 2; i < 8; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = false;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Collapsed;
+                        }
+
+                    }
+                    else if (elementsSelected[0].nbrInputs() == 3)
+                    {
+
+                        for (int i = 0; i < 3; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                        for (int i = 3; i < 8; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = false;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Collapsed;
+                        }
+
+                    }
+
+                }
+                else if (elementsSelected[0] is Encodeur)
+                {
+                    TypeEnc.Visibility = Visibility.Visible;
+                    GridCheckBox.Visibility = Visibility.Visible;
+                    if (elementsSelected[0].nbrInputs() == 4)
+                        ComboBoxPropertiesEnc.SelectedIndex = 0;
+                    else ComboBoxPropertiesEnc.SelectedIndex = 1;
+
+                    if (elementsSelected[0].nbrInputs() == 4)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                        for (int i = 4; i < 8; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = false;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Collapsed;
+                        }
+
+                    }
+                    else if (elementsSelected[0].nbrInputs() == 8)
+                    {
+
+                        for (int i = 0; i < 8; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                        
+
+                    }
+
+                }else if(elementsSelected[0] is Multiplexer)
+                {
+                    TypeDec.Visibility = Visibility.Visible;
+                    GridCheckBox.Visibility = Visibility.Visible;
+
+                    if (elementsSelected[0].nbrInputs() == 4)
+                        ComboBoxPropertiesDec.SelectedIndex = 0;
+                    else ComboBoxPropertiesDec.SelectedIndex = 1;
+
+                    if (elementsSelected[0].nbrInputs() == 4)
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                        for (int i = 2; i < 8; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = false;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Collapsed;
+                        }
+
+                    }
+                    else if (elementsSelected[0].nbrInputs() == 8)
+                    {
+
+                        for (int i = 0; i < 8; i++)
+                        {
+                            ((CheckBox)GridCheckBox.Children[i]).IsChecked = ((Terminal)elementsSelected[0].inputStack.Children[i]).IsInversed;
+                            ((CheckBox)GridCheckBox.Children[i]).Visibility = Visibility.Visible;
+                        }
+                    }
+                }
+                else if(elementsSelected[0] is Demultiplexer)
+                {
+
+                }
+                else if(elementsSelected[0] is Comparateur)
+                {
+                    NbrEnreComparateur.Visibility = Visibility.Visible;
+                    ComparatuerText.Text = (elementsSelected[0].nbrInputs()/2).ToString();
+
+                }
+             
             }
           
             
@@ -324,7 +500,7 @@ namespace WpfApplication9
         }
         private void CreateNewGate(string name)
         {
-            miseAJourPile();
+            //miseAJourPile();
             UIElement gate;
             switch (name)
             {
@@ -347,7 +523,7 @@ namespace WpfApplication9
                 case "Output":
                     gate = new Output(); break;
                 case "Chronogram":
-                    gate = new Chronogramme(2); break;
+                    gate = new Chronogramme(2,MainWindow.Delay); break;
                 case "Decoder":
                     gate = new Decodeur(2, 4); break;
                 case "Encoder":
@@ -383,7 +559,7 @@ namespace WpfApplication9
                 case "Register":
                     gate = new Registre(Registre.TriggerType.RisingEdge, 4); break;
                 case "PRegister":
-                    gate = new programmablRegister(programmablRegister.TriggerType.RisingEdge, 3); break;
+                    gate = new programmablRegister(programmablRegister.TriggerType.RisingEdge, 2); break;
                 case "CRegister":
                     gate = new CirculerRegister(CirculerRegister.TriggerType.RisingEdge, 4, CirculerRegister.Type.Left); break;
                 case "FDevider":
@@ -396,6 +572,10 @@ namespace WpfApplication9
                     gate = new DecompteurN(6, 3); break;
                 case "CDownMN":
                     gate = new DecompteurModN(6, 3); break;
+                case "Hexa Segments":
+                    gate = new Hexadicimal(); break;
+                case "Sept Segments":
+                    gate = new SeptSegmentsClass(); break;
                 default:
                     throw new ArgumentException("unknown gate");
             }
@@ -408,6 +588,15 @@ namespace WpfApplication9
         private void add7segments(object sender, RoutedEventArgs e)
         {
             SeptSegmentsClass img = new SeptSegmentsClass();
+            canvas.Children.Add(img);
+            img.AllowDrop = true;
+            img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+            img.PreviewMouseMove += this.MouseMove;
+            img.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+        }
+        private void addHexa(object sender, RoutedEventArgs e)
+        {
+            Hexadicimal img = new Hexadicimal();
             canvas.Children.Add(img);
             img.AllowDrop = true;
             img.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
@@ -493,12 +682,22 @@ namespace WpfApplication9
             if (dlg.Selected == SaveClose.Result.DONT_SAVE)
             {
                 this.Closing -= WindowClosing;
+                foreach (Window w in Application.Current.Windows)
+                {
+                    if (w != this)
+                        w.Close();
+                }
                 Close();
             }
             if(dlg.Selected == SaveClose.Result.SAVE)
             {
                 btnSave_Click(null, null);
                 this.Closing -= WindowClosing;
+                foreach (Window w in Application.Current.Windows)
+                {
+                    if (w != this)
+                        w.Close();
+                }
                 Close();
             }
 
@@ -511,8 +710,7 @@ namespace WpfApplication9
         }
         private void HelpOpen(object sender, RoutedEventArgs e)
         {
-            Help helpWindow = new Help();
-            helpWindow.Show();
+            System.Diagnostics.Process.Start(System.AppDomain.CurrentDomain.BaseDirectory + "\\help\\index.html");
         }
 
         private void ComboBoxProperties_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -524,6 +722,12 @@ namespace WpfApplication9
                     if (UserClass.IsInputChangeable(elementsSelected[0]))
                     {
                         int selecteVal = ComboBoxProperties.SelectedIndex + 2;
+                       // if(elementsSelected[0] is programmablRegister) selecteVal= ComboBoxProperties.SelectedIndex + 4;
+                        if (elementsSelected[0] is Chronogramme)
+                        {
+                            ((Chronogramme)elementsSelected[0]).nbrEntrée=selecteVal;
+                            MessageBox.Show(selecteVal.ToString());
+                        }
                         if (ComboBoxProperties.SelectedIndex == 3) selecteVal = 8;
 
                         if (selecteVal != elementsSelected[0].nbrInputs())
@@ -558,6 +762,10 @@ namespace WpfApplication9
             Frequency.Visibility = Visibility.Collapsed;
             Type.Visibility = Visibility.Collapsed;
             Compteur.Visibility = Visibility.Collapsed;
+            TypeDec.Visibility = Visibility.Collapsed;
+            TypeEnc.Visibility = Visibility.Collapsed;
+            NbrEnreComparateur.Visibility = Visibility.Collapsed;
+            TypeReg.Visibility = Visibility.Collapsed;
         }
 
         public void activeProp()
@@ -585,7 +793,7 @@ namespace WpfApplication9
                
          private void checkBox2_Click(object sender, RoutedEventArgs e)
         {
-            miseAJourPile();
+            //miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[1];
             terminal.IsInversed = checkBox2.IsChecked.Value;
             terminal.input_inversed();
@@ -594,7 +802,7 @@ namespace WpfApplication9
 
         private void checkBox3_Click(object sender, RoutedEventArgs e)
         {
-            miseAJourPile();
+            //miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[2];
             terminal.IsInversed = checkBox3.IsChecked.Value;
             terminal.input_inversed();
@@ -603,7 +811,7 @@ namespace WpfApplication9
 
         private void checkBox4_Click(object sender, RoutedEventArgs e)
         {
-            miseAJourPile();
+            //miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[3];
             terminal.IsInversed = checkBox4.IsChecked.Value;
             terminal.input_inversed();
@@ -612,7 +820,7 @@ namespace WpfApplication9
 
         private void checkBox5_Click(object sender, RoutedEventArgs e)
         {
-            miseAJourPile();
+            //miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[4];
             terminal.IsInversed = checkBox5.IsChecked.Value;
             terminal.input_inversed();
@@ -621,7 +829,7 @@ namespace WpfApplication9
 
         private void checkBox6_Click(object sender, RoutedEventArgs e)
         {
-            miseAJourPile();
+            //miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[5];
             terminal.IsInversed = checkBox6.IsChecked.Value;
             terminal.input_inversed();
@@ -630,7 +838,7 @@ namespace WpfApplication9
 
         private void checkBox7_Click(object sender, RoutedEventArgs e)
         {
-            miseAJourPile();
+            //miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[6];
             terminal.IsInversed = checkBox7.IsChecked.Value;
             terminal.input_inversed();
@@ -639,7 +847,7 @@ namespace WpfApplication9
 
         private void checkBox8_Click(object sender, RoutedEventArgs e)
         {
-            miseAJourPile();
+            //miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[7];
             terminal.IsInversed = checkBox8.IsChecked.Value;
             terminal.input_inversed();
@@ -648,7 +856,7 @@ namespace WpfApplication9
 
         private void checkBox1_Click(object sender, RoutedEventArgs e)
         {
-            miseAJourPile();
+            //miseAJourPile();
             Terminal terminal = (Terminal)elementsSelected[0].inputStack.Children[0];
             terminal.IsInversed = checkBox1.IsChecked.Value;
             terminal.input_inversed();
@@ -666,7 +874,7 @@ namespace WpfApplication9
 
         private  void PreviewMouseLeftButtonUp2(object sender, MouseButtonEventArgs e)
         {
-
+           // MessageBox.Show("krahna");
             if (sourceEllipse != null)
             {
 
@@ -687,9 +895,9 @@ namespace WpfApplication9
                     { 
                       
                         
-                        if (Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).X - e.GetPosition(canvas).X) < 20 && Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).Y - e.GetPosition(canvas).Y) < 20)
+                        if (Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).X - e.GetPosition(canvas).X) < 15 && Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).Y - e.GetPosition(canvas).Y) < 15)
                         {
-                            //MessageBox.Show("911");
+                            
                             Wireclass.selection2 = terminal.elSelector;
                         }
                     }
@@ -697,9 +905,19 @@ namespace WpfApplication9
                     {
 
 
-                        if (Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).X - e.GetPosition(canvas).X) < 20 && Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).Y - e.GetPosition(canvas).Y) < 20)
+                        if (Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).X - e.GetPosition(canvas).X) < 15 && Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).Y - e.GetPosition(canvas).Y) < 15)
                         {
-                            //MessageBox.Show("911");
+                            
+                            Wireclass.selection2 = terminal.elSelector;
+                        }
+                    }
+                    foreach (Terminal terminal in standardcomponent.selectionStack.Children)
+                    {
+
+
+                        if (Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).X - e.GetPosition(canvas).X) < 15 && Math.Abs(terminal.elSelector.TransformToAncestor(canvas).Transform(new Point(0, 0)).Y - e.GetPosition(canvas).Y) < 10)
+                        {
+                          
                             Wireclass.selection2 = terminal.elSelector;
                         }
                     }
@@ -711,6 +929,7 @@ namespace WpfApplication9
                 {
                     wire.relier();
                 }
+              
                 
             }
 
@@ -719,6 +938,7 @@ namespace WpfApplication9
             sourceEllipse = null;
         }
 
+
         public void refaire(object sender, RoutedEventArgs e)
         {
             //remplir undos
@@ -726,22 +946,64 @@ namespace WpfApplication9
             retourBouton.IsEnabled = true;
 
             //Faire la modif
-            Canvas nouveau = redos.Pop();
+            XElement circuit = redos.Pop();
             if (redos.Count == 0)
             {
                 refaireBouton.IsEnabled = false;
             }
 
-            canvas.Children.RemoveRange(0, canvas.Children.Count);
-            UIElement[] tableau = new UIElement[1000];
-            int length = nouveau.Children.Count;
-            nouveau.Children.CopyTo(tableau, 0);
-            for (int i = 0; i < length; i++)
+            canvas.Children.Clear();
+            canvas.Width = int.Parse(circuit.Attribute("Width").Value);
+            canvas.Height = int.Parse(circuit.Attribute("Height").Value);
+            var gid = new Dictionary<int, StandardComponent>();
+            foreach (XElement gate in circuit.Element("Gates").Elements())
             {
-                nouveau.Children.Remove(tableau[i]);
-                canvas.Children.Add(tableau[i]);
-                
+                StandardComponent shape = CreateGate(gate);
+                shape.SetValue(Canvas.LeftProperty, double.Parse(gate.Attribute("X").Value));
+                shape.SetValue(Canvas.TopProperty, double.Parse(gate.Attribute("Y").Value));
+                shape.RotateComponent(int.Parse(gate.Attribute("Rotation").Value));
+                shape.PosX = (double)shape.GetValue(Canvas.LeftProperty);
+                shape.PosY = (double)shape.GetValue(Canvas.TopProperty);
+
+                gid[int.Parse(gate.Attribute("ID").Value)] = shape;
+                canvas.Children.Add(shape);
+
             }
+            foreach (XElement wire in circuit.Element("Wires").Elements())
+            {
+                canvas.UpdateLayout();
+                MainWindow.wire = new Wireclass();
+                int temp;
+                if (!int.TryParse(wire.Element("From").Attribute("ID").Value, out temp)) continue;
+                StandardComponent gateSrc = gid[temp];
+                if (!int.TryParse(wire.Element("To").Attribute("ID").Value, out temp)) continue;
+                StandardComponent gateDest = gid[temp];
+                if (!int.TryParse(wire.Element("From").Attribute("Port").Value, out temp)) continue;
+                int portSrc = temp;
+                if (!int.TryParse(wire.Element("To").Attribute("Port").Value, out temp)) continue;
+                int portDest = temp;
+                Wireclass.selection1 = ((Terminal)gateSrc.OutputStack.Children[portSrc]).elSelector;
+                Wireclass.selection2 = ((Terminal)gateDest.inputStack.Children[portDest]).elSelector;
+                MainWindow.wire.relier();
+                canvas.UpdateLayout();
+                MainWindow.wire.btn111 = Wireclass.selection1;
+                MainWindow.wire.btn222 = Wireclass.selection2;
+                Wireclass.myCanvas = canvas;
+
+                canvas.UpdateLayout();
+            }
+
+            foreach (FrameworkElement gate in canvas.Children)
+            {
+                if (gate is StandardComponent)
+                {
+                    gate.AllowDrop = true;
+                    gate.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+                    gate.PreviewMouseMove += this.MouseMove;
+                    gate.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+                }
+            }
+
         }
         public void retour(object sender, RoutedEventArgs e)
         {
@@ -750,389 +1012,321 @@ namespace WpfApplication9
             refaireBouton.IsEnabled = true;
 
             //Faire la modif
-            Canvas nouveau = undos.Pop();
+            XElement circuit = undos.Pop();
             if (undos.Count == 0)
             {
                 retourBouton.IsEnabled = false;
             }
 
-            /*foreach(UIElement u in canvas.Children)
+            canvas.Children.Clear();
+            canvas.Width = int.Parse(circuit.Attribute("Width").Value);
+            canvas.Height = int.Parse(circuit.Attribute("Height").Value);
+            var gid = new Dictionary<int, StandardComponent>();
+            foreach (XElement gate in circuit.Element("Gates").Elements())
             {
-                if (typeof(Ellipse) != u.GetType())
-                {
-                    canvas.Children.Remove(u);
-                }
-            }*/
-            canvas.Children.RemoveRange(0, canvas.Children.Count);
-            UIElement[] tableau = new UIElement[1000];
-            int length = nouveau.Children.Count;
-            nouveau.Children.CopyTo(tableau, 0);
-            for (int i = 0; i < length; i++)
-            {
-                nouveau.Children.Remove(tableau[i]);
-                canvas.Children.Add(tableau[i]);
-                if (tableau[i] is Ellipse) MessageBox.Show("ok");
+                StandardComponent shape = CreateGate(gate);
+                shape.SetValue(Canvas.LeftProperty, double.Parse(gate.Attribute("X").Value));
+                shape.SetValue(Canvas.TopProperty, double.Parse(gate.Attribute("Y").Value));
+                shape.RotateComponent(int.Parse(gate.Attribute("Rotation").Value));
+                shape.PosX = (double)shape.GetValue(Canvas.LeftProperty);
+                shape.PosY = (double)shape.GetValue(Canvas.TopProperty);
+
+                gid[int.Parse(gate.Attribute("ID").Value)] = shape;
+                canvas.Children.Add(shape);
+
             }
-            canvas.UpdateLayout();
-            Wireclass.myCanvas = canvas;
+            foreach (XElement wire in circuit.Element("Wires").Elements())
+            {
+                canvas.UpdateLayout();
+                MainWindow.wire = new Wireclass();
+                int temp;
+                if (!int.TryParse(wire.Element("From").Attribute("ID").Value, out temp)) continue;
+                StandardComponent gateSrc = gid[temp];
+                if (!int.TryParse(wire.Element("To").Attribute("ID").Value, out temp)) continue;
+                StandardComponent gateDest = gid[temp];
+                if (!int.TryParse(wire.Element("From").Attribute("Port").Value, out temp)) continue;
+                int portSrc = temp;
+                if (!int.TryParse(wire.Element("To").Attribute("Port").Value, out temp)) continue;
+                int portDest = temp;
+                Wireclass.selection1 = ((Terminal)gateSrc.OutputStack.Children[portSrc]).elSelector;
+                Wireclass.selection2 = ((Terminal)gateDest.inputStack.Children[portDest]).elSelector;
+                MainWindow.wire.relier();
+                canvas.UpdateLayout();
+                MainWindow.wire.btn111 = Wireclass.selection1;
+                MainWindow.wire.btn222 = Wireclass.selection2;
+                Wireclass.myCanvas = canvas;
+
+                canvas.UpdateLayout();
+            }
+
+            foreach (FrameworkElement gate in canvas.Children)
+            {
+                if (gate is StandardComponent)
+                {
+                    gate.AllowDrop = true;
+                    gate.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+                    gate.PreviewMouseMove += this.MouseMove;
+                    gate.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+                }
+            }
+
+            foreach (StandardComponent elementSelected in elementsSelected)
+            {
+                elementSelected.typeComponenet.Stroke = Brushes.RoyalBlue;
+            }
+            elementsSelected.Clear();
+
         }
 
         public void miseAJourPile()
         {
-            Canvas canvasPrecedent = instancier(canvas);
+            XElement canvasPrecedent = instancier(canvas);
             undos.Push(canvasPrecedent);
             retourBouton.IsEnabled = true;
-            //Console.Out.Write("*********"+undos.Count+"\n");
         }
-        public Canvas instancier(Canvas canvas)
+        public XElement instancier(Canvas canvas)
         {
-            Canvas retour = new Canvas();
-            UIElement[] tableau = new UIElement[1000];
-            List<Wireclass> wireA = new List<Wireclass>();
-            List<Wireclass> wireN = new List<Wireclass>();
+            XElement circuit = new XElement("Circuit");
+            circuit.SetAttributeValue("Width", canvas.Width);
+            circuit.SetAttributeValue("Height", canvas.Height);
 
-            List<Wireclass> wires = new List<Wireclass>();
-
-            int length = canvas.Children.Count;
-            //Console.Out.WriteLine("**" + length + "**");
-            canvas.Children.CopyTo(tableau, 0);
-
-
-            for (int i = 0; i < length; i++)
+            XElement gates = new XElement("Gates");
+            var gid = new Dictionary<StandardComponent, int>();
+            int id = 1;
+            foreach (object shape in canvas.Children)
             {
-                UIElement newChild = null;
-
-                Console.Out.Write("test" + tableau[i].GetType());
-
-                if (typeof(AND) == tableau[i].GetType())
+                if (shape is StandardComponent)
                 {
-                    // newChild = new AND((tableau[i] as AND).nbrinput);
-                    newChild = new AND((tableau[i] as AND).nbrInputs());
-                    for (int j = 0; j < (tableau[i] as AND).nbrInputs(); j++)
+                    var g = shape as StandardComponent;
+                    XElement gt = new XElement("Gate");
+                    gt.SetAttributeValue("Type", g.GetType().Name);
+                    gt.SetAttributeValue("ID", id);
+                    gt.SetAttributeValue("X", g.PosX);
+                    gt.SetAttributeValue("Y", g.PosY);
+                    gt.SetAttributeValue("NumInputs", g.nbrInputs());
+                    gt.SetAttributeValue("Rotation", g.rotation);
+
+                    if (shape is SequentialComponent.Clock)
                     {
-
-                        Terminal terminal_1 = (Terminal)((tableau[i] as AND).inputStack.Children[j]);
-                        Terminal terminal_2 = (Terminal)((newChild as AND).inputStack.Children[j]);
-
-                        if (terminal_1.IsInversed)
-                        {
-                            terminal_2.IsInversed = true;
-                            terminal_2.input_inversed();
-                        }
-
+                        gt.SetAttributeValue("HighLevelms", ((SequentialComponent.Clock)g).HighLevelms);
+                        gt.SetAttributeValue("LowLevelms", ((SequentialComponent.Clock)g).LowLevelms);
                     }
-
-                }
-                else if (typeof(OR) == tableau[i].GetType())
-                {
-                    newChild = new OR((tableau[i] as OR).nbrInputs());
-                    for (int j = 0; j < (tableau[i] as OR).nbrInputs(); j++)
+                    if (shape is JK)
                     {
-
-                        Terminal terminal_1 = (Terminal)((tableau[i] as OR).inputStack.Children[j]);
-                        Terminal terminal_2 = (Terminal)((newChild as OR).inputStack.Children[j]);
-
-                        if (terminal_1.IsInversed)
-                        {
-                            terminal_2.IsInversed = true;
-                            terminal_2.input_inversed();
-                        }
-
+                        if (((JK)shape).Trigger == JK.TriggerType.FallingEdge)
+                            gt.SetAttributeValue("TriggerType", 0);
+                        else gt.SetAttributeValue("TriggerType", 1);
                     }
-                }
-
-                else if (typeof(NAND) == tableau[i].GetType())
-                {
-                    newChild = new NAND((tableau[i] as NAND).nbrInputs());
-                    for (int j = 0; j < (tableau[i] as NAND).nbrInputs(); j++)
+                    if (shape is Registre)
                     {
-
-                        Terminal terminal_1 = (Terminal)((tableau[i] as NAND).inputStack.Children[j]);
-                        Terminal terminal_2 = (Terminal)((newChild as NAND).inputStack.Children[j]);
-
-                        if (terminal_1.IsInversed)
-                        {
-                            terminal_2.IsInversed = true;
-                            terminal_2.input_inversed();
-                        }
-
+                        if (((Registre)shape).Trigger == Registre.TriggerType.FallingEdge)
+                            gt.SetAttributeValue("TriggerType", 0);
+                        else if (((Registre)shape).Trigger == Registre.TriggerType.RisingEdge)
+                            gt.SetAttributeValue("TriggerType", 1);
+                        else if (((Registre)shape).Trigger == Registre.TriggerType.LowLevel)
+                            gt.SetAttributeValue("TriggerType", 2);
+                        else if (((Registre)shape).Trigger == Registre.TriggerType.HighLevel)
+                            gt.SetAttributeValue("TriggerType", 3);
                     }
-                }
-                else if (typeof(NOR) == tableau[i].GetType())
-                {
-                    newChild = new NOR((tableau[i] as NOR).nbrInputs());
-                    for (int j = 0; j < (tableau[i] as NOR).nbrInputs(); j++)
+                    if (shape is programmablRegister)
                     {
-                        Terminal terminal_1 = (Terminal)((tableau[i] as NOR).inputStack.Children[j]);
-                        Terminal terminal_2 = (Terminal)((newChild as NOR).inputStack.Children[j]);
-
-                        if (terminal_1.IsInversed)
-                        {
-                            terminal_2.IsInversed = true;
-                            terminal_2.input_inversed();
-                        }
-
+                        if (((programmablRegister)shape).Trigger == programmablRegister.TriggerType.FallingEdge)
+                            gt.SetAttributeValue("TriggerType", 0);
+                        else if (((programmablRegister)shape).Trigger == programmablRegister.TriggerType.RisingEdge)
+                            gt.SetAttributeValue("TriggerType", 1);
+                        else if (((programmablRegister)shape).Trigger == programmablRegister.TriggerType.LowLevel)
+                            gt.SetAttributeValue("TriggerType", 2);
+                        else if (((programmablRegister)shape).Trigger == programmablRegister.TriggerType.HighLevel)
+                            gt.SetAttributeValue("TriggerType", 3);
                     }
-                }
-
-                else if (typeof(Not) == tableau[i].GetType())
-                {
-                    newChild = new Not();
-
-                    Terminal terminal_1 = (Terminal)((tableau[i] as Not).inputStack.Children[0]);
-                    Terminal terminal_2 = (Terminal)((newChild as Not).inputStack.Children[0]);
-
-                    if (terminal_1.IsInversed)
+                    if (shape is CirculerRegister)
                     {
-                        terminal_2.IsInversed = true;
-                        terminal_2.input_inversed();
+                        if (((CirculerRegister)shape).Trigger == CirculerRegister.TriggerType.FallingEdge)
+                            gt.SetAttributeValue("TriggerType", 0);
+                        else if (((CirculerRegister)shape).Trigger == CirculerRegister.TriggerType.RisingEdge)
+                            gt.SetAttributeValue("TriggerType", 1);
+                        else if (((CirculerRegister)shape).Trigger == CirculerRegister.TriggerType.LowLevel)
+                            gt.SetAttributeValue("TriggerType", 2);
+                        else if (((CirculerRegister)shape).Trigger == CirculerRegister.TriggerType.HighLevel)
+                            gt.SetAttributeValue("TriggerType", 3);
+                        if (((CirculerRegister)shape).typeDec == CirculerRegister.Type.Left)
+                            gt.SetAttributeValue("CircularType", 0);
+                        else if (((CirculerRegister)shape).typeDec == CirculerRegister.Type.Right)
+                            gt.SetAttributeValue("CircularType", 1);
                     }
-                }
-
-                else if (typeof(Output) == tableau[i].GetType())
-                {
-                    newChild = new Output();
-                }
-
-                else if (typeof(Input) == tableau[i].GetType())
-                {
-                    newChild = new Input();
-                    (newChild as Input).state = (tableau[i] as Input).state;
-
-                }
-
-                else if (typeof(XNOR) == tableau[i].GetType())
-                {
-                    newChild = new XNOR((tableau[i] as XNOR).nbrInputs());
-                    for (int j = 0; j < (tableau[i] as XNOR).nbrInputs(); j++)
+                    if (shape is compteurN)
                     {
-
-                        Terminal terminal_1 = (Terminal)((tableau[i] as XNOR).inputStack.Children[j]);
-                        Terminal terminal_2 = (Terminal)((newChild as XNOR).inputStack.Children[j]);
-
-                        if (terminal_1.IsInversed)
-                        {
-                            terminal_2.IsInversed = true;
-                            terminal_2.input_inversed();
-                        }
-
+                        gt.SetAttributeValue("NumOutputs", ((compteurN)g).Nbroutputs);
+                        gt.SetAttributeValue("N", ((compteurN)g).Val);
                     }
-                }
-                else if (typeof(XOR) == tableau[i].GetType())
-                {
-                    newChild = new XOR((tableau[i] as XOR).nbrInputs());
-                    for (int j = 0; j < (tableau[i] as XOR).nbrInputs(); j++)
+                    if (shape is CompteurModN)
                     {
-
-                        Terminal terminal_1 = (Terminal)((tableau[i] as XOR).inputStack.Children[j]);
-                        Terminal terminal_2 = (Terminal)((newChild as XOR).inputStack.Children[j]);
-
-                        if (terminal_1.IsInversed)
-                        {
-                            terminal_2.IsInversed = true;
-                            terminal_2.input_inversed();
-                        }
-
+                        gt.SetAttributeValue("NumOutputs", ((CompteurModN)g).Nbroutputs);
+                        gt.SetAttributeValue("N", ((CompteurModN)g).Val);
                     }
-                }
-
-                else if (typeof(Comparateur) == tableau[i].GetType())
-                {
-                    newChild = new Comparateur((tableau[i] as Comparateur).nbrInputs(), (tableau[i] as Comparateur).nbrOutputs());
-
-                }
-
-                else if (typeof(Decodeur) == tableau[i].GetType())
-                {
-                    newChild = new Decodeur((tableau[i] as Decodeur).nbrInputs(), (tableau[i] as Decodeur).nbrOutputs());
-                }
-
-                else if (typeof(Demultiplexer) == tableau[i].GetType())
-                {
-                    newChild = new Demultiplexer((tableau[i] as Demultiplexer).nbrInputs(), (tableau[i] as Demultiplexer).nbrOutputs(), (tableau[i] as Demultiplexer).nbrSelections());
-                }
-
-                else if (typeof(Encodeur) == tableau[i].GetType())
-                {
-                    newChild = new Encodeur((tableau[i] as Encodeur).nbrInputs(), (tableau[i] as Encodeur).nbrOutputs());
-                }
-
-                else if (typeof(FullAdder) == tableau[i].GetType())
-                {
-                    newChild = new FullAdder((tableau[i] as FullAdder).nbrInputs(), (tableau[i] as FullAdder).nbrOutputs());
-                }
-
-                else if (typeof(FullSub) == tableau[i].GetType())
-                {
-                    newChild = new FullSub((tableau[i] as FullSub).nbrInputs(), (tableau[i] as FullSub).nbrOutputs());
-                }
-
-                else if (typeof(HalfAdder) == tableau[i].GetType())
-                {
-                    newChild = new HalfAdder((tableau[i] as HalfAdder).nbrInputs(), (tableau[i] as HalfAdder).nbrOutputs());
-                }
-
-                else if (typeof(HalfSub) == tableau[i].GetType())
-                {
-                    newChild = new HalfSub((tableau[i] as HalfSub).nbrInputs(), (tableau[i] as HalfSub).nbrOutputs());
-                }
-
-                else if (typeof(Multiplexer) == tableau[i].GetType())
-                {
-                    newChild = new Multiplexer((tableau[i] as Multiplexer).nbrInputs(), (tableau[i] as Multiplexer).nbrOutputs(), (tableau[i] as Multiplexer).nbrSelections());
-                }
-
-                else if (typeof(SequentialComponent.Clock) == tableau[i].GetType())
-                {
-                    newChild = new SequentialComponent.Clock((tableau[i] as SequentialComponent.Clock).LowLevelms, (tableau[i] as SequentialComponent.Clock).HighLevelms, MainWindow.Delay);
-                }
-                
-                else if (typeof(TextBlock) == tableau[i].GetType())
-                {
-                    newChild = new TextBlock();
-                }
-
-                if (newChild != null)
-                {
-                    Terminal[] tabTerminauxA = new Terminal[100];
-                    Terminal[] tabTerminauxN = new Terminal[100];
-                    (tableau[i] as StandardComponent).inputStack.Children.CopyTo(tabTerminauxA, 0);
-                    (newChild as StandardComponent).inputStack.Children.CopyTo(tabTerminauxN, 0);
-                    int len = (tableau[i] as StandardComponent).inputStack.Children.Count;
-
-                    for (int jj = 0; jj < len; jj++)
+                    if (shape is DecompteurN)
                     {
-                        if (tabTerminauxA[jj].wires.Count > 0)
-                        {
-                            if (!wireA.Contains((tabTerminauxA[jj].wires)[0] as Wireclass))
-                            {
-                                Wireclass wire = new Wireclass(retour);
-                                tabTerminauxN[jj].wires.Add(wire);
-                                wire.destination = tabTerminauxN[jj];
-
-                                wire.btn111 = new Ellipse();
-                                wire.btn222 = new Ellipse();
-                                wire.state = ((tabTerminauxA[jj].wires)[0] as Wireclass).state;
-
-                                if (wire.noued != null)
-                                {
-                                    wire.noued = new Ellipse();
-                                    retour.Children.Add(wire.noued);
-                                }
-                                retour.Children.Add(wire.btn111);
-                                retour.Children.Add(wire.btn222);
-
-                                wireA.Add((tabTerminauxA[jj].wires)[0] as Wireclass);
-                                wireN.Add(wire);
-                            }
-                            else
-                            {
-                                int index = wireA.IndexOf((tabTerminauxA[jj].wires)[0] as Wireclass);
-                                tabTerminauxN[jj].wires.Add(wireN[index]);
-                                wireN[index].destination = tabTerminauxN[jj];
-                            }
-
-                        }
+                        gt.SetAttributeValue("NumOutputs", ((DecompteurN)g).Nbroutputs);
+                        gt.SetAttributeValue("N", ((DecompteurN)g).Val);
                     }
-
-                    (tableau[i] as StandardComponent).OutputStack.Children.CopyTo(tabTerminauxA, 0);
-                    (newChild as StandardComponent).OutputStack.Children.CopyTo(tabTerminauxN, 0);
-                    len = (tableau[i] as StandardComponent).OutputStack.Children.Count;
-
-                    for (int jj = 0; jj < len; jj++)
+                    if (shape is DecompteurModN)
                     {
-                        foreach (Wireclass w in tabTerminauxA[jj].wires)
-                        {
-                            if (!wireA.Contains(w))
-                            {
-                                Wireclass wire = new Wireclass(retour);
-                                tabTerminauxN[jj].wires.Add(wire);
-                                wireA.Add(w);
-                                wireN.Add(wire);
-                                wire.source = tabTerminauxN[jj];
-                                wire.btn111 = w.btn111;
-                                wire.btn222 = w.btn222;
-                                wire.state = w.state;
-                                wire.noued = w.noued;
-
-                                wire.btn111 = new Ellipse();
-                                wire.btn222 = new Ellipse();
-                                wire.state = w.state;
-
-                                if (wire.noued != null)
-                                {
-                                    wire.noued = new Ellipse();
-                                    retour.Children.Add(wire.noued);
-                                }
-                                retour.Children.Add(wire.btn111);
-                                retour.Children.Add(wire.btn222);
-                                //indiceLiaison++;
-                            }
-                            else
-                            {
-                                int index = wireA.IndexOf(w);
-                                tabTerminauxN[jj].wires.Add(wireN[index]);
-                                wireN[index].source = tabTerminauxN[jj];
-                            }
-                        }
+                        gt.SetAttributeValue("NumOutputs", ((DecompteurModN)g).Nbroutputs);
+                        gt.SetAttributeValue("N", ((DecompteurModN)g).Val);
                     }
-
-
-
-
-                    retour.Children.Add(newChild);
-                    newChild.AllowDrop = true;
-                    newChild.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
-                    newChild.PreviewMouseMove += this.MouseMove;
-                    newChild.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
-
-                    newChild.SetValue(Canvas.LeftProperty, tableau[i].GetValue(Canvas.LeftProperty));
-                    newChild.SetValue(Canvas.TopProperty, tableau[i].GetValue(Canvas.TopProperty));
-
-                    try
+                    if (shape is Demultiplexer)
                     {
-                        StandardComponent component = newChild as StandardComponent;
-                        component.recalculer_pos();
+                        gt.SetAttributeValue("NumOutputs", ((Demultiplexer)g).nbrOutputs());
                     }
-                    catch { };
+                    gates.Add(gt);
+                    gid.Add(g, id);
+                    id++;
                 }
-
             }
 
-            afficherLignes(retour, wireA, wireN);
-
-            return retour;
-        }
-
-        public void afficherLignes(Canvas retour, List<Wireclass> wireA, List<Wireclass> wireN)
-        {
-            Line[] ligne = new Line[3];
-            Line[] ligneN = new Line[3];
-            for (int i = 0; i < wireA.Count; i++)
+            XElement wires = new XElement("Wires");
+            foreach (object shape in canvas.Children)
             {
-                ligne[0] = wireA[i].l1;
-                ligne[1] = wireA[i].l2;
-                ligne[2] = wireA[i].l3;
-
-                ligneN[0] = wireN[i].l1;
-                ligneN[1] = wireN[i].l2;
-                ligneN[2] = wireN[i].l3;
-
-                for (int j = 0; j < 3; j++)
+                if (shape is StandardComponent)
                 {
-                    Line l1 = ligneN[j];
-                    Line line = ligne[j];
-
-                    l1.ContextMenu = line.ContextMenu;
-
-                    l1.Stroke = new SolidColorBrush(Colors.Black);
-                    l1.StrokeThickness = 2.0;
-                    l1.X1 = line.X1;
-                    l1.X2 = line.X2;
-                    l1.Y1 = line.Y1;
-                    l1.Y2 = line.Y2;
+                    var g = shape as StandardComponent;
+                    for (int i = 0; i < g.inputStack.Children.Count; i++)
+                    {
+                        var input = g.inputStack.Children[i] as Terminal;
+                        if (input.wires.Count > 0)
+                        {
+                            XElement wire = new XElement("Wire",
+                                    new XElement("From"), new XElement("To"));
+                            Terminal sourceTerminal = ((Wireclass)input.wires[0]).source;
+                            StandardComponent sourceComponent = UserClass.TryFindParent<StandardComponent>(sourceTerminal);
+                            wire.Element("From").SetAttributeValue("ID", gid[sourceComponent]);
+                            wire.Element("From").SetAttributeValue("Port", sourceComponent.OutputStack.Children.IndexOf(sourceTerminal));
+                            wire.Element("To").SetAttributeValue("ID", gid[g]);
+                            wire.Element("To").SetAttributeValue("Port", i);
+                            wires.Add(wire);
+                        }
+                    }
                 }
             }
+
+            circuit.Add(gates);
+            circuit.Add(wires);
+            return circuit;
+        }
+
+        public StandardComponent CreateGate(XElement gate)
+        {
+            int temp, temp2;
+            int numInputs = int.Parse(gate.Attribute("NumInputs").Value);
+            switch (gate.Attribute("Type").Value)
+            {
+
+                case "AND":
+                    return new AND(numInputs);
+                case "NAND":
+                    return new NAND(numInputs);
+                case "NOR":
+                    return new NOR(numInputs);
+                case "Not":
+                    return new Not();
+                case "OR":
+                    return new OR(numInputs);
+                case "XNOR":
+                    return new XNOR(numInputs);
+                case "XOR":
+                    return new XOR(numInputs);
+                case "Input":
+                    return new Input();
+                case "Output":
+                    return new Output();
+                case "Clock":
+                    temp = int.Parse(gate.Attribute("HighLevelms").Value);
+                    temp2 = int.Parse(gate.Attribute("LowLevelms").Value);
+                    return new SequentialComponent.Clock(temp, temp2, MainWindow.Delay);
+                case "JK":
+                    temp = int.Parse(gate.Attribute("TriggerType").Value);
+                    return new JK((temp == 0) ? JK.TriggerType.FallingEdge : JK.TriggerType.RisingEdge);
+                case "SynchToogle":
+                    return new SynchToogle();
+                case "AsynchToogle":
+                    return new AsynchToogle();
+                case "RSLatche":
+                    return new RSLatche();
+                case "RSHLatche":
+                    return new RSHLatche();
+                case "Chronogramme":
+                    return new Chronogramme(2, MainWindow.Delay);
+                case "SeptSegmentsClass":
+                    return new SeptSegmentsClass();
+                case "Hexadicimal":
+                    return new WpfApplication9.LogicGate.Hexadicimal();
+                case "Registre":
+                    temp = int.Parse(gate.Attribute("TriggerType").Value);
+                    switch (temp)
+                    {
+                        case 0: return new Registre(Registre.TriggerType.FallingEdge, numInputs);
+                        case 1: return new Registre(Registre.TriggerType.RisingEdge, numInputs);
+                        case 2: return new Registre(Registre.TriggerType.LowLevel, numInputs);
+                        default: return new Registre(Registre.TriggerType.HighLevel, numInputs);
+                    }
+                case "programmablRegister":
+                    temp = int.Parse(gate.Attribute("TriggerType").Value);
+                    switch (temp)
+                    {
+                        case 0: return new programmablRegister(programmablRegister.TriggerType.FallingEdge, numInputs);
+                        case 1: return new programmablRegister(programmablRegister.TriggerType.RisingEdge, numInputs);
+                        case 2: return new programmablRegister(programmablRegister.TriggerType.LowLevel, numInputs);
+                        default: return new programmablRegister(programmablRegister.TriggerType.HighLevel, numInputs);
+                    }
+                case "CirculerRegister":
+                    temp = int.Parse(gate.Attribute("TriggerType").Value);
+                    switch (temp)
+                    {
+                        case 0: return new CirculerRegister(CirculerRegister.TriggerType.FallingEdge, numInputs, CirculerRegister.Type.Left);
+                        case 1: return new CirculerRegister(CirculerRegister.TriggerType.RisingEdge, numInputs, CirculerRegister.Type.Left);
+                        case 2: return new CirculerRegister(CirculerRegister.TriggerType.LowLevel, numInputs, CirculerRegister.Type.Left);
+                        default: return new CirculerRegister(CirculerRegister.TriggerType.HighLevel, numInputs, CirculerRegister.Type.Left);
+                    }
+                case "FrequencyDevider":
+                    return new FrequencyDevider();
+                case "compteurN":
+                    temp = int.Parse(gate.Attribute("NumOutputs").Value);
+                    temp2 = int.Parse(gate.Attribute("N").Value);
+                    return new compteurN(temp2, temp);
+                case "CompteurModN":
+                    temp = int.Parse(gate.Attribute("NumOutputs").Value);
+                    temp2 = int.Parse(gate.Attribute("N").Value);
+                    return new CompteurModN(temp2, temp);
+                case "DecompteurN":
+                    temp = int.Parse(gate.Attribute("NumOutputs").Value);
+                    temp2 = int.Parse(gate.Attribute("N").Value);
+                    return new DecompteurN(temp2, temp);
+                case "DecompteurModN":
+                    temp = int.Parse(gate.Attribute("NumOutputs").Value);
+                    temp2 = int.Parse(gate.Attribute("N").Value);
+                    return new DecompteurModN(temp2, temp);
+                case "Multiplexer":
+                    return new Multiplexer(numInputs, 1, int.Parse(((Double)(Math.Log(numInputs, 2))).ToString()));
+                case "Decodeur":
+                    return new CircLab.ComplexComponent.Decodeur(numInputs, int.Parse(((Double)(Math.Pow(2, numInputs))).ToString()));
+                case "Encodeur":
+                    return new CircLab.ComplexComponent.Encodeur(numInputs, int.Parse(((Double)(Math.Log(numInputs, 2))).ToString()));
+                case "FullAdder":
+                    return new CircLab.ComplexComponent.FullAdder(numInputs, 2);
+                case "HalfAdder":
+                    return new CircLab.ComplexComponent.HalfAdder(numInputs, 2);
+                case "HalfSub":
+                    return new CircLab.ComplexComponent.HalfSub(numInputs, 2);
+                case "FullSub":
+                    return new CircLab.ComplexComponent.FullSub(numInputs, 2);
+                case "Comparateur":
+                    return new CircLab.ComplexComponent.Comparateur(numInputs, 3);
+                case "Demultiplexer":
+                    temp = int.Parse(gate.Attribute("NumOutputs").Value);
+                    return new CircLab.ComplexComponent.Demultiplexer(numInputs, temp, int.Parse(((Double)(Math.Log(temp, 2))).ToString()));
+
+            }
+            throw new ArgumentException("unknown gate");
         }
 
         private void SimulationStart_ButtonClick(object sender, RoutedEventArgs e)
@@ -1384,7 +1578,18 @@ namespace WpfApplication9
         {
             try
             {
-                ((SequentialComponent.Clock)elementsSelected[0]).Delay = float.Parse(Frequency.Text);
+                if(elementsSelected[0] is Chronogramme)
+                {
+                    ((SequentialComponent.Chronogramme)elementsSelected[0]).Delay = float.Parse(Frequency.Text);
+                }
+                else
+                {
+                    if(elementsSelected[0] is SequentialComponent.Clock)
+                    {
+                        ((SequentialComponent.Clock)elementsSelected[0]).Delay = float.Parse(Frequency.Text);
+                    }
+                }
+               
             }
             catch
             { }
@@ -1579,6 +1784,7 @@ namespace WpfApplication9
             CircuitName.Text = ttl.ToString();
         }
 
+
         public List<StandardComponent> parcourir_coupier()
         {
             UIElement[] tableau = new UIElement[1000];
@@ -1588,7 +1794,7 @@ namespace WpfApplication9
             for (int i = 0; i < length; i++)
             {
                 StandardComponent newChild = null;
-                if (!(typeof(Line) == tableau[i].GetType()) && ((tableau[i] as StandardComponent).IsSelect))
+                if ((tableau[i] is StandardComponent) && ((tableau[i] as StandardComponent).IsSelect))
                 {
 
                     if (typeof(AND) == tableau[i].GetType())
@@ -1770,7 +1976,70 @@ namespace WpfApplication9
                     {
                         newChild = new SequentialComponent.Clock((tableau[i] as SequentialComponent.Clock).LowLevelms, (tableau[i] as SequentialComponent.Clock).HighLevelms, MainWindow.Delay);
                     }
-                    
+
+                    else if (typeof(AsynchToogle) == tableau[i].GetType())
+                    {
+                        newChild = new AsynchToogle();
+                    }
+
+                    else if (typeof(Chronogramme) == tableau[i].GetType())
+                    {
+                        newChild = new Chronogramme((tableau[i] as Chronogramme).nbrInputs(),MainWindow.Delay);
+                    }
+                    else if (typeof(CirculerRegister) == tableau[i].GetType())
+                    {
+                        newChild = new CirculerRegister((tableau[i] as CirculerRegister)._trigger, (tableau[i] as CirculerRegister).nbrInputs(), (tableau[i] as CirculerRegister).typeDec);
+                    }
+                    else if (typeof(CompteurModN) == tableau[i].GetType())
+                    {
+                        newChild = new CompteurModN(1, (tableau[i] as CompteurModN).nbrOutputs());
+                    }
+                    else if (typeof(compteurN) == tableau[i].GetType())
+                    {
+                        newChild = new compteurN(1, (tableau[i] as compteurN).nbrOutputs());
+                    }
+                    else if (typeof(DecompteurN) == tableau[i].GetType())
+                    {
+                        newChild = new DecompteurN(1, (tableau[i] as DecompteurN).nbrOutputs());
+                    }
+                    else if (typeof(FlipFlop) == tableau[i].GetType())
+                    {
+                        newChild = new FlipFlop((tableau[i] as FlipFlop)._trigger);
+                    }
+                    else if (typeof(FrequencyDevider) == tableau[i].GetType())
+                    {
+                        newChild = new FrequencyDevider();
+                    }
+
+                    else if (typeof(JK) == tableau[i].GetType())
+                    {
+                        newChild = new JK((tableau[i] as JK).Trigger);
+                    }
+
+                    else if (typeof(programmablRegister) == tableau[i].GetType())
+                    {
+                        newChild = new programmablRegister((tableau[i] as programmablRegister)._trigger, (tableau[i] as programmablRegister).nbrInputs());
+                    }
+
+                    else if (typeof(Registre) == tableau[i].GetType())
+                    {
+                        newChild = new Registre((tableau[i] as Registre)._trigger, (tableau[i] as Registre).nbrInputs());
+                    }
+
+                    else if (typeof(RSHLatche) == tableau[i].GetType())
+                    {
+                        newChild = new RSHLatche();
+                    }
+
+                    else if (typeof(RSLatche) == tableau[i].GetType())
+                    {
+                        newChild = new RSLatche();
+                    }
+
+                    else if (typeof(SynchToogle) == tableau[i].GetType())
+                    {
+                        newChild = new SynchToogle();
+                    }
 
                     liste.Add(newChild);
                     newChild.AllowDrop = true;
@@ -1793,7 +2062,7 @@ namespace WpfApplication9
                     catch { };
 
                     /**/
-                    miseAJourPile();
+                    //miseAJourPile();
                     foreach (Terminal terminal in (tableau[i] as StandardComponent).inputStack.Children)
                     {
                         try
@@ -1833,7 +2102,7 @@ namespace WpfApplication9
             {
 
                 StandardComponent newChild = null;
-                if (!(typeof(Line) == tableau[i].GetType()) && ((tableau[i] as StandardComponent).IsSelect))
+                if ((tableau[i] is StandardComponent) && ((tableau[i] as StandardComponent).IsSelect))
                 {
 
                     if (typeof(AND) == tableau[i].GetType())
@@ -2014,7 +2283,69 @@ namespace WpfApplication9
                         newChild = new SequentialComponent.Clock((tableau[i] as SequentialComponent.Clock).LowLevelms, (tableau[i] as SequentialComponent.Clock).HighLevelms, MainWindow.Delay);
                     }
 
-                    
+                    else if (typeof(AsynchToogle) == tableau[i].GetType())
+                    {
+                        newChild = new AsynchToogle();
+                    }
+
+                    else if (typeof(Chronogramme) == tableau[i].GetType())
+                    {
+                        newChild = new Chronogramme((tableau[i] as Chronogramme).nbrInputs(),MainWindow.Delay);
+                    }
+                    else if (typeof(CirculerRegister) == tableau[i].GetType())
+                    {
+                        newChild = new CirculerRegister((tableau[i] as CirculerRegister)._trigger, (tableau[i] as CirculerRegister).nbrInputs(), (tableau[i] as CirculerRegister).typeDec);
+                    }
+                    else if (typeof(CompteurModN) == tableau[i].GetType())
+                    {
+                        newChild = new CompteurModN(1, (tableau[i] as CompteurModN).nbrOutputs());
+                    }
+                    else if (typeof(compteurN) == tableau[i].GetType())
+                    {
+                        newChild = new compteurN(1, (tableau[i] as compteurN).nbrOutputs());
+                    }
+                    else if (typeof(DecompteurN) == tableau[i].GetType())
+                    {
+                        newChild = new DecompteurN(1, (tableau[i] as DecompteurN).nbrOutputs());
+                    }
+                    else if (typeof(FlipFlop) == tableau[i].GetType())
+                    {
+                        newChild = new FlipFlop((tableau[i] as FlipFlop)._trigger);
+                    }
+                    else if (typeof(FrequencyDevider) == tableau[i].GetType())
+                    {
+                        newChild = new FrequencyDevider();
+                    }
+
+                    else if (typeof(JK) == tableau[i].GetType())
+                    {
+                        newChild = new JK((tableau[i] as JK).Trigger);
+                    }
+
+                    else if (typeof(programmablRegister) == tableau[i].GetType())
+                    {
+                        newChild = new programmablRegister((tableau[i] as programmablRegister)._trigger, (tableau[i] as programmablRegister).nbrInputs());
+                    }
+
+                    else if (typeof(Registre) == tableau[i].GetType())
+                    {
+                        newChild = new Registre((tableau[i] as Registre)._trigger, (tableau[i] as Registre).nbrInputs());
+                    }
+
+                    else if (typeof(RSHLatche) == tableau[i].GetType())
+                    {
+                        newChild = new RSHLatche();
+                    }
+
+                    else if (typeof(RSLatche) == tableau[i].GetType())
+                    {
+                        newChild = new RSLatche();
+                    }
+
+                    else if (typeof(SynchToogle) == tableau[i].GetType())
+                    {
+                        newChild = new SynchToogle();
+                    }
 
                     liste.Add(newChild);
                     newChild.AllowDrop = true;
@@ -2062,11 +2393,426 @@ namespace WpfApplication9
 
         }
 
+
         public void coller(object sender, RoutedEventArgs e)
         {
+            StandardComponent[] tmp = new StandardComponent[1000];
+            int size = liste_copier.Count;
+            liste_copier.CopyTo(tmp);
+            //remplir(liste_tmp, tmp, size);
+
             for (int j = 0; j < liste_copier.Count; j++)
             {
                 canvas.Children.Add(liste_copier[j]);
+            }
+            liste_copier.Clear();
+            remplir(liste_copier, tmp, size);
+        }
+
+        public void remplir(List<StandardComponent> liste, StandardComponent[] tableau, int size)
+        {
+            //liste.Clear();
+            //System.Windows.MessageBox.Show(tableau.Length.ToString());
+            for (int i = 0; i < size; i++)
+            {
+
+                StandardComponent newChild = null;
+                if (typeof(AND) == tableau[i].GetType())
+                {
+                    newChild = new AND((tableau[i] as AND).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as AND).nbrInputs(); j++)
+                    {
+
+                        Terminal terminal_1 = (Terminal)((tableau[i] as AND).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as AND).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+                    }
+                }
+                else if (typeof(OR) == tableau[i].GetType())
+                {
+                    newChild = new OR((tableau[i] as OR).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as OR).nbrInputs(); j++)
+                    {
+
+                        Terminal terminal_1 = (Terminal)((tableau[i] as OR).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as OR).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+
+                    }
+                }
+
+                else if (typeof(NAND) == tableau[i].GetType())
+                {
+                    newChild = new NAND((tableau[i] as NAND).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as NAND).nbrInputs(); j++)
+                    {
+
+                        Terminal terminal_1 = (Terminal)((tableau[i] as NAND).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as NAND).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+
+                    }
+                }
+                else if (typeof(NOR) == tableau[i].GetType())
+                {
+                    newChild = new NOR((tableau[i] as NOR).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as NOR).nbrInputs(); j++)
+                    {
+                        Terminal terminal_1 = (Terminal)((tableau[i] as NOR).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as NOR).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+
+                    }
+                }
+
+                else if (typeof(Not) == tableau[i].GetType())
+                {
+                    newChild = new Not();
+
+                    Terminal terminal_1 = (Terminal)((tableau[i] as Not).inputStack.Children[0]);
+                    Terminal terminal_2 = (Terminal)((newChild as Not).inputStack.Children[0]);
+
+                    if (terminal_1.IsInversed)
+                    {
+                        terminal_2.IsInversed = true;
+                        terminal_2.input_inversed();
+                    }
+                }
+
+                else if (typeof(Output) == tableau[i].GetType())
+                {
+                    newChild = new Output();
+                }
+
+                else if (typeof(Input) == tableau[i].GetType())
+                {
+                    newChild = new Input();
+                    (newChild as Input).state = (tableau[i] as Input).state;
+
+                }
+
+                else if (typeof(XNOR) == tableau[i].GetType())
+                {
+                    newChild = new XNOR((tableau[i] as XNOR).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as XNOR).nbrInputs(); j++)
+                    {
+
+                        Terminal terminal_1 = (Terminal)((tableau[i] as XNOR).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as XNOR).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+
+                    }
+                }
+                else if (typeof(XOR) == tableau[i].GetType())
+                {
+                    newChild = new XOR((tableau[i] as XOR).nbrInputs());
+                    for (int j = 0; j < (tableau[i] as XOR).nbrInputs(); j++)
+                    {
+                        Terminal terminal_1 = (Terminal)((tableau[i] as XOR).inputStack.Children[j]);
+                        Terminal terminal_2 = (Terminal)((newChild as XOR).inputStack.Children[j]);
+
+                        if (terminal_1.IsInversed)
+                        {
+                            terminal_2.IsInversed = true;
+                            terminal_2.input_inversed();
+                        }
+                    }
+                }
+
+                else if (typeof(Comparateur) == tableau[i].GetType())
+                {
+                    newChild = new Comparateur((tableau[i] as Comparateur).nbrInputs(), (tableau[i] as Comparateur).nbrOutputs());
+
+                }
+
+                else if (typeof(Decodeur) == tableau[i].GetType())
+                {
+                    newChild = new Decodeur((tableau[i] as Decodeur).nbrInputs(), (tableau[i] as Decodeur).nbrOutputs());
+                }
+
+                else if (typeof(Demultiplexer) == tableau[i].GetType())
+                {
+                    newChild = new Demultiplexer((tableau[i] as Demultiplexer).nbrInputs(), (tableau[i] as Demultiplexer).nbrOutputs(), (tableau[i] as Demultiplexer).nbrSelections());
+                }
+
+                else if (typeof(Encodeur) == tableau[i].GetType())
+                {
+                    newChild = new Encodeur((tableau[i] as Encodeur).nbrInputs(), (tableau[i] as Encodeur).nbrOutputs());
+                }
+
+                else if (typeof(FullAdder) == tableau[i].GetType())
+                {
+                    newChild = new FullAdder((tableau[i] as FullAdder).nbrInputs(), (tableau[i] as FullAdder).nbrOutputs());
+                }
+
+                else if (typeof(FullSub) == tableau[i].GetType())
+                {
+                    newChild = new FullSub((tableau[i] as FullSub).nbrInputs(), (tableau[i] as FullSub).nbrOutputs());
+                }
+
+                else if (typeof(HalfAdder) == tableau[i].GetType())
+                {
+                    newChild = new HalfAdder((tableau[i] as HalfAdder).nbrInputs(), (tableau[i] as HalfAdder).nbrOutputs());
+                }
+
+                else if (typeof(HalfSub) == tableau[i].GetType())
+                {
+                    newChild = new HalfSub((tableau[i] as HalfSub).nbrInputs(), (tableau[i] as HalfSub).nbrOutputs());
+                }
+
+                else if (typeof(Multiplexer) == tableau[i].GetType())
+                {
+                    newChild = new Multiplexer((tableau[i] as Multiplexer).nbrInputs(), (tableau[i] as Multiplexer).nbrOutputs(), (tableau[i] as Multiplexer).nbrSelections());
+                }
+
+                else if (typeof(SequentialComponent.Clock) == tableau[i].GetType())
+                {
+                    newChild = new SequentialComponent.Clock((tableau[i] as SequentialComponent.Clock).LowLevelms, (tableau[i] as SequentialComponent.Clock).HighLevelms, MainWindow.Delay);
+                }
+
+                else if (typeof(AsynchToogle) == tableau[i].GetType())
+                {
+                    newChild = new AsynchToogle();
+                }
+
+                else if (typeof(Chronogramme) == tableau[i].GetType())
+                {
+                    newChild = new Chronogramme((tableau[i] as Chronogramme).nbrInputs(),MainWindow.Delay);
+                }
+                else if (typeof(CirculerRegister) == tableau[i].GetType())
+                {
+                    newChild = new CirculerRegister((tableau[i] as CirculerRegister)._trigger, (tableau[i] as CirculerRegister).nbrInputs(), (tableau[i] as CirculerRegister).typeDec);
+                }
+                else if (typeof(CompteurModN) == tableau[i].GetType())
+                {
+                    newChild = new CompteurModN(1, (tableau[i] as CompteurModN).nbrOutputs());
+                }
+                else if (typeof(compteurN) == tableau[i].GetType())
+                {
+                    newChild = new compteurN(1, (tableau[i] as compteurN).nbrOutputs());
+                }
+                else if (typeof(DecompteurN) == tableau[i].GetType())
+                {
+                    newChild = new DecompteurN(1, (tableau[i] as DecompteurN).nbrOutputs());
+                }
+                else if (typeof(FlipFlop) == tableau[i].GetType())
+                {
+                    newChild = new FlipFlop((tableau[i] as FlipFlop)._trigger);
+                }
+                else if (typeof(FrequencyDevider) == tableau[i].GetType())
+                {
+                    newChild = new FrequencyDevider();
+                }
+
+                else if (typeof(JK) == tableau[i].GetType())
+                {
+                    newChild = new JK((tableau[i] as JK).Trigger);
+                }
+
+                else if (typeof(programmablRegister) == tableau[i].GetType())
+                {
+                    newChild = new programmablRegister((tableau[i] as programmablRegister)._trigger, (tableau[i] as programmablRegister).nbrInputs());
+                }
+
+                else if (typeof(Registre) == tableau[i].GetType())
+                {
+                    newChild = new Registre((tableau[i] as Registre)._trigger, (tableau[i] as Registre).nbrInputs());
+                }
+
+                else if (typeof(RSHLatche) == tableau[i].GetType())
+                {
+                    newChild = new RSHLatche();
+                }
+
+                else if (typeof(RSLatche) == tableau[i].GetType())
+                {
+                    newChild = new RSLatche();
+                }
+
+                else if (typeof(SynchToogle) == tableau[i].GetType())
+                {
+                    newChild = new SynchToogle();
+                }
+
+                liste.Add(newChild);
+                newChild.AllowDrop = true;
+                newChild.PreviewMouseLeftButtonDown += this.MouseLeftButtonDown;
+                newChild.PreviewMouseMove += this.MouseMove;
+                newChild.PreviewMouseLeftButtonUp += this.PreviewMouseLeftButtonUp;
+                newChild.SetValue(Canvas.LeftProperty, tableau[i].GetValue(Canvas.LeftProperty));
+                newChild.SetValue(Canvas.TopProperty, tableau[i].GetValue(Canvas.TopProperty));
+                (newChild as StandardComponent).PosX = (tableau[i] as StandardComponent).PosX;
+                (newChild as StandardComponent).PosY = (tableau[i] as StandardComponent).PosY;
+
+                try
+                {
+                    StandardComponent component = newChild as StandardComponent;
+                    component.recalculer_pos();
+                }
+                catch { };
+            }
+        }
+
+        private void ComboBoxPropertiesDec_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (elementsSelected != null)
+            {
+                if (elementsSelected.Count != 0)
+                {
+                    int selecteVal;
+                    if(elementsSelected[0] is Decodeur) selecteVal = ComboBoxPropertiesDec.SelectedIndex + 2;
+        
+                    else
+                    {
+                        if (ComboBoxPropertiesDec.SelectedIndex == 0) selecteVal = 4;
+                        else selecteVal = 8;
+                    }
+                    if (selecteVal != elementsSelected[0].nbrInputs())
+                    {              
+                         while (selecteVal > elementsSelected[0].nbrInputs())
+                         {
+                            elementsSelected[0].AddInputs();
+                         }
+                         while (selecteVal < elementsSelected[0].nbrInputs())
+                         {
+                            elementsSelected[0].RemoveInputs();
+                         }
+                         elementsSelected[0].redessiner(elementsSelected[0].path);
+                         canvas.UpdateLayout();
+                         elementsSelected[0].Run();
+                    } 
+                   modifieProperties();
+
+                }
+            }
+        }
+
+        private void ComboBoxPropertiesEnc_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (elementsSelected != null)
+            {
+                if (elementsSelected.Count != 0)
+                {
+                    int selecteVal;
+                    if (ComboBoxPropertiesEnc.SelectedIndex == 0) selecteVal = 4;
+                    else selecteVal = 8;
+
+                    if (selecteVal != elementsSelected[0].nbrInputs())
+                    {
+
+                        while (selecteVal > elementsSelected[0].nbrInputs())
+                        {
+                            elementsSelected[0].AddInputs();
+                        }
+                        while (selecteVal < elementsSelected[0].nbrInputs())
+                        {
+                            elementsSelected[0].RemoveInputs();
+                        }
+
+                        elementsSelected[0].redessiner(elementsSelected[0].path);
+                        canvas.UpdateLayout();
+                        elementsSelected[0].Run();
+                    }
+
+                    modifieProperties();
+
+                }
+            }
+        }
+
+        private void ComparatuerText_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (elementsSelected != null)
+            {
+                if (elementsSelected.Count != 0)
+                {
+                    int selecteVal=0;
+                  
+                    try
+                    {
+                        selecteVal = Int32.Parse(ComparatuerText.Text)*2;
+                    }
+                    catch (FormatException ex)
+                    {
+                        MessageBox.Show("Entrez un nombre s'il vous plait ! ");
+                        selecteVal = elementsSelected[0].nbrInputs();
+                        Console.WriteLine(ex.Message);
+                    }
+
+                    if (selecteVal != elementsSelected[0].nbrInputs())
+                    {
+                        
+                        while (selecteVal > elementsSelected[0].nbrInputs())
+                        {
+                            elementsSelected[0].AddInputs();
+                        }
+                        while (selecteVal < elementsSelected[0].nbrInputs())
+                        {
+                            elementsSelected[0].RemoveInputs();
+                        }
+
+                        elementsSelected[0].redessiner(elementsSelected[0].path);
+                        canvas.UpdateLayout();
+                        elementsSelected[0].Run();
+                    }
+
+                    modifieProperties();
+
+                }
+            }
+        }
+
+        private void ComboBoxPropertiesReg_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ComboBoxPropertiesReg.SelectedIndex == 0)
+            {
+                try
+                {
+                    ((CirculerRegister)elementsSelected[0]).typeDec = CirculerRegister.Type.Right;
+                }
+                catch
+                {
+
+                }
+
+
+
+            }
+            else
+            {
+                try
+                {
+                    ((CirculerRegister)elementsSelected[0]).typeDec = CirculerRegister.Type.Left;
+                }
+                catch
+                {
+
+                }
             }
         }
 
@@ -2101,9 +2847,53 @@ namespace WpfApplication9
                 {
                     coller(sender, e);
                 }
+                if (e.Key == Key.Delete)
+                {
+                    if (elementsSelected.Count != 0)
+                    {
+                        elementsSelected[0].Delete_elements();
+                    }
+                }
+                if (e.Key == Key.A)
+                {
+                    elementsSelected.Clear();
+                    foreach(Object component in canvas.Children)
+                    {
+                        if(component is StandardComponent)
+                        {
+                            ((StandardComponent)component).IsSelect = true;
+                            StandardComponent.selectElement((StandardComponent)component);
+                            elementsSelected.Add((StandardComponent)component);
+                        }
+                        
+                    }
+                }
+                if (e.Key == Key.R)
+                {
+                    foreach(Object componenet in elementsSelected)
+                    {
+                        if(componenet is StandardComponent)
+                        {
+                            ((StandardComponent)componenet).RotateRight();
+                        }
+                       
+                    }
+                }
+                if (e.Key == Key.L)
+                {
+                    foreach (Object componenet in elementsSelected)
+                    {
+                        if (componenet is StandardComponent)
+                        {
+                            ((StandardComponent)componenet).RotateLeft();
+                        }
+
+                    }
+                }
 
             }
         }
+
 
     }
 

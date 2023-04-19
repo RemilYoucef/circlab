@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfApplication9.Component;
+using CircLab.Component;
+using System.Windows.Media;
+using System.Windows;
 
-namespace WpfApplication9.SequentialComponent
+namespace CircLab.SequentialComponent
 {
     class programmablRegister : StandardComponent
     {
@@ -16,7 +18,7 @@ namespace WpfApplication9.SequentialComponent
         }
 
         private int _nbroutputs;
-        private TriggerType _trigger = TriggerType.RisingEdge;
+        public TriggerType _trigger = TriggerType.RisingEdge;
         public TriggerType Trigger
         {
             get { return _trigger; }
@@ -30,13 +32,19 @@ namespace WpfApplication9.SequentialComponent
         {
             _trigger = trigger;
             _nbroutputs = nbrinput;
-
+            path= "M 0,0 L 30,0 L 30,30 L 0,30 z";
+            TypeLabel.Text = "ProgrammableRegister";
             oldClockValue = false;//initialiser l'horloge 
             outputs_tab.Clear();//initialiser les sorties 
             for (int i = 0; i < _nbroutputs; i++)
             {
                 outputs_tab.Add(false);
             }
+            TypeLabel.Text = "PReg";
+            ((Terminal)selectionStack.Children[0]).terminal_grid.ToolTip = "Clear";
+            ((Terminal)selectionStack.Children[1]).terminal_grid.ToolTip = "Clock";
+            ((Terminal)selectionStack.Children[2]).terminal_grid.ToolTip = "Cmd1";
+            ((Terminal)selectionStack.Children[3]).terminal_grid.ToolTip = "Cmd2";
         }
 
         public override void Run()
@@ -79,6 +87,73 @@ namespace WpfApplication9.SequentialComponent
             }
             oldClockValue = newClockValue;
             update_output();//mettre à jour les sorties 
+        }
+
+        public override void redessiner(string path)
+        {
+            Terminal terminal = new Terminal();
+            int nbrInput;
+            foreach (Terminal tmp in inputStack.Children)
+            {
+                terminal = tmp;
+            }
+
+            if (this.nbrInputs() == 0)
+            {
+                nbrInput = 1;
+            }
+            else nbrInput = this.nbrInputs();
+
+            if (nbrInput-2 != OutputStack.Children.Count)
+            {
+                while (OutputStack.Children.Count < nbrInput-2)
+                {
+                    terminal = new Terminal();
+                    terminal.terminal_grid.LayoutTransform = new RotateTransform(180);
+                    terminal.IsOutpt = true;
+                    OutputStack.Children.Add(terminal);
+                    outputs_tab.Add(false);
+                }
+                while (OutputStack.Children.Count > nbrInput-2)
+                {
+                    terminal = null;
+                    Wireclass wire = null;
+
+                    foreach (Terminal tmp in OutputStack.Children)
+                    {
+                        terminal = tmp;
+                    }
+                    foreach (Wireclass tmp in terminal.wires)
+                    {
+                        wire = tmp;
+                    }
+                    if (wire != null) wire.Destroy();
+                    OutputStack.Children.Remove(terminal);
+                    try
+                    {
+                        outputs_tab.RemoveAt(1);
+                    }
+                    catch { }
+
+                }
+            }
+
+            output.Margin = new Thickness(4.5, 0, 4.5, 0);
+            grid.Height = nbrInput * 22 + 25;
+            typeComponenet.Height = terminal.Height * (nbrInput+1);
+            typeComponenet.Width = terminal.Width * 6;
+
+            typeComponenet.Data = StreamGeometry.Parse(path);
+            typeComponenet.Stretch = Stretch.Fill;
+            typeComponenet.StrokeThickness = 0;
+            typeComponenet.Fill = Brushes.RoyalBlue;
+            typeComponenet.Margin = new Thickness(14, 25, 0, 0);
+            typeComponenet.HorizontalAlignment = HorizontalAlignment.Left;
+            typeComponenet.VerticalAlignment = VerticalAlignment.Top;
+            recalculer_pos();
+            if (IsSelect) selectElement(this);
+            canvas.UpdateLayout();
+
         }
     }
 

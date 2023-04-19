@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfApplication9.Component;
+using CircLab.Component;
 
-namespace WpfApplication9.SequentialComponent
+namespace CircLab.SequentialComponent
 {
     class FrequencyDevider : StandardComponent
     {
@@ -20,6 +20,10 @@ namespace WpfApplication9.SequentialComponent
             outputs_tab.Add(false);
             outputs_tab.Add(true);
             oldClockValue = false;
+            TypeLabel.Text = "FDevider";
+            ((Terminal)inputStack.Children[0]).terminal_grid.ToolTip = "Sin";
+            ((Terminal)OutputStack.Children[0]).terminal_grid.ToolTip = "Sout";
+            ((Terminal)OutputStack.Children[1]).terminal_grid.ToolTip = "not Sout";
         }
 
         public override void Run()

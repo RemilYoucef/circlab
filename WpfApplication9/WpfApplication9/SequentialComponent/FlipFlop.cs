@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfApplication9.Component;
+using CircLab.Component;
 
-namespace WpfApplication9.SequentialComponent
+namespace CircLab.SequentialComponent
 {
     class FlipFlop : StandardComponent
     {
@@ -16,7 +16,7 @@ namespace WpfApplication9.SequentialComponent
         }
         
         private bool _val;
-        private TriggerType _trigger = TriggerType.RisingEdge;
+        public TriggerType _trigger = TriggerType.RisingEdge;
         public TriggerType Trigger
         {
             get { return _trigger; }
@@ -26,6 +26,7 @@ namespace WpfApplication9.SequentialComponent
         public FlipFlop(TriggerType trigger)
             :base(2,2,0, "M 0,0 L 30,0 L 30,30 L 0,30 z","FlipFlop")
         {
+            TypeLabel.Text = "FlipFlop";
             _trigger = trigger;
             oldClockValue = false;
             outputs_tab.Clear();

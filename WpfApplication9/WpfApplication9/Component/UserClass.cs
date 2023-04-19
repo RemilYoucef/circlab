@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using WpfApplication9.LogicGate;
+using CircLab.LogicGate;
+using CircLab.SequentialComponent;
 
-namespace WpfApplication9.Component
+namespace CircLab.Component
 {
     public static class UserClass
     {
@@ -80,6 +81,9 @@ namespace WpfApplication9.Component
             else if (component is NAND) return true;
             else if (component is NOR) return true;
             else if (component is OR) return true;
+            else if (component is Registre) return true;
+            else if (component is CirculerRegister) return true;
+            else if (component is programmablRegister) return true;
             else return false;
 
         }

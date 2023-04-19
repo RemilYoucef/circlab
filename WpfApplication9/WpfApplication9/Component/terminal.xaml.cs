@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WpfApplication9.Component
+namespace CircLab.Component
 {
     /// <summary>
     /// Interaction logic for terminal.xaml
@@ -25,10 +25,16 @@ namespace WpfApplication9.Component
         public ArrayList wires; //Un terminal de sortie peut être brancher à plusieurs entrés 
         public Wireclass logestWire;
         public Boolean IsInversed;//
-        public bool etat; 
+        public bool etat;
+        public static int idTotal = 0;
+        public int id;
+
 
         public Terminal()
         {
+            this.id = idTotal;
+            id++;
+            
             InitializeComponent();
             IsInversed = false;
             wires = new ArrayList();
@@ -42,15 +48,17 @@ namespace WpfApplication9.Component
             Canvas canvas = UserClass.TryFindParent<Canvas>((terminal));
   
             Wireclass wire = new Wireclass();
+     
             wire.relier();
         }
 
         //Recalcule de position de chaque terminal en recaluculant la pos de tout les fils
-        public void recalculer()
+        public void recalculer(int rotation)
         {
             foreach(Wireclass wire in wires)
             {
-                wire.recalculer();
+                
+                wire.recalculer(rotation,this.IsOutpt);
             }
         }
 

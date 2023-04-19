@@ -7,40 +7,46 @@ using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
-using WpfApplication9.Component;
+using CircLab.Component;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace WpfApplication9.SequentialComponent
+namespace CircLab.SequentialComponent
 {
     class Chronogramme : StandardComponent
     {
         ChronoWindow chronogramme;
         private DispatcherTimer t;
-
-        public Chronogramme(int nbrinputs)
+        public int nbrEntrée;
+        public float Delay { get; set; }
+      
+        public Chronogramme(int nbrinputs,float Delay)
             : base(nbrinputs, 1, 0, "M0.5,0.5 L27,0.5 L27,27.5 L0.5,27.5 z", "chronogramme")
         {
+            TypeLabel.Text = "Chronnogramme";
             this.OutputStack.Children.Clear();
+            this.nbrEntrée = nbrinputs;
             this.MouseDoubleClick += DoubleClickEventHandler;
+            this.Delay = Delay;
+           
         }
         public void doubleClick()
         {
                       
             t.Tick += timer_Tick;
-            t.Interval = TimeSpan.FromMilliseconds(1000);
+            t.Interval = TimeSpan.FromMilliseconds(100 * Delay);
             t.IsEnabled = true;
-            for (int i = 0; i < inputs_tab.Count; i++)
+            for (int i = 0; i < nbrEntrée; i++)
             {
-                
-                chronogramme.chronogrammeStack.Children.Add(new Chart());
+               chronogramme.chronogrammeStack.Children.Add(new Chart());
             }
 
         }
 
         private void timer_Tick(object sender, EventArgs e)
         {
+            t.Interval = TimeSpan.FromMilliseconds(100 * Delay);
             update_input();
             if (chronogramme != null)
             {
@@ -81,6 +87,15 @@ namespace WpfApplication9.SequentialComponent
         public override void Run()
         {
           
+        }
+
+
+        public void remove()
+        {
+            if (this.chronogramme != null)
+            {
+                chronogramme.Close();
+            }
         }
     }
 }

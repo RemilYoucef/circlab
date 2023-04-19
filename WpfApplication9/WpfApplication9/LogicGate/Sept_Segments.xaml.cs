@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WpfApplication9.LogicGate
+namespace CircLab.LogicGate
 {
     /// <summary>
     /// Interaction logic for _7_Segments.xaml
@@ -22,6 +22,7 @@ namespace WpfApplication9.LogicGate
     {
         public Sept_Segments()
         {
+           
             InitializeComponent();
         }
     }

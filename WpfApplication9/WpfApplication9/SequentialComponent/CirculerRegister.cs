@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfApplication9.Component;
+using CircLab.Component;
+using System.Windows.Media;
+using System.Windows;
 
-namespace WpfApplication9.SequentialComponent
+namespace CircLab.SequentialComponent
 {
     class CirculerRegister : StandardComponent
     {
@@ -18,8 +20,13 @@ namespace WpfApplication9.SequentialComponent
             Right, Left
         }
         private Type _type;
+        public Type typeDec
+        {
+            get { return _type; }
+            set { _type = value; }
+        }
         private int _nbroutputs;
-        private TriggerType _trigger = TriggerType.RisingEdge;
+        public TriggerType _trigger = TriggerType.RisingEdge;
         public TriggerType Trigger
         {
             get { return _trigger; }
@@ -40,6 +47,10 @@ namespace WpfApplication9.SequentialComponent
             {
                 outputs_tab.Add(false);
             }
+            TypeLabel.Text = "CReg";
+            ((Terminal)selectionStack.Children[0]).terminal_grid.ToolTip = "Clock";
+            ((Terminal)selectionStack.Children[1]).terminal_grid.ToolTip = "Clear";
+            ((Terminal)selectionStack.Children[2]).terminal_grid.ToolTip = "Load";
 
         }
 
@@ -85,5 +96,74 @@ namespace WpfApplication9.SequentialComponent
 
             update_output(); //mise à jour des resultats 
         }
+
+        public override void redessiner(string path)
+        {
+            Terminal terminal = new Terminal();
+            int nbrInput;
+            foreach (Terminal tmp in inputStack.Children)
+            {
+                terminal = tmp;
+            }
+
+            if (this.nbrInputs() == 0)
+            {
+                nbrInput = 1;
+            }
+            else nbrInput = this.nbrInputs();
+
+            if (nbrInput != OutputStack.Children.Count)
+            {
+                while (OutputStack.Children.Count < nbrInput)
+                {
+                    terminal = new Terminal();
+                    terminal.terminal_grid.LayoutTransform = new RotateTransform(180);
+                    terminal.IsOutpt = true;
+                    OutputStack.Children.Add(terminal);
+                    outputs_tab.Add(false);
+                }
+                while (OutputStack.Children.Count > nbrInput)
+                {
+                    terminal = null;
+                    Wireclass wire = null;
+
+                    foreach (Terminal tmp in OutputStack.Children)
+                    {
+                        terminal = tmp;
+                    }
+                    foreach (Wireclass tmp in terminal.wires)
+                    {
+                        wire = tmp;
+                    }
+                    if (wire != null) wire.Destroy();
+                    OutputStack.Children.Remove(terminal);
+                    try
+                    {
+                        outputs_tab.RemoveAt(1);
+                    }
+                    catch { }
+
+                }
+            }
+
+            output.Margin = new Thickness(4.5, 0, 4.5, 0);
+            grid.Height = nbrInput * 22 + 25;
+            typeComponenet.Height = terminal.Height * nbrInput;
+            typeComponenet.Width = terminal.Width * 4;
+
+            typeComponenet.Data = StreamGeometry.Parse(path);
+            typeComponenet.Stretch = Stretch.Fill;
+            typeComponenet.StrokeThickness = 0;
+            typeComponenet.Fill = Brushes.RoyalBlue;
+            typeComponenet.Margin = new Thickness(14, 25, 0, 0);
+            typeComponenet.HorizontalAlignment = HorizontalAlignment.Left;
+            typeComponenet.VerticalAlignment = VerticalAlignment.Top;
+            recalculer_pos();
+            if (IsSelect) selectElement(this);
+            canvas.UpdateLayout();
+
+        }
+
     }
 }
+

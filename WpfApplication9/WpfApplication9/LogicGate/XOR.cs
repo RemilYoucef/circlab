@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using WpfApplication9.Component;
+using CircLab.Component;
 
 
-namespace WpfApplication9.LogicGate
+namespace CircLab.LogicGate
 {
     class XOR : StandardComponent
     {
@@ -16,6 +16,7 @@ namespace WpfApplication9.LogicGate
             : base(nbrinput,1,0, "M 13,47 c 5,-10 5,-20 0,-30 M 13,17 c 5,10 5,20 0,30 M 18,17 h 7 c 10,0 20,5 25,15 c -5,10 -15,15 -25,15 h -7 c 5,-10 5,-20 0,-30","XNOR")
         {
             typeComponenet.StrokeThickness = 2;
+            TypeLabel.Text = "Xor";
         }
 
         public override void Run()
