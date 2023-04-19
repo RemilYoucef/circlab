@@ -1,0 +1,59 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="WpfApplication9.Component.Terminal"
+    Height="22" Width="10">
+
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Ellipse}">
+            <Setter Property="Stroke" Value="Black" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Width" Value="10" />
+            <Setter Property="Height" Value="10" />
+            <Setter Property="Fill" Value="White" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Stroke" Value="Blue" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Name= "terminal_grid" RenderTransformOrigin="0.5,0.5" Margin="-1.291,1.287,1.291,1.295">
+        <Grid.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform/>
+                <SkewTransform/>
+                <RotateTransform Angle="-89.822"/>
+                <TranslateTransform/>
+            </TransformGroup>
+        </Grid.RenderTransform>
+        <Line VerticalAlignment="Top" HorizontalAlignment="Center" X1="0" X2="0" Y1="10" Y2="22" Stroke="RoyalBlue" StrokeThickness="2" Margin="4.512,0,4.536,-1.645" Width="0.952" Height="21.063" Fill="Black" />
+        <Ellipse VerticalAlignment="Top" x:Name="elSelector" Width="Auto"  Margin="0.628,1.55,0.321,0" Height="8.498" Stroke="RoyalBlue" Fill="White" MouseLeftButtonDown="MouseLeftButtonDown" />
+        <!-- default to INPUT -->
+        <Polygon Stroke="DarkGray" Fill="DarkGray" x:Name="polyInput" Margin="-0.012,1.116,1.551,-0.119" Visibility="Hidden">
+            <Polygon.Points>
+                <Point X="3" Y="2" />
+                <Point X="5" Y="8" />
+                <Point X="7" Y="2" />
+
+            </Polygon.Points>
+        </Polygon>
+
+        <Polygon Stroke="DarkGray" Fill="DarkGray" x:Name="polyOutput" Margin="-0.012,1.116,0.486,-1.116" Visibility="Hidden">
+            <Polygon.Points>
+                <Point X="3" Y="8" />
+                <Point X="5" Y="2" />
+                <Point X="7" Y="8" />
+
+            </Polygon.Points>
+        </Polygon>
+        <Ellipse VerticalAlignment="Top" x:Name="inverse_input" Width="Auto"  Margin="2,12,1,0" Height="7" StrokeThickness="0.25" Visibility="Collapsed" >
+            <Ellipse.Stroke>
+                <SolidColorBrush Color="RoyalBlue"/>
+            </Ellipse.Stroke>
+        </Ellipse>
+
+    </Grid>
+</UserControl>
+
